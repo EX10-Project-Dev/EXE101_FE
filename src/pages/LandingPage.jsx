@@ -7,6 +7,7 @@ import RecommendationSection from '../components/RecommendationSection'
 import CriteriaFilterModal from '../components/CriteriaFilterModal'
 import VenueDetailModal from '../components/VenueDetailModal'
 import IntelligenceHighlights from '../components/IntelligenceHighlights'
+import CuratedCollections from '../components/CuratedCollections'
 import Footer from '../components/Footer'
 import { getRecommendations } from '../services/recommendationService'
 import { MOCK_VENUES } from '../data/mockVenues'
@@ -90,13 +91,31 @@ export default function LandingPage() {
     return count
   }
 
+  const handleSelectCollection = (col) => {
+    if (col.query) {
+      setPrompts([col.query])
+      setIsLoading(true)
+      getRecommendations({
+        prompts: [col.query],
+        criteria,
+        location
+      })
+        .then((res) => setVenues(res))
+        .finally(() => {
+          setIsLoading(false)
+          const el = document.getElementById('recommendations-section')
+          if (el) el.scrollIntoView({ behavior: 'smooth' })
+        })
+    }
+  }
+
   return (
     <Box
       sx={{
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: isDark ? '#150A05' : '#FFFFFF',
+        backgroundColor: isDark ? '#150A05' : '#FFF4EB',
         transition: 'background-color 0.3s ease'
       }}
     >
@@ -150,10 +169,13 @@ export default function LandingPage() {
         activeCriteriaCount={countActiveCriteria()}
       />
 
-      {/* 5. Atly Intelligence Inspired Highlights */}
+      {/* 5. Curated Collections Spotlight (Curated Collections, Made Personal) */}
+      <CuratedCollections onSelectCollection={handleSelectCollection} />
+
+      {/* 6. Atly Intelligence Inspired Highlights */}
       <IntelligenceHighlights />
 
-      {/* 6. Footer */}
+      {/* 7. Footer */}
       <Footer />
 
       {/* Criteria Filter Modal (7 tiêu chí chuẩn từ README.md) */}

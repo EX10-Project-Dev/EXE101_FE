@@ -1,9 +1,12 @@
-import { Box, Container, Typography, Button, Chip, IconButton } from '@mui/material'
-import { Compass, Sparkles, Sun, Moon } from 'lucide-react'
+import { Box, Container, Typography, Button, Chip } from '@mui/material'
+import { Lightbulb, LightbulbOff } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
+import { useLanguage } from '../contexts/LanguageContext'
+import logo from '../assets/logo.png'
 
 export default function Navbar({ onStartSearch }) {
   const { isDark, toggleTheme } = useTheme()
+  const { language, toggleLanguage, t } = useLanguage()
 
   return (
     <Box
@@ -13,54 +16,53 @@ export default function Navbar({ onStartSearch }) {
         top: 0,
         zIndex: 1100,
         backdropFilter: 'blur(18px)',
-        backgroundColor: isDark ? 'rgba(21, 10, 5, 0.92)' : 'rgba(255, 255, 255, 0.92)',
-        borderBottom: isDark ? '1px solid rgba(65, 33, 19, 0.65)' : '1px solid rgba(253, 186, 116, 0.35)',
-        boxShadow: isDark ? '0 4px 20px rgba(0, 0, 0, 0.4)' : '0 1px 12px rgba(234, 88, 12, 0.06)',
+        backgroundColor: isDark ? 'rgba(21, 10, 5, 0.92)' : 'rgba(255, 246, 237, 0.94)',
+        borderBottom: isDark ? '1px solid rgba(65, 33, 19, 0.65)' : '1px solid rgba(253, 186, 116, 0.55)',
+        boxShadow: isDark ? '0 4px 20px rgba(0, 0, 0, 0.4)' : '0 2px 14px rgba(234, 88, 12, 0.08)',
         transition: 'all 0.25s ease-in-out'
       }}
     >
       <Container
         maxWidth="lg"
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.8 }}
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.6 }}
       >
         {/* Logo & Brand */}
         <Box
           sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          {/* Glowing Orange Pin Icon like Spotly */}
+          {/* Brand Logo Emblem */}
           <Box
+            component="img"
+            src={logo}
+            alt="SEEKERS Logo"
             sx={{
-              width: 42,
-              height: 42,
-              borderRadius: '13px',
-              background: 'linear-gradient(135deg, #FF6E1A 0%, #EA580C 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
-              boxShadow: '0 4px 16px rgba(249, 115, 22, 0.45)',
+              width: 44,
+              height: 44,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: isDark ? '1.5px solid rgba(253, 186, 116, 0.35)' : '1.5px solid #FDBA74',
+              boxShadow: isDark ? '0 4px 16px rgba(0, 0, 0, 0.5)' : '0 3px 12px rgba(249, 115, 22, 0.25)',
+              backgroundColor: '#FFFFFF',
               flexShrink: 0
             }}
-          >
-            <Compass size={22} strokeWidth={2.6} />
-          </Box>
+          />
           <Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography
                 variant="h6"
                 sx={{
                   fontWeight: 900,
-                  letterSpacing: '-0.5px',
-                  fontSize: '1.3rem',
+                  letterSpacing: '0.04em',
+                  fontSize: '1.28rem',
                   lineHeight: 1,
                   color: isDark ? '#FFFFFF' : '#1C0A00'
                 }}
               >
-                FIND<span style={{ color: '#FF7A1A' }}>&amp;GO</span>
+                SEEKERS
               </Typography>
               <Chip
-                label="Khách trải nghiệm"
+                label={t('guestBadge')}
                 size="small"
                 sx={{
                   height: 20,
@@ -74,41 +76,80 @@ export default function Navbar({ onStartSearch }) {
             </Box>
             <Typography
               variant="caption"
-              sx={{ color: isDark ? '#A1948B' : '#78716C', display: { xs: 'none', sm: 'block' }, fontSize: '0.73rem' }}
+              sx={{ color: isDark ? '#A1948B' : '#78716C', display: { xs: 'none', sm: 'block' }, fontSize: '0.73rem', mt: 0.2 }}
             >
-              Gợi ý địa điểm F&amp;B thông minh theo ngữ cảnh
+              {t('brandTagline')}
             </Typography>
           </Box>
         </Box>
 
-        {/* Right Actions: Theme Toggle + CTA */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          {/* Theme Toggle Button */}
-          <IconButton
-            onClick={toggleTheme}
-            title={isDark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối (Dark Mode)'}
+        {/* Right Actions: Language Toggle + Theme Toggle + CTA */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+          {/* Language Toggle Button (VI / EN) */}
+          <Button
+            onClick={toggleLanguage}
+            size="small"
+            title={t('switchLangTooltip')}
             sx={{
-              width: 38,
               height: 38,
+              px: 1.5,
               borderRadius: '12px',
+              textTransform: 'none',
+              fontWeight: 800,
+              fontSize: '0.8rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.4,
               backgroundColor: isDark ? '#26130A' : '#FFF7ED',
               border: isDark ? '1px solid #442214' : '1px solid #FDBA74',
               color: isDark ? '#FED7AA' : '#EA580C',
               transition: 'all 0.2s ease',
               '&:hover': {
-                backgroundColor: isDark ? '#331A0E' : '#FED7AA',
-                transform: 'scale(1.05)'
+                backgroundColor: isDark ? '#331A0E' : '#FED7AA'
               }
             }}
           >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </IconButton>
+            <span style={{ opacity: language === 'vi' ? 1 : 0.4, fontWeight: language === 'vi' ? 900 : 500 }}>VI</span>
+            <span style={{ opacity: 0.35 }}>/</span>
+            <span style={{ opacity: language === 'en' ? 1 : 0.4, fontWeight: language === 'en' ? 900 : 500 }}>EN</span>
+          </Button>
 
-          {/* CTA Button matching Spotly "GET THE APP" style */}
+          {/* Theme Toggle Button with Lightbulb icon */}
+          <Button
+            onClick={toggleTheme}
+            size="small"
+            title={isDark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'}
+            sx={{
+              height: 38,
+              px: 1.6,
+              borderRadius: '12px',
+              textTransform: 'none',
+              fontWeight: 800,
+              fontSize: '0.82rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.8,
+              backgroundColor: isDark ? '#26130A' : '#FFF7ED',
+              border: isDark ? '1px solid #442214' : '1px solid #FDBA74',
+              color: isDark ? '#FED7AA' : '#EA580C',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: isDark ? '#331A0E' : '#FED7AA'
+              }
+            }}
+          >
+            {isDark ? (
+              <Lightbulb size={16} strokeWidth={2.3} style={{ color: '#FDBA74' }} />
+            ) : (
+              <LightbulbOff size={16} strokeWidth={2.3} style={{ color: '#EA580C' }} />
+            )}
+            {isDark ? t('lightMode') : t('darkMode')}
+          </Button>
+
+          {/* CTA Button without icon */}
           <Button
             variant="contained"
             onClick={onStartSearch}
-            startIcon={<Sparkles size={16} />}
             sx={{
               borderRadius: '50px',
               textTransform: 'none',
@@ -124,7 +165,7 @@ export default function Navbar({ onStartSearch }) {
               }
             }}
           >
-            Tìm quán ngay
+            {t('findVenuesCTA')}
           </Button>
         </Box>
       </Container>

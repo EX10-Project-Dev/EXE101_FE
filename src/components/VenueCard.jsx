@@ -8,18 +8,12 @@ import {
   Button,
   Stack
 } from '@mui/material'
-import {
-  MapPin,
-  Clock,
-  ExternalLink,
-  CheckCircle2,
-  Sparkles,
-  DollarSign
-} from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function VenueCard({ venue, onOpenDetail }) {
   const { isDark } = useTheme()
+  const { isEn } = useLanguage()
   const reasons = venue.dynamicReasons || venue.reasons || []
 
   const handleOpenGoogleMaps = (e) => {
@@ -102,7 +96,6 @@ export default function VenueCard({ venue, onOpenDetail }) {
             right: 12,
             display: 'flex',
             alignItems: 'center',
-            gap: 0.5,
             px: 1.3,
             py: 0.5,
             borderRadius: '12px',
@@ -112,7 +105,6 @@ export default function VenueCard({ venue, onOpenDetail }) {
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
           }}
         >
-          <Sparkles size={13} color="#FF7A1A" />
           <Typography
             sx={{
               fontWeight: 900,
@@ -132,11 +124,9 @@ export default function VenueCard({ venue, onOpenDetail }) {
             bottom: 10,
             left: 12,
             display: 'flex',
-            alignItems: 'center',
-            gap: 0.5
+            alignItems: 'center'
           }}
         >
-          <MapPin size={13} color="#FF8A3D" />
           <Typography
             variant="caption"
             sx={{
@@ -146,7 +136,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
               textShadow: '0 1px 3px rgba(0,0,0,0.8)'
             }}
           >
-            Cách bạn {venue.distanceKm} km
+            {isEn ? `${venue.distanceKm} km away` : `Cách bạn ${venue.distanceKm} km`}
           </Typography>
         </Box>
       </Box>
@@ -156,31 +146,43 @@ export default function VenueCard({ venue, onOpenDetail }) {
         <Typography
           variant="h6"
           fontWeight={900}
-          color={isDark ? '#FFFFFF' : '#1C0A00'}
-          sx={{ mb: 0.5, fontSize: '1.15rem' }}
+          sx={{
+            color: isDark ? '#FFFFFF' : '#1C0A00',
+            mb: 0.5,
+            fontSize: '1.15rem'
+          }}
         >
           {venue.name}
         </Typography>
 
         <Typography
           variant="body2"
-          color={isDark ? '#B8ABA2' : '#78716C'}
-          sx={{ mb: 2, fontSize: '0.87rem', lineHeight: 1.45 }}
+          sx={{
+            color: isDark ? '#C7BEB7' : '#78716C',
+            mb: 2,
+            fontSize: '0.87rem',
+            lineHeight: 1.45
+          }}
         >
           {venue.tagline}
         </Typography>
 
         {/* Price & hours */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <DollarSign size={14} color="#22C55E" />
-            <Typography variant="caption" fontWeight={700} color={isDark ? '#D8CFCA' : '#44403C'}>
-              {venue.priceRange}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography
+              variant="caption"
+              fontWeight={700}
+              sx={{ color: isDark ? '#E2D9D2' : '#44403C' }}
+            >
+              Giá: {venue.priceRange}
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Clock size={13} color={isDark ? '#8A7C73' : '#A8A29E'} />
-            <Typography variant="caption" color={isDark ? '#9E9188' : '#78716C'}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography
+              variant="caption"
+              sx={{ color: isDark ? '#A1948B' : '#78716C' }}
+            >
               {venue.openingHours}
             </Typography>
           </Box>
@@ -200,19 +202,25 @@ export default function VenueCard({ venue, onOpenDetail }) {
           <Typography
             variant="caption"
             fontWeight={800}
-            color={isDark ? '#FF9A52' : '#92400E'}
-            sx={{ display: 'block', mb: 0.8 }}
+            sx={{
+              color: isDark ? '#FF9A52' : '#92400E',
+              display: 'block',
+              mb: 0.8
+            }}
           >
-            Lý do đề xuất cho bạn:
+            {isEn ? 'Why we recommend:' : 'Lý do đề xuất cho bạn:'}
           </Typography>
           <Stack spacing={0.7}>
             {reasons.map((r, i) => (
               <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.8 }}>
-                <CheckCircle2 size={13} color="#FF7A1A" style={{ marginTop: 2, flexShrink: 0 }} />
+                <Typography sx={{ color: '#FF7A1A', fontWeight: 900, lineHeight: 1.4, fontSize: '0.85rem' }}>•</Typography>
                 <Typography
                   variant="caption"
-                  color={isDark ? '#D6CCC5' : '#78716C'}
-                  sx={{ fontSize: '0.78rem', lineHeight: 1.4 }}
+                  sx={{
+                    color: isDark ? '#F5EBE6' : '#78716C',
+                    fontSize: '0.78rem',
+                    lineHeight: 1.4
+                  }}
                 >
                   {r}
                 </Typography>
@@ -246,14 +254,13 @@ export default function VenueCard({ venue, onOpenDetail }) {
               }
             }}
           >
-            Chi tiết quán
+            {isEn ? 'View Details' : 'Chi tiết quán'}
           </Button>
 
           <Button
             variant="contained"
             fullWidth
             onClick={handleOpenGoogleMaps}
-            endIcon={<ExternalLink size={14} />}
             sx={{
               borderRadius: '11px',
               textTransform: 'none',
@@ -268,7 +275,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
               }
             }}
           >
-            Mở Bản Đồ
+            {isEn ? 'Open Maps' : 'Mở Bản Đồ'}
           </Button>
         </Box>
       </CardContent>
