@@ -9,16 +9,9 @@ import {
   Paper,
   Alert
 } from '@mui/material'
-import {
-  Search,
-  Plus,
-  Trash2,
-  SlidersHorizontal,
-  Sparkles,
-  Navigation
-} from 'lucide-react'
 import { POPULAR_PROMPTS } from '../data/mockVenues'
 import { useTheme } from '../contexts/ThemeContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function HeroSection({
   prompts,
@@ -31,6 +24,7 @@ export default function HeroSection({
   isLoading
 }) {
   const { isDark } = useTheme()
+  const { t, isEn } = useLanguage()
   const [currentInput, setCurrentInput] = useState('')
   const [locationAlert, setLocationAlert] = useState('')
 
@@ -89,7 +83,7 @@ export default function HeroSection({
         overflow: 'hidden',
         background: isDark
           ? 'radial-gradient(ellipse 90% 65% at 50% -10%, #2A140A 0%, #170B06 50%, #120803 100%)'
-          : 'radial-gradient(ellipse 80% 60% at 50% -10%, #FED7AA 0%, #FFF7ED 55%, #FFFFFF 100%)',
+          : 'radial-gradient(ellipse 90% 70% at 50% -15%, #FDBA74 0%, #FED7AA 35%, #FFE7D1 70%, #FFF0E2 100%)',
         transition: 'background 0.3s ease'
       }}
     >
@@ -106,7 +100,7 @@ export default function HeroSection({
           borderRadius: '50%',
           background: isDark
             ? 'radial-gradient(circle, rgba(255, 107, 0, 0.14) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(251, 146, 60, 0.18) 0%, transparent 70%)',
+            : 'radial-gradient(circle, rgba(249, 115, 22, 0.28) 0%, transparent 70%)',
           pointerEvents: 'none',
           filter: 'blur(40px)'
         }}
@@ -119,7 +113,6 @@ export default function HeroSection({
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 1,
               px: 2,
               py: 0.7,
               borderRadius: '50px',
@@ -132,13 +125,12 @@ export default function HeroSection({
                 : '0 2px 8px rgba(234, 88, 12, 0.10)'
             }}
           >
-            <Sparkles size={15} color="#FF7A1A" />
             <Typography variant="caption" sx={{ fontWeight: 700, fontSize: '0.84rem' }}>
-              Trí tuệ AI gợi ý F&amp;B theo đúng ngữ cảnh &amp; tâm trạng
+              {t('heroBadge')}
             </Typography>
           </Box>
 
-          {/* Main Headline (Bold white like SPOTLY "KNOW WHERE TO GO") */}
+          {/* Main Headline */}
           <Typography
             variant="h2"
             component="h1"
@@ -152,18 +144,37 @@ export default function HeroSection({
               textTransform: 'uppercase'
             }}
           >
-            Tìm đúng quán{' '}
-            <Box
-              component="span"
-              sx={{
-                background: 'linear-gradient(135deg, #FF802B 0%, #EA580C 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                display: 'inline-block'
-              }}
-            >
-              cho đúng nhu cầu
-            </Box>
+            {isEn ? (
+              <>
+                FIND THE RIGHT PLACE{' '}
+                <Box
+                  component="span"
+                  sx={{
+                    background: 'linear-gradient(135deg, #FF802B 0%, #EA580C 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    display: 'inline-block'
+                  }}
+                >
+                  FOR THE RIGHT OCCASION
+                </Box>
+              </>
+            ) : (
+              <>
+                Tìm đúng quán{' '}
+                <Box
+                  component="span"
+                  sx={{
+                    background: 'linear-gradient(135deg, #FF802B 0%, #EA580C 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    display: 'inline-block'
+                  }}
+                >
+                  cho đúng nhu cầu
+                </Box>
+              </>
+            )}
           </Typography>
 
           <Typography
@@ -176,8 +187,7 @@ export default function HeroSection({
               lineHeight: 1.65
             }}
           >
-            Context-aware place recommendations for exactly what you need right now.
-            Chỉ cần nhập dịp gặp mặt hoặc điều bạn muốn — hệ thống xếp hạng &amp; giải thích lý do tức thì.
+            {t('heroSubtitle')}
           </Typography>
         </Box>
 
@@ -198,15 +208,17 @@ export default function HeroSection({
           </Alert>
         )}
 
-        {/* Search Box Card */}
+        {/* Search Box Card (Thu hẹp và căn chỉnh cân đối) */}
         <Paper
           elevation={0}
           sx={{
-            p: { xs: 2.2, sm: 3 },
-            borderRadius: '28px',
+            maxWidth: { xs: '100%', sm: 640, md: 680 },
+            mx: 'auto',
+            p: { xs: 2, sm: 2.2 },
+            borderRadius: '22px',
             boxShadow: isDark
-              ? '0 24px 60px rgba(0, 0, 0, 0.7), 0 0 20px rgba(234, 88, 12, 0.15)'
-              : '0 20px 60px rgba(234, 88, 12, 0.12)',
+              ? '0 20px 50px rgba(0, 0, 0, 0.7), 0 0 20px rgba(234, 88, 12, 0.12)'
+              : '0 18px 45px rgba(234, 88, 12, 0.10)',
             border: isDark ? '1.5px solid #3E1F12' : '1.5px solid rgba(253, 186, 116, 0.6)',
             backgroundColor: isDark ? '#201009' : '#ffffff',
             transition: 'all 0.3s ease'
@@ -214,44 +226,45 @@ export default function HeroSection({
         >
           {/* Active prompt tags */}
           {prompts.length > 0 && (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.8, mb: 1.8 }}>
               {prompts.map((p, idx) => (
                 <Chip
                   key={idx}
                   label={`${idx + 1}. ${p}`}
                   onDelete={() => handleRemovePrompt(idx)}
-                  deleteIcon={<Trash2 size={13} />}
+                  deleteIcon={<span style={{ fontSize: '13px', fontWeight: 800, paddingRight: '2px' }}>✕</span>}
                   sx={{
-                    borderRadius: '10px',
+                    borderRadius: '8px',
                     backgroundColor: isDark ? '#2D160C' : '#FFF7ED',
                     color: isDark ? '#FED7AA' : '#C2410C',
                     border: isDark ? '1px solid #572A16' : '1px solid #FDBA74',
                     fontWeight: 700,
-                    fontSize: '0.85rem',
-                    py: 2.2
+                    fontSize: '0.82rem',
+                    py: 1.8
                   }}
                 />
               ))}
             </Box>
           )}
 
-          {/* Input row */}
+          {/* Input row: Căn chỉnh chiều cao đồng đều 48px và tỷ lệ cân đối */}
           <Box
             sx={{
               display: 'flex',
               flexDirection: { xs: 'column', sm: 'row' },
-              gap: 1.5,
-              alignItems: 'stretch'
+              gap: 1,
+              alignItems: 'center'
             }}
           >
             <TextField
               fullWidth
+              size="small"
               placeholder={
                 prompts.length === 0
-                  ? 'Ví dụ: "Quán cà phê yên tĩnh chạy deadline 2 người có ổ điện..."'
+                  ? (isEn ? 'e.g., "Quiet café with power outlets to work..."' : 'Ví dụ: "Cà phê yên tĩnh chạy deadline..."')
                   : prompts.length < 3
-                  ? `Thêm yêu cầu thứ ${prompts.length + 1} (tối đa 3)...`
-                  : 'Đã đủ 3 yêu cầu. Nhấn Tìm quán!'
+                  ? (isEn ? `Add requirement #${prompts.length + 1} (up to 3)...` : `Thêm yêu cầu thứ ${prompts.length + 1} (tối đa 3)...`)
+                  : (isEn ? '3 criteria added. Click Search!' : 'Đã đủ 3 yêu cầu. Nhấn Tìm quán!')
               }
               value={currentInput}
               disabled={prompts.length >= 3}
@@ -260,10 +273,11 @@ export default function HeroSection({
               variant="outlined"
               InputProps={{
                 sx: {
-                  borderRadius: '14px',
+                  height: 48,
+                  borderRadius: '12px',
                   backgroundColor: isDark ? '#160B06' : '#FAFAF9',
                   color: isDark ? '#FFFFFF' : '#1C0A00',
-                  fontSize: '0.97rem',
+                  fontSize: '0.92rem',
                   '& fieldset': {
                     borderColor: isDark ? '#381C10' : '#E7E5E4'
                   },
@@ -281,27 +295,36 @@ export default function HeroSection({
               }}
             />
 
-            {prompts.length < 3 && currentInput.trim() && (
+            {prompts.length < 3 && (
               <Button
                 variant="outlined"
+                disabled={!currentInput.trim()}
                 onClick={handleAddPrompt}
-                startIcon={<Plus size={16} />}
                 sx={{
-                  borderRadius: '14px',
+                  height: 48,
+                  borderRadius: '12px',
                   textTransform: 'none',
                   fontWeight: 700,
-                  px: 2.5,
+                  fontSize: '0.86rem',
+                  px: 2,
+                  minWidth: { xs: '100%', sm: 125 },
                   whiteSpace: 'nowrap',
+                  flexShrink: 0,
                   borderColor: isDark ? '#4D2615' : '#FDBA74',
                   color: isDark ? '#FED7AA' : '#C2410C',
                   backgroundColor: isDark ? '#26130A' : 'transparent',
                   '&:hover': {
                     borderColor: '#EA580C',
                     backgroundColor: isDark ? '#33190E' : '#FFF7ED'
+                  },
+                  '&:disabled': {
+                    opacity: 0.45,
+                    borderColor: isDark ? '#33190E' : '#E7E5E4',
+                    color: isDark ? '#7E7067' : '#A8A29E'
                   }
                 }}
               >
-                Thêm yêu cầu
+                {t('addCriteriaBtn')}
               </Button>
             )}
 
@@ -315,25 +338,26 @@ export default function HeroSection({
                 onSearch()
               }}
               disabled={isLoading}
-              startIcon={<Search size={18} />}
               sx={{
-                borderRadius: '14px',
+                height: 48,
+                borderRadius: '12px',
                 textTransform: 'none',
                 fontWeight: 800,
-                fontSize: '1rem',
-                px: 3.5,
-                py: { xs: 1.3, sm: 1.5 },
+                fontSize: '0.92rem',
+                px: 2.8,
+                minWidth: { xs: '100%', sm: 110 },
                 whiteSpace: 'nowrap',
+                flexShrink: 0,
                 background: 'linear-gradient(135deg, #FF6E1A 0%, #EA580C 100%)',
-                boxShadow: '0 4px 18px rgba(249, 115, 22, 0.45)',
+                boxShadow: '0 4px 16px rgba(249, 115, 22, 0.4)',
                 '&:hover': {
                   background: 'linear-gradient(135deg, #EA580C 0%, #C2410C 100%)',
-                  boxShadow: '0 6px 24px rgba(249, 115, 22, 0.55)'
+                  boxShadow: '0 6px 20px rgba(249, 115, 22, 0.5)'
                 },
                 '&:disabled': { opacity: 0.65, color: '#ffffff' }
               }}
             >
-              {isLoading ? 'Đang phân tích...' : 'Tìm quán'}
+              {isLoading ? t('searchingBtn') : t('searchBtn')}
             </Button>
           </Box>
 
@@ -355,7 +379,6 @@ export default function HeroSection({
                 variant="text"
                 size="small"
                 onClick={onOpenFilter}
-                startIcon={<SlidersHorizontal size={15} />}
                 sx={{
                   textTransform: 'none',
                   fontWeight: 700,
@@ -368,14 +391,13 @@ export default function HeroSection({
                   }
                 }}
               >
-                Tiêu chí chi tiết {criteriaCount > 0 ? `(${criteriaCount})` : ''}
+                {isEn ? 'Detailed Criteria' : 'Tiêu chí chi tiết'} {criteriaCount > 0 ? `(${criteriaCount})` : ''}
               </Button>
 
               <Button
                 variant="text"
                 size="small"
                 onClick={handleTriggerLocation}
-                startIcon={<Navigation size={15} />}
                 sx={{
                   textTransform: 'none',
                   fontWeight: 700,
@@ -387,7 +409,7 @@ export default function HeroSection({
                   }
                 }}
               >
-                {locationState ? 'Đã bật vị trí' : 'Gần tôi (GPS)'}
+                {locationState ? t('located') : t('nearMe')}
               </Button>
             </Box>
 
@@ -395,7 +417,7 @@ export default function HeroSection({
               variant="caption"
               sx={{ color: isDark ? '#7E7067' : '#A8A29E', fontWeight: 500 }}
             >
-              Hỗ trợ 1 – 3 lệnh tìm kiếm tự nhiên
+              {isEn ? 'Supports 1 – 3 natural language prompts' : 'Hỗ trợ 1 – 3 lệnh tìm kiếm tự nhiên'}
             </Typography>
           </Box>
         </Paper>
@@ -411,10 +433,18 @@ export default function HeroSection({
               fontWeight: 600
             }}
           >
-            Nhu cầu phổ biến của người Việt:
+            {isEn ? 'Popular recommendations by locals:' : 'Nhu cầu phổ biến của người Việt:'}
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
-            {POPULAR_PROMPTS.map((promptText, i) => (
+            {(isEn
+              ? [
+                  'Quiet café with outlets to meet deadlines for 2',
+                  'Cozy and romantic restaurant for tonight’s date',
+                  'Spacious spot with great drinks for a 5-person group',
+                  'Aesthetic café with nice view and photo spots near me'
+                ]
+              : POPULAR_PROMPTS
+            ).map((promptText, i) => (
               <Chip
                 key={i}
                 label={promptText}

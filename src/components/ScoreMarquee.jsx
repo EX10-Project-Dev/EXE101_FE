@@ -1,9 +1,9 @@
 import { Box, Typography } from '@mui/material'
-import { Sparkles } from 'lucide-react'
 import { MOCK_VENUES } from '../data/mockVenues'
 import { useTheme } from '../contexts/ThemeContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
-const MARQUEE_TAGLINES = {
+const MARQUEE_TAGLINES_VI = {
   'venue-1': 'Làm việc & Chạy deadline',
   'venue-2': 'Hẹn hò lãng mạn',
   'venue-3': 'Check-in & Thư giãn',
@@ -12,15 +12,25 @@ const MARQUEE_TAGLINES = {
   'venue-6': 'Bánh ngọt & Matcha Nhật'
 }
 
-const MARQUEE_DATA = MOCK_VENUES.map((v) => ({
-  ...v,
-  marqueeLabel: MARQUEE_TAGLINES[v.id] || v.category
-}))
-
-const INFINITE_ITEMS = [...MARQUEE_DATA, ...MARQUEE_DATA]
+const MARQUEE_TAGLINES_EN = {
+  'venue-1': 'Work & Study Haven',
+  'venue-2': 'Romantic Date Spot',
+  'venue-3': 'Aesthetic & Chill',
+  'venue-4': 'Spacious Open Air',
+  'venue-5': 'Group Gathering & Drinks',
+  'venue-6': 'Japanese Matcha & Sweets'
+}
 
 export default function ScoreMarquee({ onSelectCard }) {
   const { isDark } = useTheme()
+  const { isEn } = useLanguage()
+
+  const MARQUEE_DATA = MOCK_VENUES.map((v) => ({
+    ...v,
+    marqueeLabel: isEn ? (MARQUEE_TAGLINES_EN[v.id] || v.category) : (MARQUEE_TAGLINES_VI[v.id] || v.category)
+  }))
+
+  const INFINITE_ITEMS = [...MARQUEE_DATA, ...MARQUEE_DATA]
 
   return (
     <Box
@@ -30,9 +40,9 @@ export default function ScoreMarquee({ onSelectCard }) {
         py: 3.5,
         background: isDark
           ? 'linear-gradient(180deg, #150A05 0%, #1A0D07 50%, #150A05 100%)'
-          : 'linear-gradient(180deg, #FFF7ED 0%, #FFFFFF 100%)',
-        borderTop: isDark ? '1px solid #28140B' : '1px solid #FDE8CC',
-        borderBottom: isDark ? '1px solid #28140B' : '1px solid #FDE8CC',
+          : 'linear-gradient(180deg, #FFEBD8 0%, #FFDFC5 50%, #FFEBD8 100%)',
+        borderTop: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
+        borderBottom: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
         position: 'relative',
         '@keyframes marqueeLeft': {
           '0%': { transform: 'translateX(0%)' },
@@ -52,7 +62,9 @@ export default function ScoreMarquee({ onSelectCard }) {
             fontSize: '0.72rem'
           }}
         >
-          Địa điểm nổi bật — Bấm vào quán bất kỳ để xem trọn vẹn thông tin
+          {isEn
+            ? 'FEATURED VENUES — CLICK ANY CARD TO VIEW FULL DETAILS'
+            : 'Địa điểm nổi bật — Bấm vào quán bất kỳ để xem trọn vẹn thông tin'}
         </Typography>
       </Box>
 
@@ -138,7 +150,6 @@ export default function ScoreMarquee({ onSelectCard }) {
                   right: 12,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: 0.5,
                   px: 1.2,
                   py: 0.45,
                   borderRadius: '12px',
@@ -148,7 +159,6 @@ export default function ScoreMarquee({ onSelectCard }) {
                   boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                 }}
               >
-                <Sparkles size={13} color="#FF7A1A" />
                 <Typography
                   sx={{
                     fontWeight: 900,

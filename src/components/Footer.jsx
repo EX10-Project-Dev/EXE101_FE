@@ -1,9 +1,11 @@
 import { Box, Container, Typography, Divider } from '@mui/material'
-import { Compass, Heart } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
+import { useLanguage } from '../contexts/LanguageContext'
+import logo from '../assets/logo.png'
 
 export default function Footer() {
   const { isDark } = useTheme()
+  const { t, isEn } = useLanguage()
 
   return (
     <Box
@@ -28,28 +30,36 @@ export default function Footer() {
         >
           {/* Brand */}
           <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
               <Box
+                component="img"
+                src={logo}
+                alt="SEEKERS Logo"
                 sx={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #FF6E1A 0%, #EA580C 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  boxShadow: '0 4px 12px rgba(249, 115, 22, 0.45)'
+                  width: 42,
+                  height: 42,
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '1.5px solid rgba(253, 186, 116, 0.4)',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.45)',
+                  backgroundColor: '#FFFFFF',
+                  flexShrink: 0
                 }}
-              >
-                <Compass size={19} />
+              />
+              <Box>
+                <Typography variant="h6" fontWeight={900} sx={{ color: '#ffffff', lineHeight: 1.1, letterSpacing: '0.04em' }}>
+                  SEEKERS
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#FF8A3D', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.06em' }}>
+                  EXPLORE MORE TOGETHER
+                </Typography>
               </Box>
-              <Typography variant="h6" fontWeight={900} color="#ffffff">
-                FIND<span style={{ color: '#FF8A3D' }}>&amp;GO</span>
-              </Typography>
             </Box>
-            <Typography variant="body2" color={isDark ? '#8E8178' : '#78716C'} sx={{ maxWidth: 400 }}>
-              Nền tảng tìm kiếm và gợi ý địa điểm F&amp;B thông minh theo ngữ cảnh, cảm xúc và nhu cầu thực tế của người dùng.
+            <Typography
+              variant="body2"
+              sx={{ color: isDark ? '#8E8178' : '#78716C', maxWidth: 420 }}
+            >
+              {t('footerDesc')}
             </Typography>
           </Box>
 
@@ -65,10 +75,13 @@ export default function Footer() {
                 letterSpacing: '0.04em'
               }}
             >
-              FE TASK — LUỒNG KHÁCH CHƯA ĐĂNG NHẬP
+              {t('footerTaskBadge')}
             </Typography>
-            <Typography variant="caption" color={isDark ? '#7A6E66' : '#57534E'} display="block">
-              Không lưu dữ liệu cá nhân • Trải nghiệm tức thì không cần tài khoản
+            <Typography
+              variant="caption"
+              sx={{ color: isDark ? '#7A6E66' : '#57534E', display: 'block' }}
+            >
+              {t('footerNoLogin')}
             </Typography>
           </Box>
         </Box>
@@ -85,16 +98,12 @@ export default function Footer() {
             fontSize: '0.85rem'
           }}
         >
-          <Typography variant="caption" color={isDark ? '#7A6E66' : '#57534E'}>
-            © {new Date().getFullYear()} FIND&amp;GO — Dự án công nghệ F&amp;B.
+          <Typography variant="caption" sx={{ color: isDark ? '#7A6E66' : '#57534E' }}>
+            © {new Date().getFullYear()} {t('footerCopyright')}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Typography variant="caption" color={isDark ? '#7A6E66' : '#57534E'}>
-              Được thiết kế với
-            </Typography>
-            <Heart size={13} color="#EF4444" fill="#EF4444" />
-            <Typography variant="caption" color={isDark ? '#7A6E66' : '#57534E'}>
-              cho cộng đồng ẩm thực Việt Nam
+            <Typography variant="caption" sx={{ color: isDark ? '#7A6E66' : '#57534E' }}>
+              {t('footerCommunity')}
             </Typography>
           </Box>
         </Box>

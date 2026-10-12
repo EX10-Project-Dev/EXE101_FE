@@ -1,31 +1,38 @@
 import { Box, Container, Typography, Grid, Paper, Chip } from '@mui/material'
-import { Sparkles, Brain, Map, Compass } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function IntelligenceHighlights() {
   const { isDark } = useTheme()
+  const { t, isEn } = useLanguage()
 
   const PILLARS = [
     {
-      icon: <Sparkles size={24} />,
+      step: '01',
       bgColor: isDark ? '#2D160C' : '#FFF7ED',
       iconColor: '#FF7A1A',
-      title: 'Xếp hạng & Giải thích lý do rõ ràng',
-      body: 'Không đưa ra danh sách ngẫu nhiên. Mỗi đề xuất đều kèm theo lý do cụ thể vì sao quán phù hợp với tâm trạng và nhu cầu của bạn.'
+      title: isEn ? 'Transparent Scoring & Clear Rationale' : 'Xếp hạng & Giải thích lý do rõ ràng',
+      body: isEn
+        ? 'No random listings. Every recommendation comes with clear explanations of why it fits your mood and occasion.'
+        : 'Không đưa ra danh sách ngẫu nhiên. Mỗi đề xuất đều kèm theo lý do cụ thể vì sao quán phù hợp với tâm trạng và nhu cầu của bạn.'
     },
     {
-      icon: <Compass size={24} />,
+      step: '02',
       bgColor: isDark ? '#1C291F' : '#ECFDF5',
       iconColor: '#22C55E',
-      title: 'Tối ưu theo văn hóa F&B Việt Nam',
-      body: 'Từ cà phê chạy deadline, trà sữa tám chuyện, ăn nhậu nhóm bạn đến hẹn hò sang trọng — được phân loại sát với thói quen người Việt.'
+      title: isEn ? 'Tuned for Vietnamese F&B Culture' : 'Tối ưu theo văn hóa F&B Việt Nam',
+      body: isEn
+        ? 'From deadline-friendly cafes to gossip boba spots, drinking with friends to romantic dates — accurately mapped to local habits.'
+        : 'Từ cà phê chạy deadline, trà sữa tám chuyện, ăn nhậu nhóm bạn đến hẹn hò sang trọng — được phân loại sát với thói quen người Việt.'
     },
     {
-      icon: <Map size={24} />,
+      step: '03',
       bgColor: isDark ? '#29182E' : '#FAF5FF',
       iconColor: '#C084FC',
-      title: 'Một chạm chuyển thẳng sang Google Maps',
-      body: 'Sau khi chọn quán ưng ý, bạn lập tức mở Google Maps để định vị và nhận chỉ đường mà không cần đăng nhập hay thao tác rườm rà.'
+      title: isEn ? 'One-Tap Direct Google Maps Navigation' : 'Một chạm chuyển thẳng sang Google Maps',
+      body: isEn
+        ? 'Once you find the ideal spot, seamlessly open Google Maps for immediate directions without mandatory sign-in or clutter.'
+        : 'Sau khi chọn quán ưng ý, bạn lập tức mở Google Maps để định vị và nhận chỉ đường mà không cần đăng nhập hay thao tác rườm rà.'
     }
   ]
 
@@ -35,9 +42,9 @@ export default function IntelligenceHighlights() {
         py: 9,
         background: isDark
           ? 'linear-gradient(180deg, #150A05 0%, #1A0D07 50%, #120803 100%)'
-          : 'linear-gradient(180deg, #FFFBF8 0%, #FFF7ED 100%)',
-        borderTop: isDark ? '1px solid #28140B' : '1px solid #FDE8CC',
-        borderBottom: isDark ? '1px solid #28140B' : '1px solid #FDE8CC',
+          : 'linear-gradient(180deg, #FFEBD8 0%, #FFF2E6 50%, #FFE9D6 100%)',
+        borderTop: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
+        borderBottom: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
         transition: 'background 0.3s ease'
       }}
     >
@@ -45,8 +52,7 @@ export default function IntelligenceHighlights() {
         {/* Headline */}
         <Box sx={{ textAlign: 'center', mb: 7 }}>
           <Chip
-            icon={<Brain size={15} color="#FF7A1A" />}
-            label="Lấy cảm hứng từ Context-Aware Intelligence"
+            label={t('intelBadge')}
             sx={{
               backgroundColor: isDark ? '#2B160D' : '#FFF7ED',
               color: isDark ? '#FED7AA' : '#C2410C',
@@ -59,10 +65,13 @@ export default function IntelligenceHighlights() {
           <Typography
             variant="h4"
             fontWeight={900}
-            color={isDark ? '#FFFFFF' : '#1C0A00'}
-            sx={{ fontSize: { xs: '1.8rem', md: '2.5rem' }, mb: 1.5 }}
+            sx={{
+              color: isDark ? '#FFFFFF' : '#1C0A00',
+              fontSize: { xs: '1.8rem', md: '2.5rem' },
+              mb: 1.5
+            }}
           >
-            Hiểu đúng nơi chốn.{' '}
+            {t('intelTitleMain')}{' '}
             <Box
               component="span"
               sx={{
@@ -71,16 +80,20 @@ export default function IntelligenceHighlights() {
                 WebkitTextFillColor: 'transparent'
               }}
             >
-              Không chỉ là tọa độ bản đồ.
+              {t('intelTitleAccent')}
             </Box>
           </Typography>
           <Typography
             variant="body1"
-            color={isDark ? '#B3A8A0' : '#57534E'}
-            sx={{ maxWidth: 660, mx: 'auto', fontSize: '1.05rem', lineHeight: 1.65 }}
+            sx={{
+              color: isDark ? '#C7BEB7' : '#57534E',
+              maxWidth: 660,
+              mx: 'auto',
+              fontSize: '1.05rem',
+              lineHeight: 1.65
+            }}
           >
-            Mỗi quán mang ý nghĩa khác nhau tùy vào việc bạn đi cùng ai và làm gì.
-            FIND&amp;GO phân tích ngữ cảnh để trả về danh sách có điểm số và lý do minh bạch.
+            {t('intelSubtitle')}
           </Typography>
         </Box>
 
@@ -104,21 +117,27 @@ export default function IntelligenceHighlights() {
                       border: isDark ? '1px solid rgba(255,255,255,0.08)' : `1.5px solid ${p.iconColor}22`
                     }}
                   >
-                    {p.icon}
+                    <Typography sx={{ fontWeight: 900, fontSize: '1.1rem', color: p.iconColor, fontFamily: 'monospace' }}>
+                      {p.step}
+                    </Typography>
                   </Box>
                   <Box>
                     <Typography
                       variant="h6"
                       fontWeight={800}
-                      color={isDark ? '#FFFFFF' : '#1C0A00'}
-                      mb={0.5}
+                      sx={{
+                        color: isDark ? '#FFFFFF' : '#1C0A00',
+                        mb: 0.5
+                      }}
                     >
                       {p.title}
                     </Typography>
                     <Typography
                       variant="body2"
-                      color={isDark ? '#B8ABA2' : '#57534E'}
-                      lineHeight={1.65}
+                      sx={{
+                        color: isDark ? '#B8ABA2' : '#57534E',
+                        lineHeight: 1.65
+                      }}
                     >
                       {p.body}
                     </Typography>
@@ -167,13 +186,13 @@ export default function IntelligenceHighlights() {
                 }}
               >
                 <Typography variant="caption" sx={{ color: '#FF8A3D', fontWeight: 800, display: 'block', mb: 0.3 }}>
-                  Yêu cầu của bạn:
+                  {isEn ? 'Your request:' : 'Yêu cầu của bạn:'}
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{ color: '#FFF7ED', fontWeight: 700, fontFamily: 'monospace', fontSize: '0.88rem' }}
                 >
-                  "Quán cà phê yên tĩnh chạy deadline 2 người có ổ điện"
+                  {isEn ? '"Quiet café for 2 to meet deadline with power outlets"' : '"Quán cà phê yên tĩnh chạy deadline 2 người có ổ điện"'}
                 </Typography>
               </Box>
 
@@ -188,27 +207,33 @@ export default function IntelligenceHighlights() {
                 }}
               >
                 {`{
-  "dia_diem": "The Workshop Coffee",
+  "${isEn ? 'venue' : 'dia_diem'}": "The Workshop Coffee",
   "match_score": `}
                 <span style={{ color: '#FF7A1A', fontWeight: 800 }}>9.8</span>
                 {`,
-  "muc_dich": "Học tập & Chạy deadline",
-  "ly_do_de_xuat": [
+  "${isEn ? 'purpose' : 'muc_dich'}": "${isEn ? 'Study & Meet Deadlines' : 'Học tập & Chạy deadline'}",
+  "${isEn ? 'reasons' : 'ly_do_de_xuat'}": [
     `}
-                <span style={{ color: '#FCD34D' }}>"Bàn làm việc lớn, nhiều ổ cắm điện"</span>
+                <span style={{ color: '#FCD34D' }}>
+                  {isEn ? '"Spacious work tables, abundant power outlets"' : '"Bàn làm việc lớn, nhiều ổ cắm điện"'}
+                </span>
                 {`,
     `}
-                <span style={{ color: '#FCD34D' }}>"Wi-Fi tốc độ cao, không gian yên tĩnh"</span>
+                <span style={{ color: '#FCD34D' }}>
+                  {isEn ? '"High-speed Wi-Fi, quiet focused environment"' : '"Wi-Fi tốc độ cao, không gian yên tĩnh"'}
+                </span>
                 {`,
     `}
-                <span style={{ color: '#FCD34D' }}>"Cà phê Specialty pha thủ công"</span>
+                <span style={{ color: '#FCD34D' }}>
+                  {isEn ? '"Artisanal handcrafted specialty coffee"' : '"Cà phê Specialty pha thủ công"'}
+                </span>
                 {`
   ],
-  "khoang_cach": `}
+  "${isEn ? 'distance' : 'khoang_cach'}": `}
                 <span style={{ color: '#86EFAC' }}>"0.8 km"</span>
                 {`,
-  "trang_thai": `}
-                <span style={{ color: '#86EFAC' }}>"San_sang_chi_duong_Maps"</span>
+  "${isEn ? 'status' : 'trang_thai'}": `}
+                <span style={{ color: '#86EFAC' }}>{isEn ? '"Ready_for_Maps_navigation"' : '"San_sang_chi_duong_Maps"'}</span>
                 {`
 }`}
               </pre>

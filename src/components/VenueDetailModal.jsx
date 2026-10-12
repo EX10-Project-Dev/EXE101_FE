@@ -10,24 +10,12 @@ import {
   Divider,
   Stack
 } from '@mui/material'
-import {
-  X,
-  MapPin,
-  Clock,
-  ExternalLink,
-  Sparkles,
-  DollarSign,
-  CheckCircle2,
-  Navigation,
-  Star,
-  Users,
-  Target,
-  Coffee
-} from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function VenueDetailModal({ open, venue, onClose }) {
   const { isDark } = useTheme()
+  const { t, isEn } = useLanguage()
   const [activeImageIndex, setActiveImageIndex] = useState(0)
 
   useEffect(() => {
@@ -65,12 +53,12 @@ export default function VenueDetailModal({ open, venue, onClose }) {
           backgroundColor: isDark ? '#1C0D06' : '#FFFFFF',
           border: isDark ? '1.5px solid #3E1F12' : 'none',
           boxShadow: isDark
-            ? '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 24px rgba(234, 88, 12, 0.2)'
+            ? '0 25px 60px rgba(0, 0, 0, 0.9), 0 0 24px rgba(234, 88, 12, 0.25)'
             : '0 25px 60px rgba(28, 10, 0, 0.28)'
         }
       }}
     >
-      {/* Hero Image Showcase */}
+      {/* 1. Hero Image Showcase */}
       <Box sx={{ position: 'relative', height: { xs: 260, sm: 340 } }}>
         <Box
           component="img"
@@ -83,12 +71,13 @@ export default function VenueDetailModal({ open, venue, onClose }) {
             transition: 'opacity 0.3s ease'
           }}
         />
+        {/* Dark Gradient Overlay over Image */}
         <Box
           sx={{
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(to top, rgba(20,9,4,0.92) 0%, rgba(20,9,4,0.3) 55%, transparent 100%)'
+              'linear-gradient(to top, rgba(20,9,4,0.95) 0%, rgba(20,9,4,0.4) 60%, transparent 100%)'
           }}
         />
 
@@ -99,19 +88,20 @@ export default function VenueDetailModal({ open, venue, onClose }) {
             position: 'absolute',
             top: 14,
             right: 14,
-            backgroundColor: 'rgba(0,0,0,0.6)',
+            backgroundColor: 'rgba(0,0,0,0.65)',
             color: '#ffffff',
+            fontWeight: 800,
+            fontSize: '1.2rem',
             backdropFilter: 'blur(6px)',
-            '&:hover': { backgroundColor: 'rgba(0,0,0,0.8)' }
+            '&:hover': { backgroundColor: 'rgba(0,0,0,0.85)' }
           }}
         >
-          <X size={20} />
+          ✕
         </IconButton>
 
         {/* Top left badges: Category & Rating */}
         <Box sx={{ position: 'absolute', top: 16, left: 16, display: 'flex', gap: 1 }}>
           <Chip
-            icon={<Coffee size={14} color="#ffffff" />}
             label={venue.category}
             size="small"
             sx={{
@@ -119,7 +109,7 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               color: '#ffffff',
               fontWeight: 800,
               fontSize: '0.75rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+              boxShadow: '0 2px 8px rgba(0,0,0,0.4)'
             }}
           />
           {venue.rating && (
@@ -127,7 +117,6 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               sx={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 0.5,
                 px: 1.2,
                 py: 0.4,
                 borderRadius: '8px',
@@ -138,7 +127,6 @@ export default function VenueDetailModal({ open, venue, onClose }) {
                 fontWeight: 800
               }}
             >
-              <Star size={13} fill="#FDE047" color="#FDE047" />
               <span>{venue.rating} / 5.0</span>
             </Box>
           )}
@@ -204,10 +192,10 @@ export default function VenueDetailModal({ open, venue, onClose }) {
             <Typography
               variant="h4"
               fontWeight={900}
-              color="#ffffff"
               sx={{
+                color: '#FFFFFF !important',
                 fontSize: { xs: '1.4rem', sm: '1.9rem' },
-                textShadow: '0 2px 8px rgba(0,0,0,0.8)',
+                textShadow: '0 2px 8px rgba(0,0,0,0.9)',
                 lineHeight: 1.2
               }}
             >
@@ -216,11 +204,11 @@ export default function VenueDetailModal({ open, venue, onClose }) {
             <Typography
               variant="body2"
               sx={{
-                color: '#FED7AA',
+                color: '#FED7AA !important',
                 fontWeight: 600,
                 fontSize: '0.88rem',
                 mt: 0.5,
-                textShadow: '0 1px 3px rgba(0,0,0,0.8)'
+                textShadow: '0 1px 3px rgba(0,0,0,0.9)'
               }}
             >
               {venue.tagline}
@@ -232,7 +220,6 @@ export default function VenueDetailModal({ open, venue, onClose }) {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: 0.8,
               px: 1.8,
               py: 0.8,
               borderRadius: '16px',
@@ -242,13 +229,12 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               flexShrink: 0
             }}
           >
-            <Sparkles size={18} color="#FF7A1A" />
             <Box>
               <Typography
                 sx={{
                   fontWeight: 900,
                   fontSize: '1.15rem',
-                  color: isDark ? '#FFFFFF' : '#1C0A00',
+                  color: isDark ? '#FFFFFF !important' : '#1C0A00 !important',
                   lineHeight: 1
                 }}
               >
@@ -257,19 +243,25 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               <Typography
                 sx={{
                   fontSize: '0.7rem',
-                  color: isDark ? '#FF9A52' : '#C2410C',
+                  color: isDark ? '#FF9A52 !important' : '#C2410C !important',
                   fontWeight: 800
                 }}
               >
-                Điểm phù hợp
+                {t('modalDetailScore')}
               </Typography>
             </Box>
           </Box>
         </Box>
       </Box>
 
-      {/* Body Content */}
-      <DialogContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
+      {/* 2. Body Content (Ensured dark background in dark mode, light in light mode) */}
+      <DialogContent
+        sx={{
+          p: { xs: 2.5, sm: 3.5 },
+          backgroundColor: isDark ? '#1C0D06' : '#FFFFFF',
+          color: isDark ? '#FFFFFF' : '#1C0A00'
+        }}
+      >
         <Stack spacing={3}>
           {/* Detailed Description */}
           {venue.description && (
@@ -277,15 +269,23 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               <Typography
                 variant="subtitle2"
                 fontWeight={800}
-                color={isDark ? '#FF9A52' : '#1C0A00'}
-                sx={{ mb: 0.6, textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '0.75rem' }}
+                sx={{
+                  color: isDark ? '#FF9A52' : '#1C0A00',
+                  mb: 0.6,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  fontSize: '0.75rem'
+                }}
               >
-                Giới thiệu không gian
+                {isEn ? 'ABOUT THIS VENUE' : 'Giới thiệu không gian'}
               </Typography>
               <Typography
                 variant="body2"
-                color={isDark ? '#C7BEB7' : '#57534E'}
-                sx={{ lineHeight: 1.75, fontSize: '0.94rem' }}
+                sx={{
+                  color: isDark ? '#D6CDC6' : '#57534E',
+                  lineHeight: 1.75,
+                  fontSize: '0.94rem'
+                }}
               >
                 {venue.description}
               </Typography>
@@ -304,49 +304,81 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               border: isDark ? '1px solid #3E1F12' : '1px solid #FDE8CC'
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.2 }}>
-              <MapPin size={18} color="#FF7A1A" style={{ marginTop: 2, flexShrink: 0 }} />
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
               <Box>
-                <Typography variant="caption" color={isDark ? '#9E9188' : '#A8A29E'} fontWeight={700} display="block">
-                  Địa chỉ
+                <Typography
+                  variant="caption"
+                  fontWeight={700}
+                  display="block"
+                  sx={{ color: isDark ? '#A1948B' : '#A8A29E' }}
+                >
+                  {t('modalDetailAddress')}
                 </Typography>
-                <Typography variant="body2" fontWeight={700} color={isDark ? '#FFFFFF' : '#1C0A00'}>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  sx={{ color: isDark ? '#FFFFFF' : '#1C0A00' }}
+                >
                   {venue.address}
                 </Typography>
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.2 }}>
-              <Navigation size={18} color="#22C55E" style={{ marginTop: 2, flexShrink: 0 }} />
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
               <Box>
-                <Typography variant="caption" color={isDark ? '#9E9188' : '#A8A29E'} fontWeight={700} display="block">
-                  Khoảng cách
+                <Typography
+                  variant="caption"
+                  fontWeight={700}
+                  display="block"
+                  sx={{ color: isDark ? '#A1948B' : '#A8A29E' }}
+                >
+                  {isEn ? 'Distance' : 'Khoảng cách'}
                 </Typography>
-                <Typography variant="body2" fontWeight={700} color={isDark ? '#FFFFFF' : '#1C0A00'}>
-                  Khoảng {venue.distanceKm} km từ vị trí của bạn
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  sx={{ color: isDark ? '#FFFFFF' : '#1C0A00' }}
+                >
+                  {isEn ? `Approx. ${venue.distanceKm} km from your location` : `Khoảng ${venue.distanceKm} km từ vị trí của bạn`}
                 </Typography>
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.2 }}>
-              <Clock size={18} color="#F59E0B" style={{ marginTop: 2, flexShrink: 0 }} />
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
               <Box>
-                <Typography variant="caption" color={isDark ? '#9E9188' : '#A8A29E'} fontWeight={700} display="block">
-                  Giờ mở cửa
+                <Typography
+                  variant="caption"
+                  fontWeight={700}
+                  display="block"
+                  sx={{ color: isDark ? '#A1948B' : '#A8A29E' }}
+                >
+                  {t('modalDetailHours')}
                 </Typography>
-                <Typography variant="body2" fontWeight={700} color={isDark ? '#FFFFFF' : '#1C0A00'}>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  sx={{ color: isDark ? '#FFFFFF' : '#1C0A00' }}
+                >
                   {venue.openingHours}
                 </Typography>
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.2 }}>
-              <DollarSign size={18} color="#059669" style={{ marginTop: 2, flexShrink: 0 }} />
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
               <Box>
-                <Typography variant="caption" color={isDark ? '#9E9188' : '#A8A29E'} fontWeight={700} display="block">
-                  Khoảng giá tham khảo
+                <Typography
+                  variant="caption"
+                  fontWeight={700}
+                  display="block"
+                  sx={{ color: isDark ? '#A1948B' : '#A8A29E' }}
+                >
+                  {t('modalDetailPrice')}
                 </Typography>
-                <Typography variant="body2" fontWeight={700} color={isDark ? '#FFFFFF' : '#1C0A00'}>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  sx={{ color: isDark ? '#FFFFFF' : '#1C0A00' }}
+                >
                   {venue.priceRange}
                 </Typography>
               </Box>
@@ -362,14 +394,21 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               border: isDark ? '1.5px solid #4D2615' : '1.5px solid #FDBA74'
             }}
           >
-            <Typography variant="subtitle2" fontWeight={900} color={isDark ? '#FF9A52' : '#92400E'} mb={1.2}>
-              Tại sao FIND&amp;GO đề xuất quán này cho bạn?
+            <Typography
+              variant="subtitle2"
+              fontWeight={900}
+              sx={{ color: isDark ? '#FF9A52' : '#92400E', mb: 1.2 }}
+            >
+              {isEn ? 'Why SEEKERS recommends this venue for you' : 'Tại sao SEEKERS đề xuất quán này cho bạn?'}
             </Typography>
             <Stack spacing={1}>
               {reasons.map((reason, idx) => (
                 <Box key={idx} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                  <CheckCircle2 size={16} color="#FF7A1A" style={{ marginTop: 2, flexShrink: 0 }} />
-                  <Typography variant="body2" color={isDark ? '#E5DDD7' : '#7C2D12'} fontWeight={600} fontSize="0.9rem">
+                  <Typography sx={{ color: '#FF7A1A', fontWeight: 900, lineHeight: 1.4, fontSize: '0.95rem' }}>•</Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: isDark ? '#F5EBE6' : '#7C2D12', fontWeight: 600, fontSize: '0.9rem' }}
+                  >
                     {reason}
                   </Typography>
                 </Box>
@@ -388,15 +427,13 @@ export default function VenueDetailModal({ open, venue, onClose }) {
                   border: isDark ? '1px solid #381C0F' : '1px solid #E7E5E4'
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 1 }}>
-                  <Target size={16} color="#FF7A1A" />
+                <Box sx={{ mb: 1 }}>
                   <Typography
                     variant="subtitle2"
                     fontWeight={800}
-                    color={isDark ? '#FFFFFF' : '#1C0A00'}
-                    fontSize="0.85rem"
+                    sx={{ color: isDark ? '#FFFFFF' : '#1C0A00', fontSize: '0.85rem' }}
                   >
-                    Phù hợp cho mục đích:
+                    {isEn ? 'Suitable for occasions:' : 'Phù hợp cho mục đích:'}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.8 }}>
@@ -406,7 +443,7 @@ export default function VenueDetailModal({ open, venue, onClose }) {
                       label={p}
                       size="small"
                       sx={{
-                        backgroundColor: isDark ? '#2D160C' : '#FFF7ED',
+                        backgroundColor: isDark ? '#3D1D10' : '#FFF7ED',
                         color: isDark ? '#FED7AA' : '#C2410C',
                         fontWeight: 700,
                         fontSize: '0.78rem',
@@ -427,13 +464,11 @@ export default function VenueDetailModal({ open, venue, onClose }) {
                   border: isDark ? '1px solid #381C0F' : '1px solid #E7E5E4'
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 1 }}>
-                  <Users size={16} color="#22C55E" />
+                <Box sx={{ mb: 1 }}>
                   <Typography
                     variant="subtitle2"
                     fontWeight={800}
-                    color={isDark ? '#FFFFFF' : '#1C0A00'}
-                    fontSize="0.85rem"
+                    sx={{ color: isDark ? '#FFFFFF' : '#1C0A00', fontSize: '0.85rem' }}
                   >
                     Quy mô nhóm lý tưởng:
                   </Typography>
@@ -460,8 +495,12 @@ export default function VenueDetailModal({ open, venue, onClose }) {
 
           {/* Amenities & Atmosphere */}
           <Box>
-            <Typography variant="subtitle2" fontWeight={800} color={isDark ? '#FFFFFF' : '#1C0A00'} mb={1.2}>
-              Tiện ích &amp; Không gian nổi bật
+            <Typography
+              variant="subtitle2"
+              fontWeight={800}
+              sx={{ color: isDark ? '#FFFFFF' : '#1C0A00', mb: 1.2 }}
+            >
+              {isEn ? 'Key Amenities & Atmosphere' : 'Tiện ích & Không gian nổi bật'}
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {(venue.amenities || []).map((amenity, idx) => (
@@ -472,8 +511,8 @@ export default function VenueDetailModal({ open, venue, onClose }) {
                   sx={{
                     borderRadius: '8px',
                     backgroundColor: isDark ? '#26130A' : '#F5F5F4',
-                    color: isDark ? '#D6CDC6' : '#44403C',
-                    border: isDark ? '1px solid #381C0F' : 'none',
+                    color: isDark ? '#E2D9D2' : '#44403C',
+                    border: isDark ? '1px solid #3E1F12' : 'none',
                     fontWeight: 600,
                     fontSize: '0.82rem'
                   }}
@@ -482,7 +521,7 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               {(venue.atmosphere || []).map((atm, idx) => (
                 <Chip
                   key={`atm-${idx}`}
-                  label={`Không khí: ${atm}`}
+                  label={isEn ? `Atmosphere: ${atm}` : `Không khí: ${atm}`}
                   size="small"
                   sx={{
                     borderRadius: '8px',
@@ -501,11 +540,11 @@ export default function VenueDetailModal({ open, venue, onClose }) {
 
       <Divider sx={{ borderColor: isDark ? '#33190E' : '#FDE8CC' }} />
 
-      {/* Footer CTA: Google Maps Navigation */}
+      {/* 3. Footer CTA: Google Maps Navigation */}
       <Box
         sx={{
           p: 2.5,
-          backgroundColor: isDark ? '#170B05' : '#FFFBF8',
+          backgroundColor: isDark ? '#150A05' : '#FFFBF8',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -513,15 +552,17 @@ export default function VenueDetailModal({ open, venue, onClose }) {
           gap: 1.5
         }}
       >
-        <Typography variant="caption" color={isDark ? '#8A7C73' : '#A8A29E'}>
-          Dành riêng cho khách • Sẵn sàng chuyển sang bản đồ
+        <Typography
+          variant="caption"
+          sx={{ color: isDark ? '#A1948B' : '#A8A29E' }}
+        >
+          {isEn ? 'Guest Mode • Ready for live navigation' : 'Dành riêng cho khách • Sẵn sàng chuyển sang bản đồ'}
         </Typography>
 
         <Button
           variant="contained"
           size="large"
           onClick={handleOpenGoogleMaps}
-          endIcon={<ExternalLink size={18} />}
           sx={{
             borderRadius: '14px',
             textTransform: 'none',
@@ -536,7 +577,7 @@ export default function VenueDetailModal({ open, venue, onClose }) {
             }
           }}
         >
-          Chỉ đường bằng Google Maps
+          {isEn ? 'Get Directions on Google Maps' : 'Chỉ đường bằng Google Maps'}
         </Button>
       </Box>
     </Dialog>
