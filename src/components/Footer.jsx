@@ -1,10 +1,8 @@
-import { Box, Container, Typography, Divider } from '@mui/material'
-import { useTheme } from '../contexts/ThemeContext'
+import { Box, Container, Typography } from '@mui/material'
 import { useLanguage } from '../contexts/LanguageContext'
-import logo from '../assets/logo.png'
+import logo from '../assets/logo-small.webp'
 
 export default function Footer() {
-  const { isDark } = useTheme()
   const { t, isEn } = useLanguage()
 
   return (
@@ -12,9 +10,8 @@ export default function Footer() {
       component="footer"
       sx={{
         py: 6,
-        backgroundColor: isDark ? '#0E0603' : '#1C0A00',
-        color: '#A8A29E',
-        borderTop: isDark ? '1px solid #28140B' : 'none'
+        backgroundColor: 'transparent',
+        color: '#68564B'
       }}
     >
       <Container maxWidth="lg">
@@ -35,29 +32,31 @@ export default function Footer() {
                 component="img"
                 src={logo}
                 alt="SEEKERS Logo"
+                width={42}
+                height={42}
                 sx={{
                   width: 42,
                   height: 42,
                   borderRadius: '50%',
                   objectFit: 'cover',
                   border: '1.5px solid rgba(253, 186, 116, 0.4)',
-                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.45)',
+                  boxShadow: '0 4px 14px rgba(113, 60, 27, 0.08)',
                   backgroundColor: '#FFFFFF',
                   flexShrink: 0
                 }}
               />
               <Box>
-                <Typography variant="h6" fontWeight={900} sx={{ color: '#ffffff', lineHeight: 1.1, letterSpacing: '0.04em' }}>
+                <Typography variant="h6" fontWeight={900} sx={{ color: '#34251E', lineHeight: 1.1, letterSpacing: '0.04em' }}>
                   SEEKERS
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#FF8A3D', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.06em' }}>
+                <Typography variant="caption" sx={{ color: '#B9480B', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.06em' }}>
                   EXPLORE MORE TOGETHER
                 </Typography>
               </Box>
             </Box>
             <Typography
               variant="body2"
-              sx={{ color: isDark ? '#8E8178' : '#78716C', maxWidth: 420 }}
+              sx={{ color: '#78716C', maxWidth: 420 }}
             >
               {t('footerDesc')}
             </Typography>
@@ -68,7 +67,7 @@ export default function Footer() {
             <Typography
               variant="caption"
               sx={{
-                color: '#FF8A3D',
+                color: '#B9480B',
                 fontWeight: 800,
                 display: 'block',
                 mb: 0.5,
@@ -79,14 +78,12 @@ export default function Footer() {
             </Typography>
             <Typography
               variant="caption"
-              sx={{ color: isDark ? '#7A6E66' : '#57534E', display: 'block' }}
+              sx={{ color: '#57534E', display: 'block' }}
             >
               {t('footerNoLogin')}
             </Typography>
           </Box>
         </Box>
-
-        <Divider sx={{ borderColor: isDark ? '#261209' : '#3D1A00', mb: 3 }} />
 
         <Box
           sx={{
@@ -98,11 +95,11 @@ export default function Footer() {
             fontSize: '0.85rem'
           }}
         >
-          <Typography variant="caption" sx={{ color: isDark ? '#7A6E66' : '#57534E' }}>
+          <Typography variant="caption" sx={{ color: '#57534E' }}>
             © {new Date().getFullYear()} {t('footerCopyright')}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Typography variant="caption" sx={{ color: isDark ? '#7A6E66' : '#57534E' }}>
+            <Typography variant="caption" sx={{ color: '#57534E' }}>
               {t('footerCommunity')}
             </Typography>
           </Box>

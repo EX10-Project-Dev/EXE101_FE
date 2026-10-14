@@ -1,0 +1,38 @@
+.discovery-map-title.MuiTypography-root {
+  font-family: Impact, 'Arial Narrow', 'Segoe UI', sans-serif;
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: #34251e;
+}
+.discovery-map-frame { position: relative; isolation: isolate; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 60px rgb(113 60 27 / 8%); background: #edf1ec; }
+.discovery-map-canvas { height: 570px; width: 100%; z-index: 0; font-family: 'Segoe UI', sans-serif; }
+.discovery-map-caption { position: absolute; left: 20px; top: 20px; z-index: 1; display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; background: rgb(255 255 255 / 92%); color: #68564b; font-size: 0.72rem; box-shadow: 0 2px 10px rgb(0 0 0 / 5%); pointer-events: none; }
+.map-score-pill { display: flex; align-items: center; justify-content: center; gap: 7px; height: 38px; padding: 0 12px; border: 2px solid white; border-radius: 999px; background: white; color: #243647; font-size: 15px; box-shadow: 0 2px 8px rgb(35 48 60 / 18%); transition: transform 160ms ease, background 160ms ease; }
+.map-score-pill.is-active { background: #fff0e1; border-color: #f97316; color: #9d3909; transform: scale(1.1); }
+.discovery-map-marker:hover .map-score-pill { transform: translateY(-3px); }
+.discovery-map-marker:focus-visible { outline: 3px solid #b9480b; outline-offset: 5px; border-radius: 999px; }
+.map-match-card { position: absolute; z-index: 2; width: 290px; max-width: calc(100% - 40px); top: 24px; left: 50%; transform: translateX(-50%); padding: 16px; background: white; border-radius: 16px; color: #243647; box-shadow: 0 8px 24px rgb(35 48 60 / 16%); }
+.map-match-card::after { content: ''; position: absolute; bottom: -9px; left: calc(50% - 9px); width: 18px; height: 18px; background: white; transform: rotate(45deg); }
+.map-match-score { display: flex; align-items: center; gap: 5px; }
+.map-match-score svg { color: #f97316; }
+.map-match-score strong { font-size: 24px; line-height: 1.1; }
+.map-match-score span { font-size: 11px; color: #68564b; }
+.map-match-card h3 { font-size: 14px; line-height: 1.4; margin: 9px 0 12px; }
+.map-match-reasons { display: grid; gap: 5px; }
+.map-match-reason { display: flex; align-items: flex-start; gap: 8px; padding: 9px; border-radius: 7px; font-size: 11px; line-height: 1.5; }
+.map-match-reason svg { flex-shrink: 0; margin-top: 1px; color: #b9480b; }
+.reason-0 { background: #edf9f5; }
+.reason-1 { background: #fff5e9; }
+.reason-2 { background: #fff0f2; }
+.discovery-map-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 28px; margin-top: 24px; color: #786456; font-size: 0.8rem; }
+.discovery-map-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.discovery-map-legend svg { color: #b9480b; }
+@media (max-width: 599px) {
+  .discovery-map-canvas { height: 580px; }
+  .discovery-map-frame { border-radius: 20px; }
+  .discovery-map-caption { top: auto; bottom: 28px; left: 10px; font-size: 0.65rem; }
+  .map-match-card { top: 16px; }
+  .discovery-map-legend { gap: 12px 18px; font-size: 0.72rem; }
+}

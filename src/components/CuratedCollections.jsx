@@ -1,5 +1,4 @@
 import { Box, Container, Typography, Avatar, Chip } from '@mui/material'
-import { useTheme } from '../contexts/ThemeContext'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const COLLECTIONS = [
@@ -57,7 +56,6 @@ const COLLECTIONS = [
 ]
 
 export default function CuratedCollections({ onSelectCollection }) {
-  const { isDark } = useTheme()
   const { t, isEn } = useLanguage()
 
   return (
@@ -65,12 +63,8 @@ export default function CuratedCollections({ onSelectCollection }) {
       component="section"
       sx={{
         py: { xs: 8, md: 10 },
-        background: isDark
-          ? 'linear-gradient(180deg, #150A05 0%, #1A0D07 50%, #120803 100%)'
-          : 'linear-gradient(180deg, #FFF4EB 0%, #FFE9D6 50%, #FFF2E6 100%)',
-        color: isDark ? '#FFFFFF' : '#1C0A00',
-        borderTop: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
-        borderBottom: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
+        background: 'transparent',
+        color: '#1C0A00',
         position: 'relative',
         overflow: 'hidden',
         transition: 'background 0.3s ease'
@@ -85,9 +79,7 @@ export default function CuratedCollections({ onSelectCollection }) {
           width: '450px',
           height: '450px',
           borderRadius: '50%',
-          background: isDark
-            ? 'radial-gradient(circle, rgba(234, 88, 12, 0.12) 0%, rgba(0,0,0,0) 70%)'
-            : 'radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(0,0,0,0) 70%)',
+          background: 'radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(0,0,0,0) 70%)',
           pointerEvents: 'none'
         }}
       />
@@ -99,9 +91,7 @@ export default function CuratedCollections({ onSelectCollection }) {
           width: '480px',
           height: '480px',
           borderRadius: '50%',
-          background: isDark
-            ? 'radial-gradient(circle, rgba(194, 65, 12, 0.1) 0%, rgba(0,0,0,0) 70%)'
-            : 'radial-gradient(circle, rgba(253, 186, 116, 0.15) 0%, rgba(0,0,0,0) 70%)',
+          background: 'radial-gradient(circle, rgba(253, 186, 116, 0.15) 0%, rgba(0,0,0,0) 70%)',
           pointerEvents: 'none'
         }}
       />
@@ -122,12 +112,12 @@ export default function CuratedCollections({ onSelectCollection }) {
               label={t('colBadge')}
               size="small"
               sx={{
-                backgroundColor: isDark ? '#2B160D' : '#FFF7ED',
-                color: isDark ? '#FED7AA' : '#C2410C',
+                backgroundColor: '#FFF7ED',
+                color: '#C2410C',
                 fontWeight: 800,
                 fontSize: '0.74rem',
                 mb: 2.2,
-                border: isDark ? '1px solid #4D2615' : '1px solid #FDBA74'
+                border: '1px solid #FDBA74'
               }}
             />
 
@@ -139,7 +129,7 @@ export default function CuratedCollections({ onSelectCollection }) {
                 lineHeight: 1.1,
                 letterSpacing: '-0.02em',
                 textTransform: 'uppercase',
-                color: isDark ? '#FFFFFF' : '#1C0A00',
+                color: '#1C0A00',
                 fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
               }}
             >
@@ -184,7 +174,7 @@ export default function CuratedCollections({ onSelectCollection }) {
               variant="body1"
               sx={{
                 mt: 2.5,
-                color: isDark ? '#C7BEB7' : '#57534E',
+                color: '#57534E',
                 fontSize: { xs: '0.98rem', md: '1.05rem' },
                 lineHeight: 1.65,
                 fontWeight: 400
@@ -247,18 +237,12 @@ export default function CuratedCollections({ onSelectCollection }) {
                     overflow: 'hidden',
                     cursor: 'pointer',
                     flexShrink: 0,
-                    boxShadow: isDark
-                      ? '0 18px 45px rgba(0, 0, 0, 0.55)'
-                      : '0 16px 36px rgba(234, 88, 12, 0.12)',
-                    border: isDark
-                      ? '1.5px solid rgba(253, 186, 116, 0.2)'
-                      : '1.5px solid rgba(253, 186, 116, 0.65)',
+                    boxShadow: '0 16px 36px rgba(234, 88, 12, 0.12)',
+                    border: '1.5px solid rgba(253, 186, 116, 0.65)',
                     transition: 'all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)',
                     '&:hover': {
                       transform: 'translateY(-10px) scale(1.02)',
-                      boxShadow: isDark
-                        ? '0 24px 55px rgba(0, 0, 0, 0.75), 0 0 25px rgba(249, 115, 22, 0.35)'
-                        : '0 22px 48px rgba(234, 88, 12, 0.22), 0 0 18px rgba(253, 186, 116, 0.45)',
+                      boxShadow: '0 22px 48px rgba(234, 88, 12, 0.22), 0 0 18px rgba(253, 186, 116, 0.45)',
                       border: '1.5px solid #FF7A1A',
                       '& .card-bg-img': {
                         transform: 'scale(1.08)'

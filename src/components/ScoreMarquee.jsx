@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material'
 import { MOCK_VENUES } from '../data/mockVenues'
-import { useTheme } from '../contexts/ThemeContext'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const MARQUEE_TAGLINES_VI = {
@@ -22,7 +21,6 @@ const MARQUEE_TAGLINES_EN = {
 }
 
 export default function ScoreMarquee({ onSelectCard }) {
-  const { isDark } = useTheme()
   const { isEn } = useLanguage()
 
   const MARQUEE_DATA = MOCK_VENUES.map((v) => ({
@@ -38,11 +36,7 @@ export default function ScoreMarquee({ onSelectCard }) {
         width: '100%',
         overflow: 'hidden',
         py: 3.5,
-        background: isDark
-          ? 'linear-gradient(180deg, #150A05 0%, #1A0D07 50%, #150A05 100%)'
-          : 'linear-gradient(180deg, #FFEBD8 0%, #FFDFC5 50%, #FFEBD8 100%)',
-        borderTop: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
-        borderBottom: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
+        background: 'transparent',
         position: 'relative',
         '@keyframes marqueeLeft': {
           '0%': { transform: 'translateX(0%)' },
@@ -55,7 +49,7 @@ export default function ScoreMarquee({ onSelectCard }) {
         <Typography
           variant="caption"
           sx={{
-            color: isDark ? '#FF7A1A' : '#C2410C',
+            color: '#C2410C',
             fontWeight: 800,
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
@@ -111,17 +105,13 @@ export default function ScoreMarquee({ onSelectCard }) {
                 position: 'relative',
                 overflow: 'hidden',
                 cursor: 'pointer',
-                boxShadow: isDark
-                  ? '0 8px 24px rgba(0, 0, 0, 0.5)'
-                  : '0 6px 24px rgba(120, 60, 20, 0.10)',
-                border: isDark ? '1px solid #381C0F' : '1px solid #FDE8CC',
+                boxShadow: '0 6px 24px rgba(120, 60, 20, 0.10)',
+                border: '1px solid #FDE8CC',
                 transition: 'transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease',
                 '&:hover': {
                   transform: 'translateY(-6px) scale(1.02)',
                   borderColor: '#FF7A1A',
-                  boxShadow: isDark
-                    ? '0 16px 36px rgba(249, 115, 22, 0.35)'
-                    : '0 16px 36px rgba(234, 88, 12, 0.22)'
+                  boxShadow: '0 16px 36px rgba(234, 88, 12, 0.22)'
                 }
               }}
             >
@@ -153,8 +143,8 @@ export default function ScoreMarquee({ onSelectCard }) {
                   px: 1.2,
                   py: 0.45,
                   borderRadius: '12px',
-                  backgroundColor: isDark ? 'rgba(28, 13, 7, 0.92)' : 'rgba(255, 255, 255, 0.95)',
-                  border: isDark ? '1px solid #4D2615' : 'none',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  border: 'none',
                   backdropFilter: 'blur(8px)',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                 }}
@@ -163,7 +153,7 @@ export default function ScoreMarquee({ onSelectCard }) {
                   sx={{
                     fontWeight: 900,
                     fontSize: '0.82rem',
-                    color: isDark ? '#FFFFFF' : '#1C0A00',
+                    color: '#1C0A00',
                     lineHeight: 1
                   }}
                 >
@@ -182,7 +172,7 @@ export default function ScoreMarquee({ onSelectCard }) {
                   borderRadius: '8px',
                   backgroundColor: 'rgba(18, 8, 3, 0.75)',
                   backdropFilter: 'blur(4px)',
-                  border: isDark ? '1px solid rgba(77, 38, 21, 0.6)' : 'none',
+                  border: 'none',
                   color: '#FED7AA',
                   fontSize: '0.7rem',
                   fontWeight: 700

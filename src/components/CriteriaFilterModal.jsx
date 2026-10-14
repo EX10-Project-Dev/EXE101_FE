@@ -11,7 +11,6 @@ import {
   Divider
 } from '@mui/material'
 import { FILTER_OPTIONS } from '../data/mockVenues'
-import { useTheme } from '../contexts/ThemeContext'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const EN_OPTION_LABELS = {
@@ -67,8 +66,39 @@ const EN_OPTION_LABELS = {
   'Restroom': { label: 'Clean Restroom' }
 }
 
+  const SectionTitle = ({ num, label }) => (
+    <Typography
+      variant="subtitle2"
+      fontWeight={800}
+      sx={{ color: '#1C0A00', mb: 1.2 }}
+    >
+      {num}. {label}
+    </Typography>
+  )
+
+  const ChipGroup = ({ options, field, criteria, isEn, handleToggleSingle, chipSx }) => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+      {options.map((opt) => {
+        const val = opt.id
+        const selected = criteria[field] === val
+        const enMeta = EN_OPTION_LABELS[val]
+        const labelText = isEn && enMeta?.label ? enMeta.label : opt.label
+        const descText = isEn && enMeta?.desc ? enMeta.desc : opt.desc
+        return (
+          <Chip
+            key={val}
+            label={labelText + (descText ? ` (${descText})` : '')}
+            onClick={() => handleToggleSingle(field, val)}
+            variant={selected ? 'filled' : 'outlined'}
+            sx={chipSx(selected)}
+          />
+        )
+      })}
+    </Box>
+  )
+
+
 export default function CriteriaFilterModal({ open, onClose, criteria, setCriteria, onApply }) {
-  const { isDark } = useTheme()
   const { isEn } = useLanguage()
 
   const handleToggleSingle = (field, value) => {
@@ -115,59 +145,20 @@ export default function CriteriaFilterModal({ open, onClose, criteria, setCriter
     fontSize: '0.84rem',
     backgroundColor: selected
       ? '#EA580C'
-      : isDark
-      ? '#24120A'
       : 'transparent',
     color: selected
       ? '#ffffff'
-      : isDark
-      ? '#DCD2CB'
       : '#44403C',
     borderColor: selected
       ? '#EA580C'
-      : isDark
-      ? '#3E1F12'
       : '#D6D3D1',
     '&:hover': {
       backgroundColor: selected
         ? '#C2410C'
-        : isDark
-        ? '#30180D'
         : '#FFF7ED',
       borderColor: '#FDBA74'
     }
   })
-
-  const SectionTitle = ({ num, label }) => (
-    <Typography
-      variant="subtitle2"
-      fontWeight={800}
-      sx={{ color: isDark ? '#FFFFFF' : '#1C0A00', mb: 1.2 }}
-    >
-      {num}. {label}
-    </Typography>
-  )
-
-  const ChipGroup = ({ options, field }) => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-      {options.map((opt) => {
-        const val = opt.id
-        const selected = criteria[field] === val
-        const enMeta = EN_OPTION_LABELS[val]
-        const labelText = isEn && enMeta?.label ? enMeta.label : opt.label
-        const descText = isEn && enMeta?.desc ? enMeta.desc : opt.desc
-        return (
-          <Chip
-            key={val}
-            label={labelText + (descText ? ` (${descText})` : '')}
-            onClick={() => handleToggleSingle(field, val)}
-            variant={selected ? 'filled' : 'outlined'}
-            sx={chipSx(selected)}
-          />
-        )
-      })}
-    </Box>
-  )
 
   return (
     <Dialog
@@ -179,11 +170,9 @@ export default function CriteriaFilterModal({ open, onClose, criteria, setCriter
         sx: {
           borderRadius: '24px',
           p: { xs: 1, sm: 2 },
-          backgroundColor: isDark ? '#1C0D06' : '#FFFFFF',
-          border: isDark ? '1.5px solid #3E1F12' : '1px solid #FDE8CC',
-          boxShadow: isDark
-            ? '0 25px 60px rgba(0, 0, 0, 0.9), 0 0 24px rgba(234, 88, 12, 0.2)'
-            : '0 20px 40px rgba(0, 0, 0, 0.15)'
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #FDE8CC',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)'
         }
       }}
     >
@@ -192,13 +181,13 @@ export default function CriteriaFilterModal({ open, onClose, criteria, setCriter
           <Typography
             variant="h6"
             fontWeight={900}
-            sx={{ color: isDark ? '#FFFFFF' : '#1C0A00' }}
+            sx={{ color: '#1C0A00' }}
           >
             {isEn ? '7 Venue Criteria Filters' : 'Bộ lọc tiêu chí tìm kiếm'}
           </Typography>
           <Typography
             variant="caption"
-            sx={{ color: isDark ? '#A1948B' : '#78716C' }}
+            sx={{ color: '#78716C' }}
           >
             {isEn
               ? 'Customize 7 criteria to discover spots tailored to your exact mood'
@@ -208,39 +197,39 @@ export default function CriteriaFilterModal({ open, onClose, criteria, setCriter
         <IconButton
           onClick={onClose}
           size="small"
-          sx={{ color: isDark ? '#A1948B' : '#78716C', fontWeight: 800, fontSize: '1.2rem', lineHeight: 1 }}
+          sx={{ color: '#78716C', fontWeight: 800, fontSize: '1.2rem', lineHeight: 1 }}
         >
           ✕
         </IconButton>
       </DialogTitle>
 
-      <Divider sx={{ borderColor: isDark ? '#33190E' : '#FDE8CC' }} />
+      <Divider sx={{ borderColor: '#FDE8CC' }} />
 
-      <DialogContent sx={{ py: 2.5, backgroundColor: isDark ? '#1C0D06' : '#FFFFFF' }}>
+      <DialogContent sx={{ py: 2.5, backgroundColor: '#FFFFFF' }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <Box>
             <SectionTitle num={1} label={isEn ? 'Purpose' : 'Mục đích đi quán (Purpose)'} />
-            <ChipGroup options={FILTER_OPTIONS.purposes} field="purpose" />
+            <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.purposes} field="purpose" />
           </Box>
           <Box>
             <SectionTitle num={2} label={isEn ? 'Budget per Person' : 'Ngân sách mỗi người (Budget)'} />
-            <ChipGroup options={FILTER_OPTIONS.budget} field="budget" />
+            <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.budget} field="budget" />
           </Box>
           <Box>
             <SectionTitle num={3} label={isEn ? 'Distance & Radius' : 'Khoảng cách & Bán kính (Distance)'} />
-            <ChipGroup options={FILTER_OPTIONS.distance} field="distance" />
+            <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.distance} field="distance" />
           </Box>
           <Box>
             <SectionTitle num={4} label={isEn ? 'Group Size' : 'Số lượng người (Group Size)'} />
-            <ChipGroup options={FILTER_OPTIONS.groupSizes} field="groupSize" />
+            <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.groupSizes} field="groupSize" />
           </Box>
           <Box>
             <SectionTitle num={5} label={isEn ? 'Category' : 'Thể loại địa điểm (Category)'} />
-            <ChipGroup options={FILTER_OPTIONS.categories} field="category" />
+            <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.categories} field="category" />
           </Box>
           <Box>
             <SectionTitle num={6} label={isEn ? 'Atmosphere' : 'Không gian & Bầu không khí (Atmosphere)'} />
-            <ChipGroup options={FILTER_OPTIONS.atmosphere} field="atmosphere" />
+            <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.atmosphere} field="atmosphere" />
           </Box>
 
           {/* Amenities (multi-select) */}
@@ -266,19 +255,19 @@ export default function CriteriaFilterModal({ open, onClose, criteria, setCriter
         </Box>
       </DialogContent>
 
-      <Divider sx={{ borderColor: isDark ? '#33190E' : '#FDE8CC' }} />
+      <Divider sx={{ borderColor: '#FDE8CC' }} />
 
-      <DialogActions sx={{ px: 3, py: 2, justifyContent: 'space-between', backgroundColor: isDark ? '#1C0D06' : '#FFFFFF' }}>
+      <DialogActions sx={{ px: 3, py: 2, justifyContent: 'space-between', backgroundColor: '#FFFFFF' }}>
         <Button
           onClick={handleReset}
-          sx={{ textTransform: 'none', color: isDark ? '#A1948B' : '#78716C', fontWeight: 700 }}
+          sx={{ textTransform: 'none', color: '#78716C', fontWeight: 700 }}
         >
           {isEn ? 'Reset Filters' : 'Đặt lại bộ lọc'}
         </Button>
         <Box sx={{ display: 'flex', gap: 1.5 }}>
           <Button
             onClick={onClose}
-            sx={{ textTransform: 'none', color: isDark ? '#A1948B' : '#78716C' }}
+            sx={{ textTransform: 'none', color: '#78716C' }}
           >
             {isEn ? 'Cancel' : 'Hủy'}
           </Button>

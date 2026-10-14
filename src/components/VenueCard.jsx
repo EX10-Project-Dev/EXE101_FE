@@ -8,11 +8,9 @@ import {
   Button,
   Stack
 } from '@mui/material'
-import { useTheme } from '../contexts/ThemeContext'
 import { useLanguage } from '../contexts/LanguageContext'
 
 export default function VenueCard({ venue, onOpenDetail }) {
-  const { isDark } = useTheme()
   const { isEn } = useLanguage()
   const reasons = venue.dynamicReasons || venue.reasons || []
 
@@ -32,21 +30,17 @@ export default function VenueCard({ venue, onOpenDetail }) {
       sx={{
         borderRadius: '22px',
         overflow: 'hidden',
-        border: isDark ? '1.5px solid #361A0F' : '1px solid #FDE8CC',
-        boxShadow: isDark
-          ? '0 8px 24px rgba(0, 0, 0, 0.5)'
-          : '0 4px 18px rgba(120, 53, 15, 0.06)',
+        border: '1px solid #FDE8CC',
+        boxShadow: '0 4px 18px rgba(120, 53, 15, 0.06)',
         cursor: 'pointer',
         transition: 'transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        backgroundColor: isDark ? '#201009' : '#FFFFFF',
+        backgroundColor: '#FFFFFF',
         '&:hover': {
           transform: 'translateY(-5px)',
-          boxShadow: isDark
-            ? '0 18px 40px rgba(0, 0, 0, 0.7), 0 0 16px rgba(249, 115, 22, 0.25)'
-            : '0 18px 36px rgba(234, 88, 12, 0.14)',
+          boxShadow: '0 18px 36px rgba(234, 88, 12, 0.14)',
           borderColor: '#FF7A1A'
         }
       }}
@@ -77,9 +71,9 @@ export default function VenueCard({ venue, onOpenDetail }) {
             label={venue.category}
             size="small"
             sx={{
-              backgroundColor: isDark ? 'rgba(28, 13, 7, 0.85)' : 'rgba(28, 10, 0, 0.72)',
+              backgroundColor: 'rgba(28, 10, 0, 0.72)',
               backdropFilter: 'blur(6px)',
-              border: isDark ? '1px solid rgba(87, 42, 22, 0.7)' : 'none',
+              border: 'none',
               color: '#FED7AA',
               fontWeight: 800,
               fontSize: '0.73rem',
@@ -99,8 +93,8 @@ export default function VenueCard({ venue, onOpenDetail }) {
             px: 1.3,
             py: 0.5,
             borderRadius: '12px',
-            backgroundColor: isDark ? 'rgba(28, 13, 7, 0.92)' : 'rgba(255, 255, 255, 0.96)',
-            border: isDark ? '1px solid #4D2615' : 'none',
+            backgroundColor: 'rgba(255, 255, 255, 0.96)',
+            border: 'none',
             backdropFilter: 'blur(8px)',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
           }}
@@ -109,7 +103,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
             sx={{
               fontWeight: 900,
               fontSize: '0.88rem',
-              color: isDark ? '#FFFFFF' : '#1C0A00',
+              color: '#1C0A00',
               lineHeight: 1
             }}
           >
@@ -147,7 +141,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
           variant="h6"
           fontWeight={900}
           sx={{
-            color: isDark ? '#FFFFFF' : '#1C0A00',
+            color: '#1C0A00',
             mb: 0.5,
             fontSize: '1.15rem'
           }}
@@ -158,7 +152,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
         <Typography
           variant="body2"
           sx={{
-            color: isDark ? '#C7BEB7' : '#78716C',
+            color: '#78716C',
             mb: 2,
             fontSize: '0.87rem',
             lineHeight: 1.45
@@ -173,7 +167,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
             <Typography
               variant="caption"
               fontWeight={700}
-              sx={{ color: isDark ? '#E2D9D2' : '#44403C' }}
+              sx={{ color: '#44403C' }}
             >
               Giá: {venue.priceRange}
             </Typography>
@@ -181,7 +175,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography
               variant="caption"
-              sx={{ color: isDark ? '#A1948B' : '#78716C' }}
+              sx={{ color: '#78716C' }}
             >
               {venue.openingHours}
             </Typography>
@@ -193,8 +187,8 @@ export default function VenueCard({ venue, onOpenDetail }) {
           sx={{
             p: 1.6,
             borderRadius: '14px',
-            backgroundColor: isDark ? '#29140B' : '#FFF7ED',
-            border: isDark ? '1px solid #432112' : '1px solid #FDE8CC',
+            backgroundColor: '#FFF7ED',
+            border: '1px solid #FDE8CC',
             mb: 2.5,
             flexGrow: 1
           }}
@@ -203,7 +197,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
             variant="caption"
             fontWeight={800}
             sx={{
-              color: isDark ? '#FF9A52' : '#92400E',
+              color: '#92400E',
               display: 'block',
               mb: 0.8
             }}
@@ -217,7 +211,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
                 <Typography
                   variant="caption"
                   sx={{
-                    color: isDark ? '#F5EBE6' : '#78716C',
+                    color: '#78716C',
                     fontSize: '0.78rem',
                     lineHeight: 1.4
                   }}
@@ -243,13 +237,13 @@ export default function VenueCard({ venue, onOpenDetail }) {
               textTransform: 'none',
               fontWeight: 700,
               fontSize: '0.85rem',
-              borderColor: isDark ? '#432112' : '#E7E5E4',
-              color: isDark ? '#E5DDD7' : '#44403C',
-              backgroundColor: isDark ? '#231108' : 'transparent',
+              borderColor: '#E7E5E4',
+              color: '#44403C',
+              backgroundColor: 'transparent',
               py: 0.9,
               '&:hover': {
                 borderColor: '#FF7A1A',
-                backgroundColor: isDark ? '#2E170C' : '#FFF7ED',
+                backgroundColor: '#FFF7ED',
                 color: '#FF7A1A'
               }
             }}

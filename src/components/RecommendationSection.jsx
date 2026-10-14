@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Search, Sparkles, Plug, Volume2, Wifi, PawPrint, Trees, Coffee, Heart, Moon } from 'lucide-react'
 import {
   Box,
   Container,
@@ -6,7 +7,6 @@ import {
   Chip,
   Button
 } from '@mui/material'
-import { useTheme } from '../contexts/ThemeContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import { MOCK_VENUES } from '../data/mockVenues'
 
@@ -129,10 +129,15 @@ const INTENTS_DATA = [
   }
 ]
 
+const TAG_ICONS = {
+  work: [Plug, Volume2, Wifi],
+  dog: [PawPrint, Volume2, Trees],
+  date: [Heart, Coffee, Moon]
+}
+
 export default function RecommendationSection({ onOpenDetail }) {
-  const { isDark } = useTheme()
   const { t, isEn } = useLanguage()
-  const [activeIntentIndex, setActiveIntentIndex] = useState(1)
+  const [activeIntentIndex, setActiveIntentIndex] = useState(0)
 
   const currentIntent = INTENTS_DATA[activeIntentIndex]
   const currentVenue =
@@ -152,16 +157,11 @@ export default function RecommendationSection({ onOpenDetail }) {
       id="recommendations-section"
       sx={{
         py: { xs: 5, md: 7 },
-        background: isDark
-          ? 'linear-gradient(180deg, #150A05 0%, #1A0D07 50%, #120803 100%)'
-          : 'linear-gradient(180deg, #FFF4EB 0%, #FFE9D6 50%, #FFF2E6 100%)',
-        borderTop: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
-        borderBottom: isDark ? '1px solid #28140B' : '1px solid #FDBA74',
+        background: 'transparent',
         transition: 'background 0.3s ease'
       }}
     >
-      {/* Form nhỏ gọn với maxWidth="md" (~900px) */}
-      <Container maxWidth="md">
+      <Container maxWidth="lg" sx={{ maxWidth: '1080px !important' }}>
         {/* 1. Header nhỏ gọn tinh tế */}
         <Box sx={{ textAlign: 'center', mb: 3.5 }}>
           <Typography
@@ -170,20 +170,21 @@ export default function RecommendationSection({ onOpenDetail }) {
             sx={{
               fontWeight: 900,
               letterSpacing: '-1px',
-              fontSize: { xs: '1.75rem', sm: '2.2rem', md: '2.6rem' },
+              fontSize: { xs: '1.75rem', sm: '2.2rem', md: '2.2rem' },
+              whiteSpace: { xs: 'normal', md: 'nowrap' },
               lineHeight: 1.12,
-              color: isDark ? '#FFFFFF' : '#1C0A00',
+              color: '#1C0A00',
               textTransform: 'uppercase',
               mb: 1.2
             }}
           >
-            ONE PLACE. THREE DIFFERENT ANSWERS.
+            FIND THE RIGHT PLACE FOR YOUR MOMENT.
           </Typography>
 
           <Typography
             variant="body2"
             sx={{
-              color: isDark ? '#C7BEB7' : '#57534E',
+              color: '#57534E',
               fontSize: { xs: '0.88rem', sm: '0.98rem' },
               maxWidth: 640,
               mx: 'auto',
@@ -191,48 +192,58 @@ export default function RecommendationSection({ onOpenDetail }) {
             }}
           >
             {isEn
-              ? 'The exact same place: perfect for work, not ideal with pets, and solid for a first date. Pick an occasion to watch the match score and rationale dynamically adapt.'
+              ? 'One place can fit many needs. Tell FIND&GO what you’re looking for, and see the recommendations, match score, and reasons adapt to you.'
               : 'Cùng một quán: hoàn hảo để làm việc, nhưng không hợp mang thú cưng, và vừa đủ ổn cho buổi hẹn đầu. Chọn nhu cầu để thấy điểm số và lý do thay đổi tức thì.'}
           </Typography>
         </Box>
 
         {/* 2. Three Intent Tabs */}
         <Box
+          role="tablist"
+          aria-label={isEn ? 'Choose an occasion' : 'Chọn nhu cầu'}
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: { xs: 1.5, sm: 3 },
-            flexWrap: 'wrap',
-            mb: 3.5,
-            borderBottom: isDark ? '1px solid #2E170C' : '1px solid #FDE8CC',
-            pb: 1.2
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+            gap: { xs: 1, sm: 2 },
+            mb: 4
           }}
         >
           {INTENTS_DATA.map((intent, idx) => {
             const isActive = activeIntentIndex === idx
             return (
               <Box
+                component="button"
+                type="button"
+                role="tab"
+                id={`occasion-tab-${intent.id}`}
+                aria-selected={isActive}
+                aria-controls="occasion-panel"
                 key={intent.id}
                 onClick={() => setActiveIntentIndex(idx)}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  py: 0.8,
-                  px: { xs: 1, sm: 1.5 },
+                  gap: 1.5,
+                  textAlign: 'left',
+                  py: 1.6,
+                  px: 1.2,
+                  minWidth: 0,
+                  background: 'transparent',
+                  border: 0,
+                  color: isActive ? '#B9480B' : '#8A7568',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                  borderBottom: isActive ? '2.5px solid #FF7A1A' : '2.5px solid transparent',
-                  mb: '-11px',
+                  borderBottom: isActive ? '2px solid #F97316' : '2px solid #E9DDD4',
                   '&:hover': { color: '#FF7A1A' }
                 }}
               >
+                <Search size={24} strokeWidth={1.6} aria-hidden="true" style={{ flexShrink: 0 }} />
                 <Typography
+                  component="span"
                   sx={{
-                    fontWeight: isActive ? 800 : 600,
-                    fontSize: { xs: '0.82rem', sm: '0.92rem' },
-                    color: isActive ? '#FF7A1A' : isDark ? '#D6CDC6' : '#57534E',
-                    whiteSpace: 'nowrap'
+                    fontWeight: isActive ? 700 : 500,
+                    fontSize: { xs: '0.9rem', md: '1rem' },
+                    color: 'inherit'
                   }}
                 >
                   {isEn ? intent.tabEn : intent.tabVi}
@@ -244,26 +255,26 @@ export default function RecommendationSection({ onOpenDetail }) {
 
         {/* 3. The Interactive Showcase Card: Bố cục NẰM NGANG so với ảnh từ màn hình sm (>=600px) */}
         <Box
+          role="tabpanel"
+          id="occasion-panel"
+          aria-labelledby={`occasion-tab-${currentIntent.id}`}
           sx={{
             borderRadius: '24px',
             overflow: 'hidden',
-            backgroundColor: isDark ? '#22120B' : '#FFFFFF',
-            border: isDark ? '1.5px solid #3E1F12' : '1px solid #FDE8CC',
-            boxShadow: isDark
-              ? '0 20px 50px rgba(0, 0, 0, 0.7), 0 0 20px rgba(249, 115, 22, 0.12)'
-              : '0 16px 40px rgba(120, 53, 15, 0.08)',
+            backgroundColor: '#FFFFFF',
+            boxShadow: '0 18px 48px rgba(120, 53, 15, 0.06)',
             display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' }, // Đảm bảo NẰM NGANG
+            flexDirection: { xs: 'column', md: 'row' },
             alignItems: 'stretch',
-            minHeight: { sm: 360, md: 380 }
+            minHeight: { md: 390 }
           }}
         >
           {/* CỘT TRÁI: Hình ảnh quán (chiếm ~44% bề ngang) */}
           <Box
             sx={{
-              flex: { xs: 'none', sm: '0 0 44%' },
+              flex: { xs: 'none', md: '0 0 46%' },
               position: 'relative',
-              minHeight: { xs: 200, sm: 'auto' },
+              height: { xs: 260, sm: 320, md: 'auto' },
               overflow: 'hidden'
             }}
           >
@@ -272,71 +283,45 @@ export default function RecommendationSection({ onOpenDetail }) {
               src={currentIntent.image}
               alt={currentVenue.name}
               sx={{
+                position: { md: 'absolute' },
+                inset: 0,
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
                 display: 'block'
               }}
             />
-            {/* Tag tên quán ở góc dưới ảnh */}
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 12,
-                left: 12,
-                px: 1.4,
-                py: 0.5,
-                borderRadius: '10px',
-                backgroundColor: 'rgba(20, 9, 4, 0.82)',
-                backdropFilter: 'blur(6px)',
-                border: '1px solid rgba(87, 42, 22, 0.5)',
-                color: '#ffffff'
-              }}
-            >
-              <Typography
-                variant="caption"
-                sx={{
-                  color: '#FED7AA',
-                  fontWeight: 700,
-                  fontSize: '0.65rem',
-                  display: 'block',
-                  textTransform: 'uppercase'
-                }}
-              >
-                Quán mẫu
-              </Typography>
-              <Typography sx={{ fontWeight: 800, fontSize: '0.85rem' }}>
-                {currentVenue.name}
-              </Typography>
-            </Box>
           </Box>
 
           {/* CỘT PHẢI: Chi tiết quán NẰM NGANG bên cạnh ảnh (chiếm ~56% còn lại) */}
           <Box
             sx={{
               flex: '1 1 auto',
-              p: { xs: 2.5, sm: 3, md: 3.5 },
+              minWidth: 0,
+              p: { xs: 3, md: 4.5 },
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              backgroundColor: isDark ? '#22120B' : '#F8FAFC'
+              gap: 3,
+              backgroundColor: '#F7F8FA'
             }}
           >
             <Box>
               {/* Match Score Line */}
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.8 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                <Sparkles size={20} color="#F97316" aria-hidden="true" />
                 <Typography
                   sx={{
-                    fontWeight: 800,
-                    fontSize: '0.95rem',
-                    color: isDark ? '#FFFFFF' : '#0F172A'
+                    fontWeight: 400,
+                    fontSize: '1.15rem',
+                    color: '#0F172A'
                   }}
                 >
                   <Box
                     component="span"
                     sx={{
-                      color: currentIntent.scoreColor,
-                      fontWeight: 900,
+                      color: '#0F172A',
+                      fontWeight: 500,
                       fontSize: '1.15rem',
                       mr: 0.5
                     }}
@@ -352,10 +337,10 @@ export default function RecommendationSection({ onOpenDetail }) {
                 variant="h5"
                 component="h3"
                 sx={{
-                  fontWeight: 900,
-                  fontSize: { xs: '1.25rem', sm: '1.45rem' },
-                  color: isDark ? '#FFFFFF' : '#0F172A',
-                  mb: 1.5,
+                  fontWeight: 700,
+                  fontSize: { xs: '1.25rem', md: '1.35rem' },
+                  color: '#0F172A',
+                  mb: 2.5,
                   lineHeight: 1.2
                 }}
               >
@@ -365,13 +350,12 @@ export default function RecommendationSection({ onOpenDetail }) {
               {/* Dynamic Evidence Description */}
               <Typography
                 sx={{
-                  color: isDark ? '#D6CDC6' : '#334155',
-                  fontSize: '0.88rem',
-                  lineHeight: 1.65,
-                  mb: 2,
+                  color: '#334155',
+                  fontSize: '0.95rem',
+                  lineHeight: 1.6,
                   '& strong': {
-                    color: isDark ? '#FFFFFF' : '#0F172A',
-                    fontWeight: 800
+                    color: '#0F172A',
+                    fontWeight: 700
                   }
                 }}
               >
@@ -381,23 +365,30 @@ export default function RecommendationSection({ onOpenDetail }) {
 
             {/* Bottom Tags & Buttons */}
             <Box>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.8, mb: 2.2 }}>
-                {(isEn ? currentIntent.tagsEn : currentIntent.tagsVi).map((tag, idx) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1.5 }}>
+                {(isEn ? currentIntent.tagsEn : currentIntent.tagsVi).map((tag, idx) => {
+                  const TagIcon = TAG_ICONS[currentIntent.id][idx]
+                  return (
                   <Chip
                     key={idx}
                     size="small"
                     label={tag.label}
+                    icon={<TagIcon size={14} aria-hidden="true" />}
                     sx={{
-                      borderRadius: '16px',
-                      fontWeight: 700,
+                      borderRadius: '999px',
+                      fontWeight: 400,
                       fontSize: '0.78rem',
-                      backgroundColor: isDark ? '#2C170E' : '#FFFFFF',
-                      color: isDark ? '#E5DDD7' : '#1E293B',
-                      border: isDark ? '1px solid #482516' : '1px solid #E2E8F0',
-                      py: 1.8
+                      backgroundColor: '#FFFFFF',
+                      color: '#1E293B',
+                      border: 0,
+                      boxShadow: '0 2px 2px rgba(15, 23, 42, 0.12)',
+                      height: 36,
+                      px: 0.6,
+                      '& .MuiChip-icon': { color: '#B9480B', ml: 1 }
                     }}
                   />
-                ))}
+                  )
+                })}
               </Box>
 
               {/* Action Buttons */}
@@ -405,8 +396,7 @@ export default function RecommendationSection({ onOpenDetail }) {
                 sx={{
                   display: 'flex',
                   gap: 1.2,
-                  pt: 1.8,
-                  borderTop: isDark ? '1px solid #331A0F' : '1px solid #E2E8F0',
+                  pt: 0.5,
                   flexWrap: 'wrap'
                 }}
               >
@@ -421,13 +411,13 @@ export default function RecommendationSection({ onOpenDetail }) {
                     fontSize: '0.82rem',
                     px: 1.8,
                     py: 0.7,
-                    borderColor: isDark ? '#4D2615' : '#CBD5E1',
-                    color: isDark ? '#E5DDD7' : '#334155',
-                    backgroundColor: isDark ? '#25130A' : '#FFFFFF',
+                    borderColor: '#CBD5E1',
+                    color: '#334155',
+                    backgroundColor: '#FFFFFF',
                     '&:hover': {
                       borderColor: '#FF7A1A',
                       color: '#FF7A1A',
-                      backgroundColor: isDark ? '#30180D' : '#FFF7ED'
+                      backgroundColor: '#FFF7ED'
                     }
                   }}
                 >

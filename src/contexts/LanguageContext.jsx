@@ -4,12 +4,12 @@ const LanguageContext = createContext()
 
 export const TRANSLATIONS = {
   vi: {
-    // Navbar
+    // Hero actions
     brandTagline: 'Explore More Together • Gợi ý địa điểm F&B thông minh',
-    guestBadge: 'Khách trải nghiệm',
-    lightMode: 'Sáng',
-    darkMode: 'Tối',
-    findVenuesCTA: 'Tìm quán ngay',
+    findVenuesCTA: 'Tìm quán',
+    getStartedCTA: 'Bắt đầu khám phá',
+    heroNote: 'Đúng gu. Đúng lúc. Đúng nơi.',
+    heroExplore: 'Một nơi cho mọi khoảnh khắc',
     switchLangTooltip: 'Switch to English',
     langLabel: 'EN',
 
@@ -45,7 +45,7 @@ export const TRANSLATIONS = {
 
     // Recommendation Section
     recBadge: 'GỢI Ý TỐI ƯU CHO BẠN',
-    recHeadline: 'ONE PLACE. THREE DIFFERENT ANSWERS.',
+    recHeadline: 'FIND THE RIGHT PLACE FOR YOUR MOMENT.',
     recSubtitle: 'Cùng một địa điểm nhưng mang lại giá trị khác nhau tùy thuộc vào mục đích của bạn.',
     recEmpty: 'Không tìm thấy địa điểm nào phù hợp với bộ tiêu chí hiện tại.',
     recReset: 'Đặt lại bộ lọc',
@@ -73,26 +73,13 @@ export const TRANSLATIONS = {
     colGreen2: 'SỐNG XANH',
     colGreenSub: 'Tuyển chọn từ 15k+ đánh giá bản địa',
 
-    // Intelligence Highlights
-    intelBadge: 'Lấy cảm hứng từ Context-Aware Intelligence',
-    intelTitleMain: 'Hiểu đúng nơi chốn. ',
-    intelTitleAccent: 'Không chỉ là tọa độ bản đồ.',
-    intelSubtitle: 'Mỗi quán mang ý nghĩa khác nhau tùy vào việc bạn đi cùng ai và làm gì. SEEKERS phân tích ngữ cảnh để trả về danh sách có điểm số và lý do minh bạch.',
-    intelPillar1Title: 'Xếp hạng & Giải thích lý do rõ ràng',
-    intelPillar1Body: 'Không đưa ra danh sách ngẫu nhiên. Mỗi đề xuất đều kèm theo lý do cụ thể vì sao quán phù hợp với tâm trạng và nhu cầu của bạn.',
-    intelPillar2Title: 'Tối ưu theo văn hóa F&B Việt Nam',
-    intelPillar2Body: 'Từ cà phê chạy deadline, trà sữa tám chuyện, ăn nhậu nhóm bạn đến hẹn hò sang trọng — được phân loại sát với thói quen người Việt.',
-    intelPillar3Title: 'Một chạm chuyển thẳng sang Google Maps',
-    intelPillar3Body: 'Sau khi chọn quán ưng ý, bạn lập tức mở Google Maps để định vị và nhận chỉ đường mà không cần đăng nhập hay thao tác rườm rà.',
-    intelDemoYourRequest: 'Yêu cầu của bạn:',
-    intelDemoPrompt: '"Quán cà phê yên tĩnh chạy deadline 2 người có ổ điện"',
 
     // Footer
     footerDesc: 'Nền tảng tìm kiếm và gợi ý địa điểm F&B thông minh theo ngữ cảnh, cảm xúc và nhu cầu thực tế của người dùng.',
-    footerTaskBadge: 'FE TASK — LUỒNG KHÁCH CHƯA ĐĂNG NHẬP',
-    footerNoLogin: 'Không lưu dữ liệu cá nhân • Trải nghiệm tức thì không cần tài khoản',
+    footerTaskBadge: '',
+    footerNoLogin: ' • "',
     footerCopyright: 'SEEKERS — Explore More Together.',
-    footerCommunity: 'Được thiết kế cho cộng đồng ẩm thực Việt Nam',
+    footerCommunity: '',
 
     // Modals
     modalFilterTitle: 'Tùy chỉnh 7 tiêu chí tìm quán',
@@ -108,12 +95,12 @@ export const TRANSLATIONS = {
     modalDetailNavBtn: 'Chỉ đường qua Google Maps'
   },
   en: {
-    // Navbar
+    // Hero actions
     brandTagline: 'Explore More Together • Context-Aware F&B Discovery',
-    guestBadge: 'Guest Mode',
-    lightMode: 'Light',
-    darkMode: 'Dark',
     findVenuesCTA: 'Find Venues',
+    getStartedCTA: 'Get Started',
+    heroNote: 'Your mood. Your moment. Your place.',
+    heroExplore: 'A place for every kind of moment',
     switchLangTooltip: 'Chuyển sang Tiếng Việt',
     langLabel: 'VI',
 
@@ -149,8 +136,8 @@ export const TRANSLATIONS = {
 
     // Recommendation Section
     recBadge: 'OPTIMIZED RECOMMENDATIONS',
-    recHeadline: 'ONE PLACE. THREE DIFFERENT ANSWERS.',
-    recSubtitle: 'The exact same place delivers entirely different values depending on your occasion.',
+    recHeadline: 'FIND THE RIGHT PLACE FOR YOUR MOMENT.',
+    recSubtitle: 'One place can fit many needs. Tell FIND&GO what you’re looking for, and see the recommendations, match score, and reasons adapt to you.',
     recEmpty: 'No venues match your current criteria.',
     recReset: 'Reset Filters',
     tabWork: 'Focus & Work',
@@ -193,7 +180,7 @@ export const TRANSLATIONS = {
 
     // Footer
     footerDesc: 'Smart F&B search and recommendation platform tailored to user context, mood, and real occasions.',
-    footerTaskBadge: 'FE TASK — GUEST EXPERIENCE FLOW',
+    footerTaskBadge: '',
     footerNoLogin: 'No personal data logged • Instant access without registration',
     footerCopyright: 'SEEKERS — Explore More Together.',
     footerCommunity: 'Crafted for the Vietnamese culinary & coffee community',

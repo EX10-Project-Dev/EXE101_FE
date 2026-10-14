@@ -19,8 +19,8 @@ export async function getRecommendations(payload = {}) {
     if (response.data && (response.data.data || Array.isArray(response.data))) {
       return response.data.data || response.data
     }
-  } catch (error) {
-    console.warn('Backend /api/recommendations chưa sẵn sàng hoặc lỗi, sử dụng thuật toán gợi ý dữ liệu mẫu:', error?.message)
+  } catch {
+    // An unavailable backend is expected in the demo; continue with local recommendations.
   }
 
   // Fallback: Tính điểm phù hợp dựa trên prompt và tiêu chí đã chọn
@@ -115,8 +115,8 @@ export async function getVenueDetail(id) {
     if (response.data && (response.data.data || response.data)) {
       return response.data.data || response.data
     }
-  } catch (error) {
-    console.warn(`Backend /api/venues/${id} chưa kết nối, sử dụng dữ liệu cục bộ:`, error?.message)
+  } catch {
+    // Keep the existing local venue fallback available in the demo.
   }
 
   const found = MOCK_VENUES.find((v) => v.id === id)
