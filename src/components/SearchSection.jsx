@@ -14,6 +14,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 import Reveal from './Reveal'
 
 export default function SearchSection({
+  embedded = false,
   prompts,
   setPrompts,
   onSearch,
@@ -76,7 +77,7 @@ export default function SearchSection({
       if (currentInput.trim() && prompts.length < 3) {
         handleAddPrompt()
       } else {
-        onSearch()
+        onSearch(prompts)
       }
     }
   }
@@ -116,8 +117,8 @@ export default function SearchSection({
   }
 
   return (
-    <section id="venue-search" className="venue-search" aria-label={t('findVenuesCTA')}>
-      <Container maxWidth="md">
+    <section id="venue-search" className={`venue-search${embedded ? ' venue-search--map' : ''}`} aria-label={t('findVenuesCTA')}>
+      <Container maxWidth={embedded ? false : "md"} disableGutters={embedded}>
         {/* Location alert */}
         {locationAlert && (
           <Alert
@@ -141,13 +142,13 @@ export default function SearchSection({
           scale={0.98}
           elevation={0}
           sx={{
-            maxWidth: { xs: '100%', sm: 640, md: 680 },
+            maxWidth: embedded ? '100%' : { xs: '100%', sm: 640, md: 680 },
             mx: 'auto',
-            p: { xs: 2, sm: 2.2 },
-            borderRadius: '22px',
-            boxShadow: '0 18px 45px rgba(234, 88, 12, 0.10)',
-            border: '1.5px solid rgba(253, 186, 116, 0.6)',
-            backgroundColor: '#ffffff',
+            p: embedded ? 0 : { xs: 2, sm: 2.2 },
+            borderRadius: embedded ? 0 : '22px',
+            boxShadow: embedded ? 'none' : '0 18px 45px rgba(234, 88, 12, 0.10)',
+            border: embedded ? 'none' : '1.5px solid rgba(253, 186, 116, 0.6)',
+            backgroundColor: embedded ? 'transparent' : '#ffffff',
             transition: 'box-shadow 0.25s ease, border-color 0.25s ease'
           }}
         >
@@ -387,11 +388,13 @@ export default function SearchSection({
             <Button
               variant="contained"
               onClick={() => {
-                if (currentInput.trim() && prompts.length < 3) {
-                  setPrompts([...prompts, currentInput.trim()])
-                  setCurrentInput('')
-                }
-                onSearch()
+                const searchPrompts = currentInput.trim() && prompts.length < 3
+                  ? [...prompts, currentInput.trim()]
+                  : prompts
+                setPrompts(searchPrompts)
+                setCurrentInput('')
+                setShowSuggestions(false)
+                onSearch(searchPrompts)
               }}
               disabled={isLoading}
               sx={{
@@ -478,7 +481,7 @@ export default function SearchSection({
         </Paper>
 
         {/* Quick prompt suggestions */}
-        <Box sx={{ mt: 3.5, textAlign: 'center' }}>
+        <Box sx={{ mt: embedded ? 2 : 3.5, textAlign: 'center' }}>
           <Typography
             variant="caption"
             component={Reveal}
@@ -511,6 +514,9 @@ export default function SearchSection({
                 onClick={() => handleSelectQuickPrompt(promptText)}
                 clickable
                 sx={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                  '& .MuiChip-label': { whiteSpace: 'normal', py: 0.75 },
                   borderRadius: '20px',
                   backgroundColor: '#FFFFFF',
                   color: '#44403C',

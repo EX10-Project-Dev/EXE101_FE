@@ -620,3 +620,79 @@
     font-size: 0.72rem;
   }
 }
+
+/* Search and recommendations live inside the map frame. */
+.map-surface {
+  position: relative;
+}
+
+.map-search-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px 28px 30px;
+  border-radius: 28px 28px 0 0;
+  background: rgba(255, 255, 255, 0.97);
+  border-top: 1px solid #fed7aa;
+  box-shadow: 0 -8px 32px rgba(52, 37, 30, 0.1);
+  z-index: 1001;
+}
+
+.venue-search.venue-search--map {
+  padding: 0;
+}
+
+.venue-search--map > .MuiContainer-root {
+  padding: 0;
+}
+
+.venue-search--map > .MuiContainer-root > .MuiBox-root {
+  padding-top: 16px;
+  border-top: 1px solid #f0e6dc;
+}
+
+.discovery-map-frame--search .discovery-map-canvas {
+  height: 940px;
+}
+
+@media (max-width: 768px) {
+  .map-search-controls {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    padding: 20px 16px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .discovery-map-frame--search .discovery-map-canvas {
+    height: 560px;
+  }
+}
+
+@media (min-width: 769px) {
+  .discovery-map-frame--search .leaflet-control-zoom {
+    margin-bottom: 320px !important;
+  }
+
+  .discovery-map-frame--search .discovery-map-card {
+    top: 70px;
+    bottom: auto;
+  }
+
+  .discovery-map-frame--search .map-quick-picks-bar {
+    top: 70px;
+    bottom: auto;
+  }
+
+  .venue-search--map .MuiPaper-root .MuiPaper-root {
+    top: auto;
+    bottom: calc(100% + 8px);
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}

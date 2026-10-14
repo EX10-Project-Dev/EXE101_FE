@@ -58,15 +58,16 @@ export default function DiscoveryContent() {
     return () => { cancelled = true }
   }, [])
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchPrompts = prompts, searchLocation = location) => {
     setIsLoading(true)
     try {
       const results = await getRecommendations({
-        prompts,
+        prompts: searchPrompts,
         criteria,
-        location
+        location: searchLocation
       })
       setVenues(results)
+      setFocusedVenueId(results[0]?.id || null)
     } catch (err) {
       console.error('Lỗi khi tải gợi ý:', err)
     } finally {
@@ -77,7 +78,7 @@ export default function DiscoveryContent() {
   const handleApplyFilters = () => {
     handleSearch()
     // Cuộn tới danh sách quán
-    const el = document.getElementById('recommendations-section')
+    const el = document.getElementById('discovery-map')
     if (el) {
       el.scrollIntoView({ behavior: scrollBehavior })
     }
@@ -95,6 +96,7 @@ export default function DiscoveryContent() {
       amenities: []
     })
     setLocation(null)
+    setFocusedVenueId(null)
     setIsLoading(true)
     getRecommendations({ prompts: [], criteria: {}, location: null })
       .then((res) => setVenues(res))
@@ -133,25 +135,6 @@ export default function DiscoveryContent() {
 
   return (
     <>
-      {/* 2. Search & Context-Aware Prompt Section with Live Suggestions */}
-      <SearchSection
-        prompts={prompts}
-        setPrompts={setPrompts}
-        onSearch={handleSearch}
-        onOpenFilter={() => setFilterModalOpen(true)}
-        criteriaCount={countActiveCriteria()}
-        onGetLocation={(loc) => {
-          setLocation(loc)
-          handleSearch()
-        }}
-        locationState={location}
-        isLoading={isLoading}
-        venues={venues.length > 0 ? venues : MOCK_VENUES}
-        onSelectSuggestedVenue={(venue) => {
-          handleFocusVenueOnMap(venue)
-        }}
-      />
-
       {/* 3. Atly-Style Match Score Marquee */}
       <ScoreMarquee
         onSelectCard={(selected) => {
@@ -177,13 +160,33 @@ export default function DiscoveryContent() {
         activeCriteriaCount={countActiveCriteria()}
       />
 
-      {/* 5. Discovery Interactive Map Section */}
+      {/* Discovery map with its search controls */}
       <DiscoveryMapSection
         venues={venues.length > 0 ? venues : MOCK_VENUES}
         focusedVenueId={focusedVenueId}
         onSelectVenue={(venue) => setFocusedVenueId(venue?.id || null)}
         onClearVenue={() => setFocusedVenueId(null)}
         onOpenDetail={(venue) => setSelectedVenue(venue)}
+        searchControls={
+          <SearchSection
+            embedded
+            prompts={prompts}
+            setPrompts={setPrompts}
+            onSearch={handleSearch}
+            onOpenFilter={() => setFilterModalOpen(true)}
+            criteriaCount={countActiveCriteria()}
+            onGetLocation={(loc) => {
+              setLocation(loc)
+              handleSearch(prompts, loc)
+            }}
+            locationState={location}
+            isLoading={isLoading}
+            venues={venues.length > 0 ? venues : MOCK_VENUES}
+            onSelectSuggestedVenue={(venue) => {
+              handleFocusVenueOnMap(venue)
+            }}
+          />
+        }
       />
 
       {/* 6. Curated Collections Spotlight */}

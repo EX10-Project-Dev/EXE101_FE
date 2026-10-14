@@ -169,6 +169,7 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
 }
 
 export default function DiscoveryMapSection({
+  searchControls,
   onOpenDetail,
   focusedVenueId,
   onClearVenue,
@@ -228,7 +229,8 @@ export default function DiscoveryMapSection({
           </Typography>
         </Box>
 
-        <Reveal scale={0.97} delay={0.18} className="discovery-map-frame">
+        <Reveal scale={0.97} delay={0.18} className={`discovery-map-frame${searchControls ? ' discovery-map-frame--search' : ''}`}>
+          <div className="map-surface">
           {/* Floating Top Control Bar */}
           <div className="map-top-bar">
             <div className="map-status-badge">
@@ -448,6 +450,8 @@ export default function DiscoveryMapSection({
               </div>
             </Reveal>
           )}
+          </div>
+          {searchControls && <div className="map-search-controls">{searchControls}</div>}
         </Reveal>
 
         {/* Map Legend */}
