@@ -1,5 +1,6 @@
 // @ts-check
 import { ArrowUpRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import HeroNavbar from './HeroNavbar'
 import Reveal from './Reveal'
@@ -28,9 +29,9 @@ export default function HeroSection() {
               : 'Gợi ý địa điểm theo ngữ cảnh, phù hợp với điều bạn cần ngay lúc này.'}
           </Reveal>
           <Reveal onLoad delay={0.24} distance={16}>
-            <a className="hero-primary" href="#venue-search">
+            <Link className="hero-primary" to="/login">
               {t('getStartedCTA')}<ArrowUpRight size={22} aria-hidden="true" />
-            </a>
+            </Link>
           </Reveal>
         </div>
       </section>

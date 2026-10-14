@@ -1,4 +1,5 @@
 import { ArrowUpRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import logo from '../assets/logo-small.webp'
 import BrandText from './BrandText'
@@ -18,9 +19,9 @@ export default function HeroNavbar() {
             <span className="hero-language-divider" aria-hidden="true">/</span>
             <span className={language === 'en' ? 'is-active' : ''}>EN</span>
           </button>
-          <a className="hero-secondary" href="#venue-search">
+          <Link className="hero-secondary" to="/login">
             {t('findVenuesCTA')}<ArrowUpRight size={16} aria-hidden="true" />
-          </a>
+          </Link>
         </div>
       </header>
   )
