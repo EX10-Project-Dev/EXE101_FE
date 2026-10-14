@@ -18,6 +18,8 @@ export const MOCK_VENUES = [
     tagline: 'Không gian cà phê specialty chuẩn gu làm việc & chạy deadline',
     address: 'Tầng 2, 27 Ngô Đức Kế, Bến Nghé, Quận 1, TP.HCM',
     distanceKm: 0.8,
+    lat: 10.77348,
+    lng: 106.70560,
     priceRange: '65.000đ - 120.000đ',
     budgetLevel: '50k-100k',
     rating: 4.8,
@@ -36,7 +38,7 @@ export const MOCK_VENUES = [
       'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1000&q=80',
       'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1000&q=80'
     ],
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=The+Workshop+Coffee+27+Ngo+Duc+Ke+Quan+1',
+    googleMapsUrl: 'https://www.google.com/maps/place/The+Workshop+Coffee/@10.7734764,106.7056037,17z',
     description: 'Nằm trên tầng gác cổ kính ngay trung tâm Quận 1, The Workshop là không gian lý tưởng cho người cần sự tập trung cao độ, freelancer làm việc cả ngày cùng hương thơm cà phê Specialty nguyên bản.'
   },
   {
@@ -46,6 +48,8 @@ export const MOCK_VENUES = [
     tagline: 'Trải nghiệm ẩm thực Ý phong cách Nhật hoàn hảo cho buổi hẹn hò',
     address: '8 Thủ Khoa Huân, Phường Bến Thành, Quận 1, TP.HCM',
     distanceKm: 1.2,
+    lat: 10.77336,
+    lng: 106.69732,
     priceRange: '200.000đ - 450.000đ/người',
     budgetLevel: '250k-500k',
     rating: 4.9,
@@ -64,7 +68,7 @@ export const MOCK_VENUES = [
       'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80',
       'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=1000&q=80'
     ],
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Pizza+4Ps+Thu+Khoa+Huan+Quan+1',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Pizza+4Ps+Ben+Thanh+8+Thu+Khoa+Huan+Quan+1+TPHCM',
     description: 'Thương hiệu ẩm thực nổi tiếng với phô mai tự sản xuất, không gian mở ấm cúng kết hợp kiến trúc mộc mạc và hiện đại, mang lại trải nghiệm ẩm thực tinh tế.'
   },
   {
@@ -74,6 +78,8 @@ export const MOCK_VENUES = [
     tagline: 'Góc cà phê retro tinh tế, góc check-in nghệ thuật và thư giãn',
     address: '151 Đồng Khởi, Bến Nghé, Quận 1, TP.HCM',
     distanceKm: 0.5,
+    lat: 10.77584,
+    lng: 106.70318,
     priceRange: '60.000đ - 95.000đ',
     budgetLevel: '50k-100k',
     rating: 4.7,
@@ -92,7 +98,7 @@ export const MOCK_VENUES = [
       'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=1000&q=80',
       'https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1000&q=80'
     ],
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Okkio+Caffe+151+Dong+Khoi+Quan+1',
+    googleMapsUrl: 'https://maps.google.com/?cid=6671288971746035671',
     description: 'Okkio Caffe mang tone màu đỏ gạch cổ điển, kiến trúc uốn cong duyên dáng tạo cảm giác bình yên giữa lòng phố thị náo nhiệt.'
   },
   {
@@ -102,6 +108,8 @@ export const MOCK_VENUES = [
     tagline: 'Không gian mở hiện đại, phong cách tối giản và thoáng đãng',
     address: '1 Thảo Điền, Phường Thảo Điền, TP. Thủ Đức, TP.HCM',
     distanceKm: 3.5,
+    lat: 10.80332,
+    lng: 106.73468,
     priceRange: '60.000đ - 110.000đ',
     budgetLevel: '50k-100k',
     rating: 4.7,
@@ -120,7 +128,7 @@ export const MOCK_VENUES = [
       'https://images.unsplash.com/photo-1497636577773-f1231844b336?auto=format&fit=crop&w=1000&q=80',
       'https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=1000&q=80'
     ],
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Rang+Rang+Coffee+Thao+Dien',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Rang+Rang+Coffee+1+Thao+Dien+Thu+Duc+TPHCM',
     description: 'Thiết kế kính trong suốt cùng các mảng cây xanh tự nhiên mang đến bầu không khí thư thái cho những buổi gặp gỡ bạn bè hay làm việc nhóm.'
   },
   {
@@ -130,6 +138,8 @@ export const MOCK_VENUES = [
     tagline: 'Thiên đường bia thủ công, tụ tập bạn bè bùng nổ năng lượng',
     address: '1 Lê Ngô Cát, Phường Võ Thị Sáu, Quận 3, TP.HCM',
     distanceKm: 2.1,
+    lat: 10.77640,
+    lng: 106.68540,
     priceRange: '150.000đ - 350.000đ/người',
     budgetLevel: '100k-250k',
     rating: 4.6,
@@ -148,7 +158,7 @@ export const MOCK_VENUES = [
       'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1000&q=80',
       'https://images.unsplash.com/photo-1436076863939-06870fe779c2?auto=format&fit=crop&w=1000&q=80'
     ],
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Bia+Craft+1+Le+Ngo+Cat+Quan+3',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=BiaCraft+Artisan+Ales+1+Le+Ngo+Cat+Quan+3+TPHCM',
     description: 'Địa điểm số 1 cho các buổi tụ họp sau giờ làm, sinh nhật hay liên hoan bạn bè với không khí vui tươi, hào sảng.'
   },
   {
@@ -158,6 +168,8 @@ export const MOCK_VENUES = [
     tagline: 'Thiên đường tráng miệng Matcha Nhật Bản thanh tao và thư thái',
     address: '30 Lê Lợi, Bến Nghé, Quận 1, TP.HCM',
     distanceKm: 0.9,
+    lat: 10.77352,
+    lng: 106.70138,
     priceRange: '70.000đ - 180.000đ',
     budgetLevel: '50k-100k',
     rating: 4.7,
@@ -176,7 +188,7 @@ export const MOCK_VENUES = [
       'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=1000&q=80',
       'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1000&q=80'
     ],
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Morico+30+Le+Loi+Quan+1',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Morico+30+Le+Loi+Ben+Nghe+Quan+1+TPHCM',
     description: 'Morico mang văn hóa ẩm thực ngọt ngào của xứ sở hoa anh đào đến Sài Gòn với phong cách phục vụ tinh tế và không gian thư giãn an yên.'
   }
 ]

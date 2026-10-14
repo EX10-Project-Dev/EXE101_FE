@@ -1,4 +1,4 @@
-﻿// @ts-check
+// @ts-check
 import { ArrowUpRight } from 'lucide-react'
 import { useLanguage } from '../contexts/LanguageContext'
 import logo from '../assets/logo-small.webp'
@@ -19,7 +19,7 @@ export default function HeroSection() {
             <span className="hero-language-divider" aria-hidden="true">/</span>
             <span className={language === 'en' ? 'is-active' : ''}>EN</span>
           </button>
-          <a className="hero-secondary" href="#recommendations-section">
+          <a className="hero-secondary" href="#venue-search">
             {t('findVenuesCTA')}<ArrowUpRight size={16} aria-hidden="true" />
           </a>
         </div>
@@ -41,7 +41,7 @@ export default function HeroSection() {
             ? 'Context-aware place recommendations for exactly what you need right now.'
             : 'Gợi ý địa điểm theo ngữ cảnh, phù hợp với điều bạn cần ngay lúc này.'}
         </p>
-        <a className="hero-primary" href="#recommendations-section">
+        <a className="hero-primary" href="#venue-search">
           {t('getStartedCTA')}<ArrowUpRight size={22} aria-hidden="true" />
         </a>
       </div>

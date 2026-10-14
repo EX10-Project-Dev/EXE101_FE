@@ -11,6 +11,7 @@ import {
   Stack
 } from '@mui/material'
 import { useLanguage } from '../contexts/LanguageContext'
+import { getDirectionsUrl, getPlaceViewUrl } from '../utils/geoUtils'
 
 export default function VenueDetailModal({ open, venue, onClose }) {
   const { t, isEn } = useLanguage()
@@ -19,11 +20,7 @@ export default function VenueDetailModal({ open, venue, onClose }) {
   if (!venue) return null
 
   const handleOpenGoogleMaps = () => {
-    const url =
-      venue.googleMapsUrl ||
-      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-        venue.name + ' ' + venue.address
-      )}`
+    const url = getDirectionsUrl(venue) || getPlaceViewUrl(venue)
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 
