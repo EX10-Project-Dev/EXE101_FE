@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import SearchSection from '../components/SearchSection'
 import ScoreMarquee from '../components/ScoreMarquee'
 import RecommendationSection from '../components/RecommendationSection'
 import DiscoveryMapSection from '../components/DiscoveryMapSection'
@@ -25,6 +26,19 @@ export default function DiscoveryContent() {
   const [isLoading, setIsLoading] = useState(true)
   const [filterModalOpen, setFilterModalOpen] = useState(false)
   const [selectedVenue, setSelectedVenue] = useState(null)
+  const [focusedVenueId, setFocusedVenueId] = useState(null)
+
+  const handleFocusVenueOnMap = (venue, openModal = false) => {
+    if (!venue) return
+    setFocusedVenueId(venue.id)
+    if (openModal) {
+      setSelectedVenue(venue)
+    }
+    const mapEl = document.getElementById('discovery-map')
+    if (mapEl) {
+      mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }
 
   // Tải danh sách đề xuất ban đầu
   useEffect(() => {
@@ -116,16 +130,35 @@ export default function DiscoveryContent() {
 
   return (
     <>
+      {/* 2. Search & Context-Aware Prompt Section with Live Suggestions */}
+      <SearchSection
+        prompts={prompts}
+        setPrompts={setPrompts}
+        onSearch={handleSearch}
+        onOpenFilter={() => setFilterModalOpen(true)}
+        criteriaCount={countActiveCriteria()}
+        onGetLocation={(loc) => {
+          setLocation(loc)
+          handleSearch()
+        }}
+        locationState={location}
+        isLoading={isLoading}
+        venues={venues.length > 0 ? venues : MOCK_VENUES}
+        onSelectSuggestedVenue={(venue) => {
+          handleFocusVenueOnMap(venue)
+        }}
+      />
+
       {/* 3. Atly-Style Match Score Marquee */}
       <ScoreMarquee
         onSelectCard={(selected) => {
           if (typeof selected === 'object' && selected !== null) {
-            setSelectedVenue(selected)
+            handleFocusVenueOnMap(selected)
           } else {
             const found =
               venues.find((v) => v.name.toLowerCase().includes(String(selected).toLowerCase())) ||
               MOCK_VENUES.find((v) => v.name.toLowerCase().includes(String(selected).toLowerCase()))
-            if (found) setSelectedVenue(found)
+            if (found) handleFocusVenueOnMap(found)
           }
         }}
       />
@@ -135,14 +168,22 @@ export default function DiscoveryContent() {
         venues={venues}
         isLoading={isLoading}
         onOpenDetail={(venue) => setSelectedVenue(venue)}
+        onFocusOnMap={(venue) => handleFocusVenueOnMap(venue)}
         onResetFilters={handleResetFilters}
         activePromptCount={prompts.length}
         activeCriteriaCount={countActiveCriteria()}
       />
 
-      <DiscoveryMapSection onOpenDetail={(venue) => setSelectedVenue(venue)} />
+      {/* 5. Discovery Interactive Map Section */}
+      <DiscoveryMapSection
+        venues={venues.length > 0 ? venues : MOCK_VENUES}
+        focusedVenueId={focusedVenueId}
+        onSelectVenue={(venue) => setFocusedVenueId(venue?.id || null)}
+        onClearVenue={() => setFocusedVenueId(null)}
+        onOpenDetail={(venue) => setSelectedVenue(venue)}
+      />
 
-      {/* 5. Curated Collections Spotlight (Curated Collections, Made Personal) */}
+      {/* 6. Curated Collections Spotlight */}
       <CuratedCollections onSelectCollection={handleSelectCollection} />
 
       {/* 7. Footer */}

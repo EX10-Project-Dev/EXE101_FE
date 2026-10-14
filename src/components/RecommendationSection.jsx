@@ -135,7 +135,7 @@ const TAG_ICONS = {
   date: [Heart, Coffee, Moon]
 }
 
-export default function RecommendationSection({ onOpenDetail }) {
+export default function RecommendationSection({ onOpenDetail, onFocusOnMap }) {
   const { t, isEn } = useLanguage()
   const [activeIntentIndex, setActiveIntentIndex] = useState(0)
 
@@ -422,6 +422,30 @@ export default function RecommendationSection({ onOpenDetail }) {
                   }}
                 >
                   {t('viewDetails')}
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => onFocusOnMap && onFocusOnMap(currentVenue)}
+                  sx={{
+                    borderRadius: '10px',
+                    textTransform: 'none',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    px: 1.8,
+                    py: 0.7,
+                    borderColor: '#FDBA74',
+                    color: '#C2410C',
+                    backgroundColor: '#FFF7ED',
+                    '&:hover': {
+                      borderColor: '#EA580C',
+                      color: '#9A3412',
+                      backgroundColor: '#FED7AA'
+                    }
+                  }}
+                >
+                  {isEn ? 'Show on Map 📍' : 'Xem trên bản đồ 📍'}
                 </Button>
 
                 <Button
