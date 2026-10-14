@@ -11,6 +11,7 @@ import {
 } from '@mui/material'
 import { POPULAR_PROMPTS, MOCK_VENUES } from '../data/mockVenues'
 import { useLanguage } from '../contexts/LanguageContext'
+import Reveal from './Reveal'
 
 export default function SearchSection({
   prompts,
@@ -136,6 +137,8 @@ export default function SearchSection({
 
         {/* Search Box Card (Thu hẹp và căn chỉnh cân đối) */}
         <Paper
+          component={Reveal}
+          scale={0.98}
           elevation={0}
           sx={{
             maxWidth: { xs: '100%', sm: 640, md: 680 },
@@ -145,7 +148,7 @@ export default function SearchSection({
             boxShadow: '0 18px 45px rgba(234, 88, 12, 0.10)',
             border: '1.5px solid rgba(253, 186, 116, 0.6)',
             backgroundColor: '#ffffff',
-            transition: 'all 0.3s ease'
+            transition: 'box-shadow 0.25s ease, border-color 0.25s ease'
           }}
         >
           {/* Active prompt tags */}
@@ -478,6 +481,8 @@ export default function SearchSection({
         <Box sx={{ mt: 3.5, textAlign: 'center' }}>
           <Typography
             variant="caption"
+            component={Reveal}
+            delay={0.12}
             sx={{
               color: '#78716C',
               display: 'block',
@@ -498,6 +503,9 @@ export default function SearchSection({
               : POPULAR_PROMPTS
             ).map((promptText, i) => (
               <Chip
+                component={Reveal}
+                delay={0.2 + i * 0.08}
+                distance={16}
                 key={i}
                 label={promptText}
                 onClick={() => handleSelectQuickPrompt(promptText)}
@@ -510,7 +518,7 @@ export default function SearchSection({
                   fontSize: '0.8rem',
                   fontWeight: 500,
                   boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-                  transition: 'all 0.15s ease',
+                  transition: 'background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
                   '&:hover': {
                     backgroundColor: '#FFF7ED',
                     color: '#FF7A1A',

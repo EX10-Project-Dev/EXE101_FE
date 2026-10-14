@@ -8,6 +8,8 @@ import { useLanguage } from '../contexts/LanguageContext'
 import { MOCK_VENUES } from '../data/mockVenues'
 import { extractVenueCoordinates, getDirectionsUrl } from '../utils/geoUtils'
 import './DiscoveryMapSection.css'
+import Reveal from './Reveal'
+import { useReducedMotion } from 'framer-motion'
 
 const CATEGORY_SYMBOLS = {
   Café: '☕',
@@ -25,7 +27,6 @@ function createCustomMarkerHtml(venue, symbol) {
   const score = venue.matchScore?.toFixed(1) || '9.5'
   return `
     <div class="custom-map-pin is-active" title="${venue.name}: ${score}/10">
-      <div class="pin-pulse-ring"></div>
       <div class="pin-card-pill">
         <span class="pin-emoji" aria-hidden="true">${symbol}</span>
         <span class="pin-name">${venue.name}</span>
@@ -58,15 +59,18 @@ const GOOGLE_MAP_STYLES = [
 
 function GoogleMapPanTo({ targetPosition, zoom = 16 }) {
   const map = useMap()
+  const reducedMotion = useReducedMotion()
   useEffect(() => {
     if (!map || !targetPosition) return
-    map.panTo(targetPosition)
+    if (reducedMotion) map.setCenter(targetPosition)
+    else map.panTo(targetPosition)
     map.setZoom(zoom)
-  }, [map, targetPosition, zoom])
+  }, [map, targetPosition, zoom, reducedMotion])
   return null
 }
 
 function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
+  const reducedMotion = useReducedMotion()
   const mapElement = useRef(null)
   const mapInstanceRef = useRef(null)
   const markerRef = useRef(null)
@@ -112,9 +116,9 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
   // Recenter back to central Ho Chi Minh City
   useEffect(() => {
     if (recenterTrigger > 0 && mapInstanceRef.current) {
-      mapInstanceRef.current.flyTo([10.775, 106.700], 14, { duration: 1 })
+      mapInstanceRef.current.flyTo([10.775, 106.700], 14, { duration: 1, animate: !reducedMotion })
     }
-  }, [recenterTrigger])
+  }, [recenterTrigger, reducedMotion])
 
   // Update marker & smooth flyTo active venue with dynamically parsed coordinates
   useEffect(() => {
@@ -151,8 +155,8 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
       markerRef.current.setIcon(icon)
     }
 
-    map.flyTo(position, 16, { duration: 1.2, easeLinearity: 0.25 })
-  }, [activeVenue])
+    map.flyTo(position, 16, { duration: 1.2, easeLinearity: 0.25, animate: !reducedMotion })
+  }, [activeVenue, reducedMotion])
 
   return (
     <div
@@ -210,21 +214,21 @@ export default function DiscoveryMapSection({
     <Box component="section" id="discovery-map" sx={{ py: { xs: 6, md: 9 } }}>
       <Container maxWidth="lg" sx={{ maxWidth: '1080px !important' }}>
         <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
-          <Typography component="h2" className="discovery-map-title">
+          <Typography component={Reveal} tag="h2" className="discovery-map-title">
             {isEn ? 'FEELS LIKE THE RESEARCH' : 'QUÁN HỢP GU BẠN,'}
             <br />
             <Box component="span" sx={{ color: '#B9480B' }}>
               {isEn ? 'WAS ALREADY DONE FOR YOU' : 'ĐÃ ĐƯỢC TÌM SẴN.'}
             </Box>
           </Typography>
-          <Typography sx={{ maxWidth: 590, mx: 'auto', mt: 2, color: '#68564B', fontSize: { xs: '0.9rem', md: '1rem' }, lineHeight: 1.7 }}>
+          <Typography component={Reveal} delay={0.12} sx={{ maxWidth: 590, mx: 'auto', mt: 2, color: '#68564B', fontSize: { xs: '0.9rem', md: '1rem' }, lineHeight: 1.7 }}>
             {isEn
               ? 'Find places that fit your moment. Search or choose a venue above to view its exact location on the map.'
               : 'Khám phá những nơi phù hợp với khoảnh khắc của bạn. Tìm kiếm hoặc chọn một địa điểm ở trên để hiển thị vị trí trên bản đồ.'}
           </Typography>
         </Box>
 
-        <div className="discovery-map-frame">
+        <Reveal scale={0.97} delay={0.18} className="discovery-map-frame">
           {/* Floating Top Control Bar */}
           <div className="map-top-bar">
             <div className="map-status-badge">
@@ -292,7 +296,6 @@ export default function DiscoveryMapSection({
                         title={`${activeVenue.name}: ${activeVenue.matchScore}/10`}
                       >
                         <div className="custom-map-pin is-active">
-                          <div className="pin-pulse-ring" />
                           <div className="pin-card-pill">
                             <span className="pin-emoji" aria-hidden="true">{CATEGORY_SYMBOLS[activeVenue.category] || '📍'}</span>
                             <span className="pin-name">{activeVenue.name}</span>
@@ -343,7 +346,11 @@ export default function DiscoveryMapSection({
 
           {/* Floating Detail Card for the active venue */}
           {activeVenue && (
-            <article
+            <Reveal
+              tag="article"
+              key={activeVenue.id}
+              distance={16}
+              delay={0.35}
               className="discovery-map-card"
               aria-live="polite"
               aria-atomic="true"
@@ -439,9 +446,9 @@ export default function DiscoveryMapSection({
                   {isEn ? 'Directions' : 'Chỉ đường'}
                 </Button>
               </div>
-            </article>
+            </Reveal>
           )}
-        </div>
+        </Reveal>
 
         {/* Map Legend */}
         <div className="discovery-map-legend">

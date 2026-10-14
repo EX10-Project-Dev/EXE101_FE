@@ -1,5 +1,7 @@
 import { Box, Container, Typography, Avatar, Chip } from '@mui/material'
 import { useLanguage } from '../contexts/LanguageContext'
+import Reveal from './Reveal'
+import BrandText from './BrandText'
 
 const COLLECTIONS = [
   {
@@ -109,6 +111,8 @@ export default function CuratedCollections({ onSelectCollection }) {
           {/* Cột trái: Tiêu đề lớn & Đoạn văn giới thiệu */}
           <Box sx={{ maxWidth: { xs: '100%', lg: '400px' }, flexShrink: 0 }}>
             <Chip
+              component={Reveal}
+              distance={10}
               label={t('colBadge')}
               size="small"
               sx={{
@@ -123,6 +127,10 @@ export default function CuratedCollections({ onSelectCollection }) {
 
             <Typography
               variant="h2"
+              component={Reveal}
+              tag="h2"
+              direction="left"
+              delay={0.08}
               sx={{
                 fontWeight: 900,
                 fontSize: { xs: '2.1rem', sm: '2.6rem', md: '3rem' },
@@ -172,6 +180,9 @@ export default function CuratedCollections({ onSelectCollection }) {
 
             <Typography
               variant="body1"
+              component={Reveal}
+              direction="left"
+              delay={0.2}
               sx={{
                 mt: 2.5,
                 color: '#57534E',
@@ -185,6 +196,8 @@ export default function CuratedCollections({ onSelectCollection }) {
 
             <Typography
               variant="caption"
+              component={Reveal}
+              delay={0.28}
               sx={{
                 display: 'block',
                 mt: 2,
@@ -194,7 +207,7 @@ export default function CuratedCollections({ onSelectCollection }) {
                 letterSpacing: '0.04em'
               }}
             >
-              {t('colTag')}
+              <BrandText text={t('colTag')} />
             </Typography>
           </Box>
 
@@ -212,7 +225,7 @@ export default function CuratedCollections({ onSelectCollection }) {
               '&::-webkit-scrollbar': { display: 'none' }
             }}
           >
-            {COLLECTIONS.map((col) => {
+            {COLLECTIONS.map((col, index) => {
               const title1 = isEn ? col.titleEn1 : col.titleVi1
               const title2 = isEn ? col.titleEn2 : col.titleVi2
               const sub = isEn ? col.subEn : col.subVi
@@ -220,13 +233,24 @@ export default function CuratedCollections({ onSelectCollection }) {
 
               return (
                 <Box
+                  component={Reveal}
+                  delay={index * 0.09}
+                  scale={0.98}
                   key={col.id}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      event.currentTarget.click()
+                    }
+                  }}
                   onClick={() => {
                     if (onSelectCollection) {
                       onSelectCollection({ ...col, query })
                     } else {
                       const el = document.getElementById('hero-search-box') || document.getElementById('recommendations-section')
-                      if (el) el.scrollIntoView({ behavior: 'smooth' })
+                      if (el) el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
                     }
                   }}
                   sx={{
@@ -239,13 +263,13 @@ export default function CuratedCollections({ onSelectCollection }) {
                     flexShrink: 0,
                     boxShadow: '0 16px 36px rgba(234, 88, 12, 0.12)',
                     border: '1.5px solid rgba(253, 186, 116, 0.65)',
-                    transition: 'all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                    transition: 'translate 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
                     '&:hover': {
-                      transform: 'translateY(-10px) scale(1.02)',
-                      boxShadow: '0 22px 48px rgba(234, 88, 12, 0.22), 0 0 18px rgba(253, 186, 116, 0.45)',
+                      translate: '0 -4px',
+                      boxShadow: '0 20px 40px rgba(234, 88, 12, 0.16)',
                       border: '1.5px solid #FF7A1A',
                       '& .card-bg-img': {
-                        transform: 'scale(1.08)'
+                        transform: 'scale(1.02)'
                       }
                     }
                   }}

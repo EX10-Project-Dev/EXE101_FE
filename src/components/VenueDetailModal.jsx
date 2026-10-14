@@ -11,6 +11,7 @@ import {
   Stack
 } from '@mui/material'
 import { useLanguage } from '../contexts/LanguageContext'
+import BrandText from './BrandText'
 import { getDirectionsUrl, getPlaceViewUrl } from '../utils/geoUtils'
 
 export default function VenueDetailModal({ open, venue, onClose }) {
@@ -388,7 +389,7 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               fontWeight={900}
               sx={{ color: '#92400E', mb: 1.2 }}
             >
-              {isEn ? 'Why SEEKERS recommends this venue for you' : 'Tại sao SEEKERS đề xuất quán này cho bạn?'}
+              <BrandText text={isEn ? 'Why FIND&GO recommends this venue for you' : 'Tại sao FIND&GO đề xuất quán này cho bạn?'} />
             </Typography>
             <Stack spacing={1}>
               {reasons.map((reason, idx) => (

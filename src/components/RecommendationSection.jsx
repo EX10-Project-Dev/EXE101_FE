@@ -9,6 +9,7 @@ import {
 } from '@mui/material'
 import { useLanguage } from '../contexts/LanguageContext'
 import { MOCK_VENUES } from '../data/mockVenues'
+import Reveal from './Reveal'
 
 const INTENTS_DATA = [
   {
@@ -155,6 +156,7 @@ export default function RecommendationSection({ onOpenDetail, onFocusOnMap }) {
   return (
     <Box
       id="recommendations-section"
+      component="section"
       sx={{
         py: { xs: 5, md: 7 },
         background: 'transparent',
@@ -166,7 +168,8 @@ export default function RecommendationSection({ onOpenDetail, onFocusOnMap }) {
         <Box sx={{ textAlign: 'center', mb: 3.5 }}>
           <Typography
             variant="h3"
-            component="h2"
+            component={Reveal}
+            tag="h2"
             sx={{
               fontWeight: 900,
               letterSpacing: '-1px',
@@ -183,6 +186,8 @@ export default function RecommendationSection({ onOpenDetail, onFocusOnMap }) {
 
           <Typography
             variant="body2"
+            component={Reveal}
+            delay={0.12}
             sx={{
               color: '#57534E',
               fontSize: { xs: '0.88rem', sm: '0.98rem' },
@@ -212,7 +217,10 @@ export default function RecommendationSection({ onOpenDetail, onFocusOnMap }) {
             const isActive = activeIntentIndex === idx
             return (
               <Box
-                component="button"
+                component={Reveal}
+                tag="button"
+                delay={0.2 + idx * 0.09}
+                scale={0.98}
                 type="button"
                 role="tab"
                 id={`occasion-tab-${intent.id}`}
@@ -232,7 +240,7 @@ export default function RecommendationSection({ onOpenDetail, onFocusOnMap }) {
                   border: 0,
                   color: isActive ? '#B9480B' : '#8A7568',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
+                  transition: 'color 0.25s ease, border-color 0.25s ease',
                   borderBottom: isActive ? '2px solid #F97316' : '2px solid #E9DDD4',
                   '&:hover': { color: '#FF7A1A' }
                 }}
@@ -271,6 +279,8 @@ export default function RecommendationSection({ onOpenDetail, onFocusOnMap }) {
         >
           {/* CỘT TRÁI: Hình ảnh quán (chiếm ~44% bề ngang) */}
           <Box
+            component={Reveal}
+            direction="left"
             sx={{
               flex: { xs: 'none', md: '0 0 46%' },
               position: 'relative',
@@ -295,6 +305,9 @@ export default function RecommendationSection({ onOpenDetail, onFocusOnMap }) {
 
           {/* CỘT PHẢI: Chi tiết quán NẰM NGANG bên cạnh ảnh (chiếm ~56% còn lại) */}
           <Box
+            component={Reveal}
+            direction="right"
+            delay={0.12}
             sx={{
               flex: '1 1 auto',
               minWidth: 0,

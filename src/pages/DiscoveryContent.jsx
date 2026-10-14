@@ -9,8 +9,11 @@ import CuratedCollections from '../components/CuratedCollections'
 import Footer from '../components/Footer'
 import { getRecommendations } from '../services/recommendationService'
 import { MOCK_VENUES } from '../data/mockVenues'
+import { useReducedMotion } from 'framer-motion'
 
 export default function DiscoveryContent() {
+  const reducedMotion = useReducedMotion()
+  const scrollBehavior = reducedMotion ? 'instant' : 'smooth'
   const [prompts, setPrompts] = useState([])
   const [criteria, setCriteria] = useState({
     purpose: '',
@@ -36,7 +39,7 @@ export default function DiscoveryContent() {
     }
     const mapEl = document.getElementById('discovery-map')
     if (mapEl) {
-      mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      mapEl.scrollIntoView({ behavior: scrollBehavior, block: 'start' })
     }
   }
 
@@ -44,8 +47,8 @@ export default function DiscoveryContent() {
   useEffect(() => {
     let cancelled = false
     const hashId = window.location.hash.slice(1)
-    const targetId = hashId === 'venue-search' ? 'recommendations-section' : hashId
-    if (targetId === 'recommendations-section') {
+    const targetId = hashId
+    if (['venue-search', 'recommendations-section', 'discovery-map'].includes(targetId)) {
       document.getElementById(targetId)?.scrollIntoView({ behavior: 'instant' })
     }
     getRecommendations({ prompts: [], criteria: {}, location: null })
@@ -76,7 +79,7 @@ export default function DiscoveryContent() {
     // Cuộn tới danh sách quán
     const el = document.getElementById('recommendations-section')
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
+      el.scrollIntoView({ behavior: scrollBehavior })
     }
   }
 
@@ -123,7 +126,7 @@ export default function DiscoveryContent() {
         .finally(() => {
           setIsLoading(false)
           const el = document.getElementById('recommendations-section')
-          if (el) el.scrollIntoView({ behavior: 'smooth' })
+          if (el) el.scrollIntoView({ behavior: scrollBehavior })
         })
     }
   }

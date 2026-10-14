@@ -1,6 +1,9 @@
+import { useRef } from 'react'
+import { useInView, useReducedMotion } from 'framer-motion'
 import { Box, Typography } from '@mui/material'
 import { MOCK_VENUES } from '../data/mockVenues'
 import { useLanguage } from '../contexts/LanguageContext'
+import Reveal from './Reveal'
 
 const MARQUEE_TAGLINES_VI = {
   'venue-1': 'Làm việc & Chạy deadline',
@@ -22,6 +25,9 @@ const MARQUEE_TAGLINES_EN = {
 
 export default function ScoreMarquee({ onSelectCard }) {
   const { isEn } = useLanguage()
+  const track = useRef(null)
+  const inView = useInView(track)
+  const reducedMotion = useReducedMotion()
 
   const MARQUEE_DATA = MOCK_VENUES.map((v) => ({
     ...v,
@@ -47,6 +53,8 @@ export default function ScoreMarquee({ onSelectCard }) {
       {/* Section label */}
       <Box sx={{ textAlign: 'center', mb: 2.5 }}>
         <Typography
+          component={Reveal}
+          distance={16}
           variant="caption"
           sx={{
             color: '#C2410C',
@@ -64,9 +72,10 @@ export default function ScoreMarquee({ onSelectCard }) {
 
       {/* Marquee Wrapper with fading edge masks */}
       <Box
+        ref={track}
         sx={{
           width: '100%',
-          overflow: 'hidden',
+          overflowX: reducedMotion ? 'auto' : 'hidden',
           position: 'relative',
           maskImage: {
             xs: 'none',
@@ -79,20 +88,29 @@ export default function ScoreMarquee({ onSelectCard }) {
         }}
       >
         <Box
+          component={Reveal}
+          distance={16}
+          delay={0.12}
+        >
+        <Box
           sx={{
             display: 'flex',
             gap: 2.5,
             width: 'max-content',
             animation: 'marqueeLeft 28s linear infinite',
+            animationPlayState: inView && !reducedMotion ? 'running' : 'paused',
             py: 1,
             px: 1,
             willChange: 'transform',
             '&:hover': {
               animationPlayState: 'paused'
+            },
+            '&:focus-within': {
+              animationPlayState: 'paused'
             }
           }}
         >
-          {INFINITE_ITEMS.map((item, idx) => (
+          {(reducedMotion ? MARQUEE_DATA : INFINITE_ITEMS).map((item, idx) => (
             <Box
               key={`${item.id}-${idx}`}
               onClick={() => onSelectCard && onSelectCard(item)}
@@ -109,7 +127,7 @@ export default function ScoreMarquee({ onSelectCard }) {
                 border: '1px solid #FDE8CC',
                 transition: 'transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease',
                 '&:hover': {
-                  transform: 'translateY(-6px) scale(1.02)',
+                  transform: 'translateY(-4px)',
                   borderColor: '#FF7A1A',
                   boxShadow: '0 16px 36px rgba(234, 88, 12, 0.22)'
                 }
@@ -213,6 +231,7 @@ export default function ScoreMarquee({ onSelectCard }) {
               </Box>
             </Box>
           ))}
+        </Box>
         </Box>
       </Box>
     </Box>

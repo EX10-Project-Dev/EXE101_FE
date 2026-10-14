@@ -1,6 +1,8 @@
 import { Box, Container, Typography } from '@mui/material'
 import { useLanguage } from '../contexts/LanguageContext'
 import logo from '../assets/logo-small.webp'
+import Reveal from './Reveal'
+import BrandText from './BrandText'
 
 export default function Footer() {
   const { t, isEn } = useLanguage()
@@ -14,7 +16,7 @@ export default function Footer() {
         color: '#68564B'
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" component={Reveal} distance={16}>
         <Box
           sx={{
             display: 'flex',
@@ -31,7 +33,7 @@ export default function Footer() {
               <Box
                 component="img"
                 src={logo}
-                alt="SEEKERS Logo"
+                alt="FIND&GO Logo"
                 width={42}
                 height={42}
                 sx={{
@@ -47,7 +49,7 @@ export default function Footer() {
               />
               <Box>
                 <Typography variant="h6" fontWeight={900} sx={{ color: '#34251E', lineHeight: 1.1, letterSpacing: '0.04em' }}>
-                  SEEKERS
+                  <BrandText />
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#B9480B', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.06em' }}>
                   EXPLORE MORE TOGETHER
@@ -96,7 +98,7 @@ export default function Footer() {
           }}
         >
           <Typography variant="caption" sx={{ color: '#57534E' }}>
-            © {new Date().getFullYear()} {t('footerCopyright')}
+            © {new Date().getFullYear()} <BrandText text={t('footerCopyright')} />
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Typography variant="caption" sx={{ color: '#57534E' }}>

@@ -51,7 +51,7 @@ html { scroll-behavior: smooth; }
 .hero-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-1); width: 100%; z-index: 1; }
 .hero-brand { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 1rem; letter-spacing: -0.06em; font-weight: 900; min-height: 44px; }
 .hero-brand img { width: 32px; height: 32px; object-fit: contain; }
-.hero-brand-dot { color: var(--accent-text); }
+.brand-go { color: var(--accent); }
 .hero-actions { display: flex; align-items: center; gap: 4px; }
 .hero-language { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; padding: 0 8px; border: 0; background: transparent; cursor: pointer; color: var(--text-muted); font-size: 0.75rem; }
 .hero-language .is-active { font-weight: 800; color: var(--text-primary); }
@@ -63,8 +63,9 @@ html { scroll-behavior: smooth; }
 .hero-artwork img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .hero-subtitle { max-width: 560px; margin: 28px auto 0; padding: 0 12px; text-align: center; font-size: clamp(1rem, 1.5vw, 1.25rem); line-height: 1.5; color: var(--text-secondary); text-wrap: balance; }
 .hero-primary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 64px; width: auto; max-width: 100%; margin-top: 36px; padding: var(--space-2) var(--space-4); background: linear-gradient(110deg, #f97316, #f06445); color: #ffffff; border-radius: 16px; box-shadow: var(--shadow-cta); text-decoration: none; font-size: 1.125rem; font-weight: 700; transition: transform 180ms ease; }
-.hero-primary:hover { transform: translateY(-3px); }
-.venue-search { padding: var(--space-5) 0; scroll-margin-top: var(--space-2); }
+.hero-primary:hover { transform: translateY(-2px) scale(1.01); }
+.venue-search { padding: var(--space-5) 0; }
+#venue-search, #recommendations-section, #discovery-map { scroll-margin-top: var(--space-2); }
 .discovery-placeholder { min-height: 600px; }
 
 @media (min-width: 600px) {
@@ -88,4 +89,8 @@ html { scroll-behavior: smooth; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .hero-primary:hover { transform: none; }
+  [data-reveal] { opacity: 1 !important; transform: none !important; translate: none !important; }
+  .card-bg-img { transform: none !important; }
+  .MuiBox-root:hover, .MuiCard-root:hover, .custom-map-pin:hover,
+  .map-action-btn:hover, .map-quick-chip:hover, .card-detail-btn.MuiButton-root:hover { transform: none; }
 }

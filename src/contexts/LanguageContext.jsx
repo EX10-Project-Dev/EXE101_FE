@@ -62,7 +62,7 @@ export const TRANSLATIONS = {
     colTitle2: 'TUYỂN CHỌN,',
     colTitle3: 'DÀNH RIÊNG CHO BẠN',
     colSubtitle: 'Khám phá các danh sách được tuyển chọn bởi người bản địa, cá nhân hóa theo đúng khẩu vị và sở thích của bạn để mỗi gợi ý đều mang đậm dấu ấn riêng.',
-    colTag: 'SEEKERS • CÁ NHÂN HÓA TRẢI NGHIỆM ẨM THỰC',
+    colTag: 'FIND&GO • CÁ NHÂN HÓA TRẢI NGHIỆM ẨM THỰC',
     colBurger1: 'ĐẠI TIỆC',
     colBurger2: 'BURGER',
     colBurgerSub: 'Tuyển chọn từ 18k+ đánh giá bản địa',
@@ -78,7 +78,7 @@ export const TRANSLATIONS = {
     footerDesc: 'Nền tảng tìm kiếm và gợi ý địa điểm F&B thông minh theo ngữ cảnh, cảm xúc và nhu cầu thực tế của người dùng.',
     footerTaskBadge: '',
     footerNoLogin: ' • "',
-    footerCopyright: 'SEEKERS — Explore More Together.',
+    footerCopyright: 'FIND&GO — Explore More Together.',
     footerCommunity: '',
 
     // Modals
@@ -153,7 +153,7 @@ export const TRANSLATIONS = {
     colTitle2: 'COLLECTIONS,',
     colTitle3: 'MADE PERSONAL',
     colSubtitle: 'Find curated lists from locals, personalized to your taste and interests so every recommendation feels made for you.',
-    colTag: 'SEEKERS • PERSONALIZED DINING EXPERIENCE',
+    colTag: 'FIND&GO • PERSONALIZED DINING EXPERIENCE',
     colBurger1: 'THE BURGER',
     colBurger2: 'BREAKDOWN',
     colBurgerSub: 'Curated from 18k+ local reviews',
@@ -168,7 +168,7 @@ export const TRANSLATIONS = {
     intelBadge: 'Inspired by Context-Aware Intelligence',
     intelTitleMain: 'Understanding spaces. ',
     intelTitleAccent: 'Beyond raw map coordinates.',
-    intelSubtitle: 'Every venue holds a different meaning depending on who you are with and what you do. SEEKERS analyzes context to deliver transparent scores and reasons.',
+    intelSubtitle: 'Every venue holds a different meaning depending on who you are with and what you do. FIND&GO analyzes context to deliver transparent scores and reasons.',
     intelPillar1Title: 'Transparent Scoring & Clear Rationale',
     intelPillar1Body: 'No random lists. Every recommendation provides specific reasons explaining why it matches your mood and intent.',
     intelPillar2Title: 'Tuned for Vietnamese F&B Culture',
@@ -182,7 +182,7 @@ export const TRANSLATIONS = {
     footerDesc: 'Smart F&B search and recommendation platform tailored to user context, mood, and real occasions.',
     footerTaskBadge: '',
     footerNoLogin: 'No personal data logged • Instant access without registration',
-    footerCopyright: 'SEEKERS — Explore More Together.',
+    footerCopyright: 'FIND&GO — Explore More Together.',
     footerCommunity: 'Crafted for the Vietnamese culinary & coffee community',
 
     // Modals
