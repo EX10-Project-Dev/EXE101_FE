@@ -9,6 +9,24 @@
 }
 
 /* Map frame & container */
+.discovery-map-demo-label {
+  margin: 0 0 12px;
+  text-align: center;
+  color: #9a3412;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.discovery-map-frame--demo {
+  cursor: default;
+  touch-action: pan-y;
+}
+
+.discovery-map-frame--demo [inert],
+.discovery-map-frame--demo [inert] * {
+  pointer-events: none !important;
+}
+
 .discovery-map-frame {
   position: relative;
   isolation: isolate;

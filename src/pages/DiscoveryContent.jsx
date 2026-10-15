@@ -162,6 +162,7 @@ export default function DiscoveryContent() {
 
       {/* Discovery map with its search controls */}
       <DiscoveryMapSection
+        demo
         venues={venues.length > 0 ? venues : MOCK_VENUES}
         focusedVenueId={focusedVenueId}
         onSelectVenue={(venue) => setFocusedVenueId(venue?.id || null)}

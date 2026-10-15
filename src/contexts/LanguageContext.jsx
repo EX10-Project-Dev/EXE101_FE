@@ -22,7 +22,7 @@ export const TRANSLATIONS = {
     prompt2Placeholder: 'Yêu cầu 2: Có ổ điện, Wi-Fi mạnh, bàn rộng...',
     prompt3Placeholder: 'Yêu cầu 3: Không gian thoáng mát, mở tới 23h...',
     addCriteriaBtn: 'Thêm yêu cầu',
-    searchBtn: 'Tìm quán',
+    searchBtn: 'Tìm địa điểm',
     searchingBtn: 'Đang tìm...',
     nearMe: 'Gần tôi',
     locating: 'Đang định vị...',

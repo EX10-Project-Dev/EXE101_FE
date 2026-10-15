@@ -66,6 +66,12 @@ Phạm vi này chỉ dành cho khách chưa đăng nhập. Luồng đăng ký/đ
 
 ## Phụ thuộc và ghi chú
 
+### AI demo trên trang `/discover`
+
+Tìm kiếm hiện chạy cục bộ qua `src/services/discoveryAiDemo.js`: hiển thị hiệu ứng phân tích khoảng 1,8 giây, xếp hạng dữ liệu quán mẫu theo nhu cầu tiếng Việt/Anh và giữ các bộ lọc đã chọn. Thử `cafe for first date` hoặc `cà phê yên tĩnh có ổ cắm`. Có thể hủy tìm kiếm; kết quả cũ không ghi đè yêu cầu mới.
+
+Điểm số là điểm minh họa theo mức khớp tiêu chí. Nội dung review trong `src/data/demoVenueReviews.js` là bản tổng hợp biên tập từ dữ liệu mẫu, không phải review khách hàng trực tiếp hoặc nội dung do mô hình AI sinh. Giao diện đánh dấu **AI demo** ở trạng thái tìm kiếm, kết quả và phần tổng hợp. Chưa gọi API AI, chưa dùng API key. Khi có contract backend, thay hàm tìm kiếm demo bằng adapter API có hỗ trợ hủy request.
+
 - Endpoint và cấu trúc dữ liệu trong README task chung mới là đề xuất cho tới khi BE xác nhận.
 - Không hard-code số lượng kết quả là ba; hiển thị số địa điểm backend trả về.
 - Nếu chưa có API, dùng dữ liệu mẫu tạm thời và thay bằng API sau khi contract được chốt.

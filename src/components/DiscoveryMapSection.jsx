@@ -69,7 +69,7 @@ function GoogleMapPanTo({ targetPosition, zoom = 16 }) {
   return null
 }
 
-function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
+function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger, demo }) {
   const { tx } = useLanguage()
   const reducedMotion = useReducedMotion()
   const mapElement = useRef(null)
@@ -85,6 +85,11 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
     if (!mapElement.current) return
     const map = L.map(mapElement.current, {
       scrollWheelZoom: false,
+      dragging: !demo,
+      touchZoom: !demo,
+      doubleClickZoom: !demo,
+      boxZoom: !demo,
+      keyboard: !demo,
       zoomControl: false,
       center: [10.775, 106.700],
       zoom: 14
@@ -111,12 +116,13 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
       map.remove()
       mapInstanceRef.current = null
     }
-  }, [])
+  }, [demo])
 
   useEffect(() => {
+    if (demo) return
     const control = L.control.zoom({ position: 'bottomright', zoomInTitle: tx('Zoom in'), zoomOutTitle: tx('Zoom out') }).addTo(mapInstanceRef.current)
     return () => { control.remove() }
-  }, [tx])
+  }, [tx, demo])
 
   // Recenter back to central Ho Chi Minh City
   useEffect(() => {
@@ -174,6 +180,7 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
 }
 
 export default function DiscoveryMapSection({
+  demo = false,
   searchControls,
   onOpenDetail,
   focusedVenueId,
@@ -193,7 +200,7 @@ export default function DiscoveryMapSection({
   }
 
   const venueList = venues?.length > 0 ? venues : MOCK_VENUES
-  const activeVenueId = userSelectedVenueId || focusedVenueId || null
+  const activeVenueId = demo ? null : userSelectedVenueId || focusedVenueId || null
   const activeVenue = activeVenueId ? venueList.find((v) => v.id === activeVenueId) : null
   const activeCoords = extractVenueCoordinates(activeVenue)
   const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim()
@@ -228,13 +235,26 @@ export default function DiscoveryMapSection({
             </Box>
           </Typography>
           <Typography component={Reveal} delay={0.12} sx={{ maxWidth: 590, mx: 'auto', mt: 2, color: '#68564B', fontSize: { xs: '0.9rem', md: '1rem' }, lineHeight: 1.7 }}>
-            {isEn
+            {demo
+              ? (isEn
+                  ? 'A preview of how you can discover places that match your taste.'
+                  : 'Xem trước cách khám phá những địa điểm phù hợp với gu của bạn.')
+              : isEn
               ? 'Find places that fit your moment. Search or choose a venue above to view its exact location on the map.'
               : 'Khám phá những nơi phù hợp với khoảnh khắc của bạn. Tìm kiếm hoặc chọn một địa điểm ở trên để hiển thị vị trí trên bản đồ.'}
           </Typography>
         </Box>
 
-        <Reveal scale={0.97} delay={0.18} className={`discovery-map-frame${searchControls ? ' discovery-map-frame--search' : ''}`}>
+        {demo && (
+          <p className="discovery-map-demo-label">
+            {isEn ? 'Demo · Preview only' : 'Bản demo · Chỉ để xem trước'}
+          </p>
+        )}
+        <Reveal scale={0.97} delay={0.18} className={`discovery-map-frame${searchControls ? ' discovery-map-frame--search' : ''}${demo ? ' discovery-map-frame--demo' : ''}`}
+          role={demo ? 'img' : undefined}
+          aria-label={demo ? (isEn ? 'Demo preview of the venue map and search in Ho Chi Minh City' : 'Bản demo bản đồ và tìm kiếm quán tại TP. Hồ Chí Minh') : undefined}
+        >
+          <div inert={demo}>
           <div className="map-surface">
           {/* Floating Top Control Bar */}
           <div className="map-top-bar">
@@ -246,7 +266,9 @@ export default function DiscoveryMapSection({
                   <strong>{activeVenue.name}</strong>
                 </span>
               ) : (
-                <span>{isEn ? 'Ho Chi Minh City · Pick a place to locate' : 'TP. Hồ Chí Minh · Chọn quán để định vị'}</span>
+                <span>{demo
+                  ? (isEn ? 'Ho Chi Minh City · Demo map' : 'TP. Hồ Chí Minh · Bản đồ demo')
+                  : (isEn ? 'Ho Chi Minh City · Pick a place to locate' : 'TP. Hồ Chí Minh · Chọn quán để định vị')}</span>
               )}
             </div>
 
@@ -289,7 +311,10 @@ export default function DiscoveryMapSection({
                   mapId="DEMO_MAP_ID"
                   internalUsageAttributionIds={['gmp_git_agentskills_v1']}
                   disableDefaultUI
-                  zoomControl
+                  zoomControl={!demo}
+                  gestureHandling={demo ? 'none' : 'auto'}
+                  keyboardShortcuts={!demo}
+                  clickableIcons={!demo}
                   styles={GOOGLE_MAP_STYLES}
                   style={{ width: '100%', height: '100%' }}
                 >
@@ -319,6 +344,7 @@ export default function DiscoveryMapSection({
             </div>
           ) : (
             <LeafletMapCanvas
+              demo={demo}
               activeVenue={activeVenue}
               onMarkerClick={handleMarkerClick}
               recenterTrigger={recenterTrigger}
@@ -457,13 +483,16 @@ export default function DiscoveryMapSection({
           )}
           </div>
           {searchControls && <div className="map-search-controls">{searchControls}</div>}
+          </div>
         </Reveal>
 
         {/* Map Legend */}
         <div className="discovery-map-legend">
           <span><Sparkles size={16} aria-hidden="true" />{isEn ? 'Clear match scores' : 'Điểm phù hợp rõ ràng'}</span>
           <span><Wifi size={16} aria-hidden="true" />{isEn ? 'Reasons that matter to you' : 'Lý do đúng nhu cầu'}</span>
-          <span><MapPin size={16} aria-hidden="true" />{isEn ? 'Tap pin to see details' : 'Chạm vào vị trí để xem chi tiết'}</span>
+          <span><MapPin size={16} aria-hidden="true" />{demo
+            ? (isEn ? 'Illustrative map preview' : 'Bản đồ minh họa')
+            : (isEn ? 'Tap pin to see details' : 'Chạm vào vị trí để xem chi tiết')}</span>
         </div>
       </Container>
     </Box>
