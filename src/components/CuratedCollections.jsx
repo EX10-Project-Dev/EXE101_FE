@@ -134,7 +134,7 @@ export default function CuratedCollections({ onSelectCollection }) {
               sx={{
                 fontWeight: 900,
                 fontSize: { xs: '2.1rem', sm: '2.6rem', md: '3rem' },
-                lineHeight: 1.1,
+                lineHeight: 1.3,
                 letterSpacing: '-0.02em',
                 textTransform: 'uppercase',
                 color: '#1C0A00',

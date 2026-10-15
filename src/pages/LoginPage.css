@@ -138,3 +138,8 @@
   .auth-dialog .auth-left { padding: 20px; }
   .auth-dialog .auth-intro h1 { font-size: 36px; }
 }
+
+.auth-page[lang="vi"] .auth-intro h1 { line-height: 1.25; letter-spacing: -.025em; text-wrap: balance; }
+.auth-page[lang="vi"] .auth-eyebrow, .auth-page[lang="vi"] .auth-member { letter-spacing: .04em; line-height: 1.6; }
+.auth-page[lang="vi"] .auth-divider span { white-space: normal; text-align: center; line-height: 1.6; }
+.auth-options { flex-wrap: wrap; }

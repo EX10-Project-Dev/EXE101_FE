@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { translateText } from '../utils/localization'
 
 const LanguageContext = createContext()
 
@@ -45,7 +46,7 @@ export const TRANSLATIONS = {
 
     // Recommendation Section
     recBadge: 'GỢI Ý TỐI ƯU CHO BẠN',
-    recHeadline: 'FIND THE RIGHT PLACE FOR YOUR MOMENT.',
+    recHeadline: 'TÌM QUÁN HỢP GU CHO MỖI KHOẢNH KHẮC.',
     recSubtitle: 'Cùng một địa điểm nhưng mang lại giá trị khác nhau tùy thuộc vào mục đích của bạn.',
     recEmpty: 'Không tìm thấy địa điểm nào phù hợp với bộ tiêu chí hiện tại.',
     recReset: 'Đặt lại bộ lọc',
@@ -77,9 +78,9 @@ export const TRANSLATIONS = {
     // Footer
     footerDesc: 'Nền tảng tìm kiếm và gợi ý địa điểm F&B thông minh theo ngữ cảnh, cảm xúc và nhu cầu thực tế của người dùng.',
     footerTaskBadge: '',
-    footerNoLogin: ' • "',
-    footerCopyright: 'FIND&GO — Explore More Together.',
-    footerCommunity: '',
+    footerNoLogin: 'Khám phá địa điểm ngay trên trang chủ',
+    footerCopyright: 'FIND&GO — Cùng nhau khám phá nhiều hơn.',
+    footerCommunity: 'Dành cho cộng đồng yêu ẩm thực và cà phê Việt Nam',
 
     // Modals
     modalFilterTitle: 'Tùy chỉnh 7 tiêu chí tìm quán',
@@ -181,7 +182,7 @@ export const TRANSLATIONS = {
     // Footer
     footerDesc: 'Smart F&B search and recommendation platform tailored to user context, mood, and real occasions.',
     footerTaskBadge: '',
-    footerNoLogin: 'No personal data logged • Instant access without registration',
+    footerNoLogin: 'Explore places right from the home page',
     footerCopyright: 'FIND&GO — Explore More Together.',
     footerCommunity: 'Crafted for the Vietnamese culinary & coffee community',
 
@@ -202,11 +203,15 @@ export const TRANSLATIONS = {
 
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState(() => {
-    return localStorage.getItem('findgo-language') || 'vi'
+    try {
+      return localStorage.getItem('findgo-language') === 'en' ? 'en' : 'vi'
+    } catch {
+      return 'vi'
+    }
   })
 
   useEffect(() => {
-    localStorage.setItem('findgo-language', language)
+    try { localStorage.setItem('findgo-language', language) } catch { /* Use the selection for this visit. */ }
     document.documentElement.setAttribute('lang', language)
   }, [language])
 
@@ -218,9 +223,10 @@ export function LanguageProvider({ children }) {
     const langDict = TRANSLATIONS[language] || TRANSLATIONS.vi
     return langDict[key] ?? key
   }
+  const tx = useCallback((text, values) => translateText(text, language, values), [language])
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t, isEn: language === 'en' }}>
+    <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t, tx, isEn: language === 'en' }}>
       {children}
     </LanguageContext.Provider>
   )

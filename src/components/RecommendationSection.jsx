@@ -172,16 +172,16 @@ export default function RecommendationSection({ onOpenDetail, onFocusOnMap }) {
             tag="h2"
             sx={{
               fontWeight: 900,
-              letterSpacing: '-1px',
+              letterSpacing: '-0.02em',
               fontSize: { xs: '1.75rem', sm: '2.2rem', md: '2.2rem' },
-              whiteSpace: { xs: 'normal', md: 'nowrap' },
-              lineHeight: 1.12,
+              textWrap: 'balance',
+              lineHeight: 1.35,
               color: '#1C0A00',
               textTransform: 'uppercase',
               mb: 1.2
             }}
           >
-            FIND THE RIGHT PLACE FOR YOUR MOMENT.
+            {t('recHeadline')}
           </Typography>
 
           <Typography

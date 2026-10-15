@@ -15,7 +15,7 @@ import BrandText from './BrandText'
 import { getDirectionsUrl, getPlaceViewUrl } from '../utils/geoUtils'
 
 export default function VenueDetailModal({ open, venue, onClose }) {
-  const { t, isEn } = useLanguage()
+  const { t, isEn, tx } = useLanguage()
   const [activeImageIndex, setActiveImageIndex] = useState(0)
 
   if (!venue) return null
@@ -92,7 +92,7 @@ export default function VenueDetailModal({ open, venue, onClose }) {
         {/* Top left badges: Category & Rating */}
         <Box sx={{ position: 'absolute', top: 16, left: 16, display: 'flex', gap: 1 }}>
           <Chip
-            label={venue.category}
+            label={tx(venue.category)}
             size="small"
             sx={{
               backgroundColor: '#EA580C',
@@ -430,7 +430,7 @@ export default function VenueDetailModal({ open, venue, onClose }) {
                   {venue.purposes.map((p, idx) => (
                     <Chip
                       key={idx}
-                      label={p}
+                      label={tx(p)}
                       size="small"
                       sx={{
                         backgroundColor: '#FFF7ED',
@@ -460,14 +460,14 @@ export default function VenueDetailModal({ open, venue, onClose }) {
                     fontWeight={800}
                     sx={{ color: '#1C0A00', fontSize: '0.85rem' }}
                   >
-                    Quy mô nhóm lý tưởng:
+                    {isEn ? 'Ideal group size:' : 'Quy mô nhóm lý tưởng:'}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.8 }}>
                   {venue.groupSizes.map((g, idx) => (
                     <Chip
                       key={idx}
-                      label={g}
+                      label={tx(g)}
                       size="small"
                       sx={{
                         backgroundColor: '#ECFDF5',
@@ -511,7 +511,7 @@ export default function VenueDetailModal({ open, venue, onClose }) {
               {(venue.atmosphere || []).map((atm, idx) => (
                 <Chip
                   key={`atm-${idx}`}
-                  label={isEn ? `Atmosphere: ${atm}` : `Không khí: ${atm}`}
+                  label={isEn ? `Atmosphere: ${atm}` : `Không gian: ${tx(atm)}`}
                   size="small"
                   sx={{
                     borderRadius: '8px',

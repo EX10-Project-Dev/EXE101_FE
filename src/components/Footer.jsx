@@ -52,7 +52,7 @@ export default function Footer() {
                   <BrandText />
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#B9480B', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.06em' }}>
-                  EXPLORE MORE TOGETHER
+                  {isEn ? 'EXPLORE MORE TOGETHER' : 'CÙNG NHAU KHÁM PHÁ'}
                 </Typography>
               </Box>
             </Box>

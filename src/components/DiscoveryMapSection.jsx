@@ -70,6 +70,7 @@ function GoogleMapPanTo({ targetPosition, zoom = 16 }) {
 }
 
 function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
+  const { tx } = useLanguage()
   const reducedMotion = useReducedMotion()
   const mapElement = useRef(null)
   const mapInstanceRef = useRef(null)
@@ -96,7 +97,6 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
       maxZoom: 19
     }).addTo(map)
 
-    L.control.zoom({ position: 'bottomright' }).addTo(map)
 
     const handleResize = () => map.invalidateSize()
     const observer = new ResizeObserver(handleResize)
@@ -112,6 +112,11 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
       mapInstanceRef.current = null
     }
   }, [])
+
+  useEffect(() => {
+    const control = L.control.zoom({ position: 'bottomright', zoomInTitle: tx('Zoom in'), zoomOutTitle: tx('Zoom out') }).addTo(mapInstanceRef.current)
+    return () => { control.remove() }
+  }, [tx])
 
   // Recenter back to central Ho Chi Minh City
   useEffect(() => {
@@ -163,7 +168,7 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger }) {
       ref={mapElement}
       className="discovery-map-canvas"
       role="region"
-      aria-label="Interactive map of recommended places in Ho Chi Minh City"
+      aria-label={tx('Interactive map of Ho Chi Minh City')}
     />
   )
 }
@@ -176,7 +181,7 @@ export default function DiscoveryMapSection({
   onSelectVenue,
   venues = MOCK_VENUES
 }) {
-  const { isEn } = useLanguage()
+  const { isEn, tx } = useLanguage()
   const [userSelectedVenueId, setUserSelectedVenueId] = useState(null)
   const [prevFocusedVenueId, setPrevFocusedVenueId] = useState(focusedVenueId)
   const [recenterTrigger, setRecenterTrigger] = useState(0)
@@ -384,7 +389,7 @@ export default function DiscoveryMapSection({
                 <div className="card-meta">
                   <div className="card-badge-row">
                     <span className="card-category-badge">
-                      {CATEGORY_SYMBOLS[activeVenue.category] || '📍'} {activeVenue.category}
+                      {CATEGORY_SYMBOLS[activeVenue.category] || '📍'} {tx(activeVenue.category)}
                     </span>
                     {activeVenue.priceRange && (
                       <span className="card-price-badge">{activeVenue.priceRange}</span>

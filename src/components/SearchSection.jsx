@@ -12,6 +12,7 @@ import {
 import { POPULAR_PROMPTS, MOCK_VENUES } from '../data/mockVenues'
 import { useLanguage } from '../contexts/LanguageContext'
 import Reveal from './Reveal'
+import { normalizeSearch, translateText } from '../utils/localization'
 
 export default function SearchSection({
   embedded = false,
@@ -35,15 +36,11 @@ export default function SearchSection({
   // Filter matching venues for live suggestion dropdown
   const matchingVenues = currentInput.trim()
     ? (venues || MOCK_VENUES).filter((v) => {
-        const q = currentInput.trim().toLowerCase()
-        return (
-          v.name.toLowerCase().includes(q) ||
-          v.category.toLowerCase().includes(q) ||
-          (v.tagline && v.tagline.toLowerCase().includes(q)) ||
-          (v.address && v.address.toLowerCase().includes(q)) ||
-          (v.purposes && v.purposes.some((p) => p.toLowerCase().includes(q))) ||
-          (v.reasons && v.reasons.some((r) => r.toLowerCase().includes(q)))
-        )
+        const q = normalizeSearch(currentInput)
+        const labels = [v.category, ...(v.purposes || [])]
+        return normalizeSearch([v.name, v.tagline, v.address, ...labels,
+          ...labels.map((label) => translateText(label, 'vi')), ...(v.reasons || []),
+          ...(v.amenities || [])].filter(Boolean).join(' ')).includes(q)
       }).slice(0, 5)
     : []
 
@@ -343,7 +340,7 @@ export default function SearchSection({
                             display: { xs: 'none', sm: 'inline' }
                           }}
                         >
-                          {isEn ? 'Map ➔' : 'Xem map ➔'}
+                          {isEn ? 'Map ➔' : 'Bản đồ ➔'}
                         </Typography>
                       </Box>
                     </Box>

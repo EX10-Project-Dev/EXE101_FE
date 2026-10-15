@@ -24,7 +24,7 @@ const MARQUEE_TAGLINES_EN = {
 }
 
 export default function ScoreMarquee({ onSelectCard }) {
-  const { isEn } = useLanguage()
+  const { isEn, tx } = useLanguage()
   const track = useRef(null)
   const inView = useInView(track)
   const reducedMotion = useReducedMotion()
@@ -51,7 +51,7 @@ export default function ScoreMarquee({ onSelectCard }) {
       }}
     >
       {/* Section label */}
-      <Box sx={{ textAlign: 'center', mb: 2.5 }}>
+      <Box sx={{ textAlign: 'center', mb: 2.5, px: 2 }}>
         <Typography
           component={Reveal}
           distance={16}
@@ -60,8 +60,10 @@ export default function ScoreMarquee({ onSelectCard }) {
             color: '#C2410C',
             fontWeight: 800,
             textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            fontSize: '0.72rem'
+            letterSpacing: '0.03em',
+            fontSize: '0.8rem',
+            lineHeight: 1.7,
+            textWrap: 'balance'
           }}
         >
           {isEn
@@ -196,7 +198,7 @@ export default function ScoreMarquee({ onSelectCard }) {
                   fontWeight: 700
                 }}
               >
-                {item.category}
+                {tx(item.category)}
               </Box>
 
               {/* Bottom text */}

@@ -1,7 +1,13 @@
-import { BrowserRouter, Routes, Route, Outlet, useNavigate } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+import { BrowserRouter, Routes, Route, Outlet, useNavigate, Navigate } from 'react-router-dom'
 import Dialog from '@mui/material/Dialog'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
+import ProtectedRoute from './components/ProtectedRoute'
+import { useLanguage } from './contexts/LanguageContext'
+import useAuth from './hooks/useAuth'
+
+const DiscoverPage = lazy(() => import('./pages/DiscoverPage'))
 
 function LandingLayout() {
   return <><LandingPage /><Outlet /></>
@@ -9,7 +15,10 @@ function LandingLayout() {
 
 function AuthDialog({ pendingFlow, isSignup = false }) {
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
   const close = () => navigate('/', { replace: true })
+
+  if (isAuthenticated) return <Navigate to="/discover" replace />
 
   return (
     <Dialog
@@ -28,9 +37,11 @@ function AuthDialog({ pendingFlow, isSignup = false }) {
 }
 
 function App() {
+  const { tx } = useLanguage()
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/discover" element={<ProtectedRoute><Suspense fallback={<p role="status" style={{ padding: 32 }}>{tx('Opening your map…')}</p>}><DiscoverPage /></Suspense></ProtectedRoute>} />
         <Route element={<LandingLayout />}>
           <Route path="/" element={null} />
           <Route path="/login" element={<AuthDialog />} />

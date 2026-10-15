@@ -2,6 +2,8 @@
 
 ## Mục tiêu
 
+Authenticated discovery implementation and login setup: [Discovery documentation](docs/discovery.md).
+
 Xây dựng giao diện để khách chưa đăng nhập đi hết luồng tìm địa điểm F&B của FIND&GO: bắt đầu từ landing page, nhập nhu cầu, xem và so sánh gợi ý, mở chi tiết, chọn địa điểm và chuyển sang Google Maps.
 
 Phạm vi này chỉ dành cho khách chưa đăng nhập. Luồng đăng ký/đăng nhập, hồ sơ người dùng, follow bạn bè và chức năng tài khoản doanh nghiệp chưa thuộc task này.

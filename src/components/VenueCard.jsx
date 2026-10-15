@@ -11,7 +11,7 @@ import {
 import { useLanguage } from '../contexts/LanguageContext'
 
 export default function VenueCard({ venue, onOpenDetail }) {
-  const { isEn } = useLanguage()
+  const { isEn, tx } = useLanguage()
   const reasons = venue.dynamicReasons || venue.reasons || []
 
   const handleOpenGoogleMaps = (e) => {
@@ -68,7 +68,7 @@ export default function VenueCard({ venue, onOpenDetail }) {
         {/* Category chip */}
         <Box sx={{ position: 'absolute', top: 12, left: 12 }}>
           <Chip
-            label={venue.category}
+            label={tx(venue.category)}
             size="small"
             sx={{
               backgroundColor: 'rgba(28, 10, 0, 0.72)',

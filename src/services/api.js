@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { clearSession, DEMO_TOKEN, getToken } from './sessionStore'
 
 const baseURL = import.meta.env.VITE_API_BASE || '/api'
 
@@ -12,8 +13,8 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-    if (token && !config.skipAuth) {
+    const token = getToken()
+    if (token && token !== DEMO_TOKEN && !config.skipAuth) {
       config.headers.Authorization = `Bearer ${token}`
     }
     return config
@@ -25,6 +26,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401 && !error.config?.skipAuth) clearSession()
     return Promise.reject(error)
   }
 )

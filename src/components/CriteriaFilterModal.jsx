@@ -208,33 +208,33 @@ export default function CriteriaFilterModal({ open, onClose, criteria, setCriter
       <DialogContent sx={{ py: 2.5, backgroundColor: '#FFFFFF' }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <Box>
-            <SectionTitle num={1} label={isEn ? 'Purpose' : 'Mục đích đi quán (Purpose)'} />
+            <SectionTitle num={1} label={isEn ? 'Purpose' : 'Mục đích đi quán'} />
             <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.purposes} field="purpose" />
           </Box>
           <Box>
-            <SectionTitle num={2} label={isEn ? 'Budget per Person' : 'Ngân sách mỗi người (Budget)'} />
+            <SectionTitle num={2} label={isEn ? 'Budget per Person' : 'Ngân sách mỗi người'} />
             <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.budget} field="budget" />
           </Box>
           <Box>
-            <SectionTitle num={3} label={isEn ? 'Distance & Radius' : 'Khoảng cách & Bán kính (Distance)'} />
+            <SectionTitle num={3} label={isEn ? 'Distance & Radius' : 'Khoảng cách & Bán kính'} />
             <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.distance} field="distance" />
           </Box>
           <Box>
-            <SectionTitle num={4} label={isEn ? 'Group Size' : 'Số lượng người (Group Size)'} />
+            <SectionTitle num={4} label={isEn ? 'Group Size' : 'Số lượng người'} />
             <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.groupSizes} field="groupSize" />
           </Box>
           <Box>
-            <SectionTitle num={5} label={isEn ? 'Category' : 'Thể loại địa điểm (Category)'} />
+            <SectionTitle num={5} label={isEn ? 'Category' : 'Thể loại địa điểm'} />
             <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.categories} field="category" />
           </Box>
           <Box>
-            <SectionTitle num={6} label={isEn ? 'Atmosphere' : 'Không gian & Bầu không khí (Atmosphere)'} />
+            <SectionTitle num={6} label={isEn ? 'Atmosphere' : 'Không gian & Bầu không khí'} />
             <ChipGroup criteria={criteria} isEn={isEn} handleToggleSingle={handleToggleSingle} chipSx={chipSx} options={FILTER_OPTIONS.atmosphere} field="atmosphere" />
           </Box>
 
           {/* Amenities (multi-select) */}
           <Box>
-            <SectionTitle num={7} label={isEn ? 'Amenities (Select multiple)' : 'Tiện ích cần có (Amenities — Chọn nhiều)'} />
+            <SectionTitle num={7} label={isEn ? 'Amenities (Select multiple)' : 'Tiện ích cần có (Chọn nhiều)'} />
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {FILTER_OPTIONS.amenities.map((am) => {
                 const selected = (criteria.amenities || []).includes(am.id)
