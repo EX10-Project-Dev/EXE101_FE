@@ -9,13 +9,28 @@ import VenuePhoto from './VenuePhoto'
 
 const CITY_CENTER = { lat: 10.786, lng: 106.705 }
 
+const VENUE_SYMBOLS = {
+  Café: '☕',
+  Cafe: '☕',
+  Restaurant: '🥘',
+  Food: '🥘',
+  Bar: '🍷',
+  'Other F&B': '🍷',
+  Brunch: '🥞',
+  Dessert: '🍰',
+  'Tea & Beverage': '🧋',
+  'Fast Food': '🍔',
+}
+
+const venueSymbol = (venue) => VENUE_SYMBOLS[venue?.category] || '📍'
+
 function VenueMapPopup({ venue, onDetails }) {
   const { tx } = useLanguage()
   return <button className="dg-map-preview" type="button" onClick={() => onDetails(venue)} aria-label={tx('View details for {name}', { name: venue.name })}><VenuePhoto venue={venue} /><span><strong>{venue.name}</strong><span className="dg-rating"><span>★ {venue.rating.toFixed(1)}</span><i>·</i><span className="dg-distance">{venue.distanceKm} km</span></span><span className="dg-preview-link">{tx('View details →')}</span></span></button>
 }
 
-function makeIcon(selected, highlighted) {
-  return L.divIcon({ className: 'dg-marker-container', html: `<span class="dg-pin${selected ? ' is-selected' : ''}${highlighted ? ' is-highlighted' : ''}"><span></span></span>`, iconSize: [32, 42], iconAnchor: [16, 42], popupAnchor: [0, -48] })
+function makeIcon(venue, selected, highlighted) {
+  return L.divIcon({ className: 'dg-marker-container', html: `<span class="dg-pin${selected ? ' is-selected' : ''}${highlighted ? ' is-highlighted' : ''}" aria-hidden="true"><span class="dg-pin-body"><span class="dg-pin-symbol">${venueSymbol(venue)}</span></span></span>`, iconSize: [38, 46], iconAnchor: [19, 46], popupAnchor: [0, -48] })
 }
 
 function LeafletDiscoveryMap({ venues, selectedVenueId, hoveredVenueId, onSelect, onDetails, recenterKey }) {
@@ -50,7 +65,7 @@ function LeafletDiscoveryMap({ venues, selectedVenueId, hoveredVenueId, onSelect
     const map = mapRef.current
     const currentMarkers = markers.current
     venues.forEach((venue) => {
-      const marker = L.marker([venue.lat, venue.lng], { icon: makeIcon(false, false), title: venue.name, alt: venue.name, keyboard: true })
+      const marker = L.marker([venue.lat, venue.lng], { icon: makeIcon(venue, false, false), title: venue.name, alt: venue.name, keyboard: true })
         .addTo(map).on('click', () => onSelect(venue.id))
       currentMarkers.set(venue.id, marker)
     })
@@ -59,8 +74,9 @@ function LeafletDiscoveryMap({ venues, selectedVenueId, hoveredVenueId, onSelect
 
   useEffect(() => {
     markers.current.forEach((marker, id) => {
-      marker.setIcon(makeIcon(id === selectedVenueId, id === hoveredVenueId))
-      marker.getElement()?.setAttribute('aria-label', tx('Show {name} on map', { name: venues.find((venue) => venue.id === id)?.name }))
+      const venue = venues.find((item) => item.id === id)
+      marker.setIcon(makeIcon(venue, id === selectedVenueId, id === hoveredVenueId))
+      marker.getElement()?.setAttribute('aria-label', tx('Show {name} on map', { name: venue?.name }))
       marker.setZIndexOffset(id === selectedVenueId ? 1000 : id === hoveredVenueId ? 500 : 0)
     })
   }, [venues, selectedVenueId, hoveredVenueId, tx])
@@ -103,7 +119,7 @@ function GoogleDiscoveryMap(props) {
   const selected = venues.find((venue) => venue.id === selectedVenueId)
   return <GoogleMap className="dg-map-canvas" style={{ height: 'calc(100% - 38px)' }} defaultCenter={CITY_CENTER} defaultZoom={14} mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID'} disableDefaultUI zoomControl gestureHandling="greedy" clickableIcons={false}>
     <GoogleMapController selected={selected} venues={venues} recenterKey={recenterKey} />
-    {venues.map((venue) => <AdvancedMarker key={venue.id} position={{ lat: venue.lat, lng: venue.lng }} title={venue.name} onClick={() => onSelect(venue.id)} zIndex={venue.id === selectedVenueId ? 1000 : 1}><span className={`dg-pin${venue.id === selectedVenueId ? ' is-selected' : ''}${venue.id === hoveredVenueId ? ' is-highlighted' : ''}`}><span /></span></AdvancedMarker>)}
+    {venues.map((venue) => <AdvancedMarker key={venue.id} position={{ lat: venue.lat, lng: venue.lng }} title={venue.name} onClick={() => onSelect(venue.id)} zIndex={venue.id === selectedVenueId ? 1000 : venue.id === hoveredVenueId ? 500 : 1}><span className={`dg-pin${venue.id === selectedVenueId ? ' is-selected' : ''}${venue.id === hoveredVenueId ? ' is-highlighted' : ''}`} aria-hidden="true"><span className="dg-pin-body"><span className="dg-pin-symbol">{venueSymbol(venue)}</span></span></span></AdvancedMarker>)}
     {selected && <InfoWindow position={{ lat: selected.lat, lng: selected.lng }} pixelOffset={[0, -48]} headerDisabled onCloseClick={() => onSelect(null)}><VenueMapPopup venue={selected} onDetails={onDetails} /></InfoWindow>}
   </GoogleMap>
 }

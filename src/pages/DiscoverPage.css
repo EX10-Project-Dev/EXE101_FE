@@ -40,14 +40,14 @@
 .dg-map .leaflet-control-zoom a { background: #fff !important; color: #23343b !important; width: 38px !important; height: 38px !important; line-height: 38px !important; font-weight: 400 !important; backdrop-filter: none !important; }
 .dg-map .leaflet-control-attribution { margin-bottom: 39px; font-size: 9px !important; background: #ffffffed !important; color: #616969 !important; backdrop-filter: none !important; border-radius: 0 !important; }
 .dg-map .leaflet-control-attribution a { color: #52605f; }
-.dg-pin { position: relative; display: block; width: 26px; height: 34px; transform-origin: 50% 100%; transition: transform 160ms; }
-.dg-pin > span { position: absolute; top: 1px; left: 2px; width: 24px; height: 24px; border: 2px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #ff6b1a; box-shadow: -1px 2px 4px #a1511e22; }
-.dg-pin > span::after { content: ''; position: absolute; width: 7px; height: 7px; top: 6.5px; left: 6.5px; border-radius: 50%; background: #fff; }
-.dg-pin.is-selected { transform: scale(1.4); }
-.dg-pin.is-selected::before { content: ''; position: absolute; left: -7px; bottom: -5px; width: 42px; height: 42px; border-radius: 50%; background: #ff6b1a26; }
-.dg-pin.is-highlighted { transform: scale(1.35); }
+.dg-pin { position: relative; display: block; width: 38px; height: 46px; transform-origin: 50% 100%; transition: transform 160ms; }
+.dg-pin-body { position: absolute; top: 4px; left: 2px; display: grid; place-items: center; width: 34px; height: 34px; border: 2px solid #ff6b1a; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #fff; box-shadow: -1px 2px 5px #593e2926; }
+.dg-pin-symbol { display: grid; place-items: center; width: 28px; height: 28px; transform: rotate(45deg); font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; font-size: 21px; line-height: 1; }
+.dg-pin.is-selected { transform: scale(1.2); }
+.dg-pin.is-selected::before { content: ''; position: absolute; left: -5px; bottom: -2px; width: 48px; height: 48px; border-radius: 50%; background: #ff6b1a26; }
+.dg-pin.is-selected .dg-pin-body { background: #fff0e6; border-color: #e85b16; }
+.dg-pin.is-highlighted { transform: scale(1.2); }
 .dg-marker-container { background: transparent; border: 0; }
-.dg-marker-container .dg-pin { margin: 6px 2px 0; }
 .dg-leaflet-popup .leaflet-popup-content-wrapper { border-radius: 16px; padding: 0; box-shadow: 0 5px 20px #23343b17; }
 .dg-leaflet-popup .leaflet-popup-content { margin: 0; width: 260px !important; }
 .dg-leaflet-popup .leaflet-popup-tip-container { display: none; }
@@ -137,7 +137,7 @@
 .dg-prompt-form { display: grid; grid-template-columns: minmax(0, 1fr) 125px 112px; gap: 8px; }
 .dg-prompt-form input { width: 100%; min-width: 0; height: 48px; padding: 0 14px; border: 1px solid #e7e5e4; border-radius: 12px; background: #fafaf9; color: #23343b; font-size: 14px; }
 .dg-prompt-form input::placeholder { color: #a8a29e; opacity: 1; }
-.dg-prompt-form input:focus { outline: 2px solid #ffb183; outline-offset: 0; }
+.dg-page .dg-prompt-form input:focus { outline: none; border-color: #c7c5c2; box-shadow: none; }
 .dg-prompt-form > button { height: 48px; border-radius: 12px; font-size: 14px; font-weight: 700; white-space: nowrap; transition: background 160ms; }
 .dg-add-prompt { border: 1px solid #efba9b; color: #b94b12; background: #fff; }
 .dg-add-prompt:hover:not(:disabled) { background: #fff7ed; }
