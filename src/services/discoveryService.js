@@ -2,13 +2,14 @@ import { venues } from '../data/venues.js'
 import { normalizeSearch, translateText } from '../utils/localization.js'
 
 const normalize = normalizeSearch
-const ignoredWords = new Set(['a', 'an', 'the', 'with', 'and', 'to', 'for', 'of', 'in', 'near', 'me', 'good', 'place', 'places'])
+const ignoredWords = new Set(['a', 'an', 'the', 'with', 'and', 'to', 'for', 'of', 'in', 'near', 'me', 'good', 'place', 'places', 'quan', 'can', 'tim', 'co', 'de', 'voi', 'va', 'cho', 'toi', 'mot'])
 
 // Pure local search boundary. Replace this with the recommendation API adapter
 // when the backend contract is available; the page doesn't need to change.
-export function searchDiscoveryVenues({ query = '', filters = {}, savedIds, savedOnly = false } = {}) {
-  const terms = normalize(query).split(' ').filter((word) => word && !ignoredWords.has(word))
-  return venues.filter((venue) => {
+export function searchDiscoveryVenues({ query = '', prompts = [], filters = {}, savedIds, savedOnly = false, location = null } = {}) {
+  const terms = normalize([query, ...prompts.slice(0, 3)].join(' ')).split(' ').filter((word) => word && !ignoredWords.has(word))
+  const locatedVenues = location ? venues.map((venue) => ({ ...venue, distanceKm: distanceKm(location, venue) })) : venues
+  const results = locatedVenues.filter((venue) => {
     if (savedOnly && !savedIds?.includes(venue.id)) return false
     if (filters.purpose && !venue.purposes.includes(filters.purpose)) return false
     if (filters.budget && venue.priceLevel !== filters.budget) return false
@@ -17,9 +18,20 @@ export function searchDiscoveryVenues({ query = '', filters = {}, savedIds, save
     if (filters.atmosphere && !venue.atmosphere.includes(filters.atmosphere)) return false
     if (filters.amenities?.some((amenity) => !venue.amenities.includes(amenity))) return false
     const labels = [venue.category, ...venue.tags, ...venue.purposes, ...venue.atmosphere, ...venue.amenities]
-    const searchable = normalize([venue.name, venue.address, venue.description, venue.descriptionVi, ...labels, ...labels.map((label) => translateText(label, 'vi'))].join(' '))
+    const workKeywords = venue.purposes.includes('Study / Work') ? 'chạy deadline' : ''
+    const searchable = normalize([venue.name, venue.address, venue.description, venue.descriptionVi, workKeywords, ...labels, ...labels.map((label) => translateText(label, 'vi'))].join(' '))
     return terms.every((term) => searchable.includes(term))
   })
+  return location ? results.sort((a, b) => a.distanceKm - b.distanceKm) : results
+}
+
+// Straight-line distance from the explicitly granted browser location.
+function distanceKm(from, to) {
+  const radians = (degrees) => degrees * Math.PI / 180
+  const latDelta = radians(to.lat - from.lat)
+  const lngDelta = radians(to.lng - from.lng)
+  const a = Math.sin(latDelta / 2) ** 2 + Math.cos(radians(from.lat)) * Math.cos(radians(to.lat)) * Math.sin(lngDelta / 2) ** 2
+  return Math.round(6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a))) * 10) / 10
 }
 
 export function getMatchReasons(venue, filters, language = 'en') {

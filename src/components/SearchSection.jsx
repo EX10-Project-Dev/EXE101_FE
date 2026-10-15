@@ -16,12 +16,14 @@ import { normalizeSearch, translateText } from '../utils/localization'
 
 export default function SearchSection({
   embedded = false,
+  compact = false,
   prompts,
   setPrompts,
   onSearch,
   onOpenFilter,
   criteriaCount,
   onGetLocation,
+  onReset,
   locationState,
   isLoading,
   venues = MOCK_VENUES,
@@ -30,6 +32,7 @@ export default function SearchSection({
   const { t, isEn } = useLanguage()
   const [currentInput, setCurrentInput] = useState('')
   const [locationAlert, setLocationAlert] = useState('')
+  const [locating, setLocating] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
   const searchContainerRef = useRef(null)
 
@@ -96,20 +99,55 @@ export default function SearchSection({
   }
 
   const handleTriggerLocation = () => {
-    if (!navigator.geolocation) {
-      setLocationAlert('Trình duyệt không hỗ trợ định vị GPS.')
+    if (compact && locationState) {
+      onGetLocation(null)
+      setLocationAlert('')
       return
     }
+    if (!navigator.geolocation) {
+      setLocationAlert(isEn ? 'Your browser does not support location.' : 'Trình duyệt không hỗ trợ định vị GPS.')
+      return
+    }
+    setLocating(true)
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        setLocating(false)
         onGetLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-        setLocationAlert('Đã nhận diện vị trí hiện tại!')
+        setLocationAlert(isEn ? 'Location found. Showing places nearest to you.' : 'Đã lấy vị trí. Hiển thị quán gần bạn nhất.')
         setTimeout(() => setLocationAlert(''), 4000)
       },
       () => {
-        setLocationAlert('Không lấy được vị trí. Vui lòng cấp quyền truy cập vị trí.')
+        setLocating(false)
+        setLocationAlert(isEn ? 'Location unavailable. Allow location access and try again.' : 'Không lấy được vị trí. Vui lòng cấp quyền truy cập vị trí.')
         setTimeout(() => setLocationAlert(''), 5000)
-      }
+      },
+      { timeout: 10000, maximumAge: 60000 }
+    )
+  }
+
+  if (compact) {
+    const submit = (event) => {
+      event.preventDefault()
+      const nextPrompts = currentInput.trim() && prompts.length < 3 ? [...prompts, currentInput.trim()] : prompts
+      setPrompts(nextPrompts)
+      setCurrentInput('')
+      onSearch(nextPrompts)
+    }
+    return (
+      <section className="dg-prompt-search" aria-label={t('findVenuesCTA')}>
+        {prompts.length > 0 && <div className="dg-prompt-chips">{prompts.map((prompt, index) => <span key={`${index}-${prompt}`}><span>{index + 1}. {prompt}</span><button type="button" onClick={() => handleRemovePrompt(index)} aria-label={isEn ? `Remove requirement ${index + 1}` : `Xóa yêu cầu ${index + 1}`}>×</button></span>)}</div>}
+        <form className="dg-prompt-form" onSubmit={submit} role="search">
+          <input aria-label={isEn ? 'Describe your occasion' : 'Mô tả nhu cầu tìm quán'} placeholder={prompts.length >= 3 ? (isEn ? '3 requirements added. Click Find places!' : 'Đã đủ 3 yêu cầu. Nhấn Tìm quán!') : prompts.length ? (isEn ? `Add requirement #${prompts.length + 1} (up to 3)...` : `Thêm yêu cầu thứ ${prompts.length + 1} (tối đa 3)...`) : (isEn ? 'e.g., "Quiet café to meet a deadline..."' : 'Ví dụ: "Cà phê yên tĩnh chạy deadline..."')} value={currentInput} onChange={(event) => setCurrentInput(event.target.value)} disabled={prompts.length >= 3} />
+          <button className="dg-add-prompt" type="button" onClick={handleAddPrompt} disabled={!currentInput.trim() || prompts.length >= 3}>{t('addCriteriaBtn')}</button>
+          <button className="dg-find-places" type="submit" disabled={isLoading}>{isLoading ? t('searchingBtn') : t('searchBtn')}</button>
+        </form>
+        <div className="dg-prompt-tools"><div>
+          <button type="button" className={criteriaCount ? 'is-active' : ''} onClick={onOpenFilter}>{isEn ? 'Detailed criteria' : 'Tiêu chí chi tiết'}{criteriaCount ? ` (${criteriaCount})` : ''}</button>
+          <button type="button" className={locationState ? 'is-active' : ''} onClick={handleTriggerLocation} disabled={locating} aria-pressed={Boolean(locationState)}>{locating ? (isEn ? 'Locating…' : 'Đang định vị…') : locationState ? t('located') : t('nearMe')}</button>
+          {(prompts.length > 0 || criteriaCount > 0 || locationState) && <button type="button" onClick={() => { setCurrentInput(''); setLocationAlert(''); onReset?.() }}>{isEn ? 'Clear all' : 'Xóa tất cả'}</button>}
+        </div><p>{isEn ? 'Supports 1 – 3 natural language prompts' : 'Hỗ trợ 1 – 3 lệnh tìm kiếm tự nhiên'}</p></div>
+        {locationAlert && <p className="dg-location-status" role="status">{locationAlert}</p>}
+      </section>
     )
   }
 

@@ -134,6 +134,39 @@
 .dg-detail-actions .dg-primary { flex: 1; }
 .dg-detail-save { display: grid; place-items: center; width: 46px; background: #fff; color: #e85b16; border: 1px solid #e8e2de; border-radius: 12px; cursor: pointer; }
 .dg-chosen { margin-top: 20px; padding: 12px; background: #fff0e6; color: #8e4018; border-radius: 8px; font-size: 13px; line-height: 1.6; }
+.dg-prompt-form { display: grid; grid-template-columns: minmax(0, 1fr) 125px 112px; gap: 8px; }
+.dg-prompt-form input { width: 100%; min-width: 0; height: 48px; padding: 0 14px; border: 1px solid #e7e5e4; border-radius: 12px; background: #fafaf9; color: #23343b; font-size: 14px; }
+.dg-prompt-form input::placeholder { color: #a8a29e; opacity: 1; }
+.dg-prompt-form input:focus { outline: 2px solid #ffb183; outline-offset: 0; }
+.dg-prompt-form > button { height: 48px; border-radius: 12px; font-size: 14px; font-weight: 700; white-space: nowrap; transition: background 160ms; }
+.dg-add-prompt { border: 1px solid #efba9b; color: #b94b12; background: #fff; }
+.dg-add-prompt:hover:not(:disabled) { background: #fff7ed; }
+.dg-add-prompt:disabled { border-color: #e7e5e4; color: #a8a29e; opacity: .45; cursor: default; }
+.dg-find-places { border: 0; background: #ff6b1a; color: #fff; box-shadow: 0 4px 12px #f9731630; }
+.dg-find-places:hover { background: #e85b16; }
+.dg-prompt-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 23px; }
+.dg-prompt-tools > div { display: flex; gap: 3px; flex-wrap: wrap; }
+.dg-prompt-tools button { padding: 8px 12px; border: 0; border-radius: 8px; background: transparent; color: #57534e; font-size: 13px; font-weight: 700; }
+.dg-prompt-tools button:hover { background: #fff7ed; }
+.dg-prompt-tools button.is-active { color: #c34a10; }
+.dg-prompt-tools button:disabled { opacity: .6; cursor: wait; }
+.dg-prompt-tools > p { color: #a8a29e; font-size: 12px; line-height: 1.5; text-align: right; }
+.dg-prompt-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+.dg-prompt-chips > span { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; padding: 5px 8px 5px 12px; border: 1px solid #fed7aa; border-radius: 8px; background: #fff7ed; color: #9a4316; font-size: 12px; }
+.dg-prompt-chips > span > span { overflow-wrap: anywhere; }
+.dg-prompt-chips button { flex-shrink: 0; border: 0; background: transparent; color: inherit; font-size: 20px; width: 26px; height: 26px; }
+.dg-location-status { padding: 6px 12px; color: #68605a; font-size: 12px; line-height: 1.6; }
+.dg-filter-dialog .MuiDialogTitle-root { display: flex; justify-content: space-between; align-items: center; font-size: 21px; }
+.dg-filter-dialog .MuiDialogTitle-root button { display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; cursor: pointer; }
+.dg-filter-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 18px; padding: 10px 0; }
+.dg-filter-fields > label, .dg-filter-fields legend { font-size: 13px; font-weight: 600; color: #23343b; }
+.dg-filter-fields select { display: block; width: 100%; height: 44px; padding: 0 10px; margin-top: 8px; font: inherit; font-weight: 400; border: 1px solid #e8e2de; border-radius: 8px; background: #fff; color: #23343b; }
+.dg-filter-fields fieldset { grid-column: 1 / -1; border: 0; }
+.dg-filter-fields legend { margin-bottom: 10px; }
+.dg-filter-fields fieldset label { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px 8px 0; font-size: 13px; }
+.dg-filter-fields input { width: 16px; height: 16px; accent-color: #ff6b1a; }
+.dg-filter-dialog .MuiDialogActions-root { padding: 18px 24px; justify-content: space-between; border-top: 1px solid #e8e2de; }
+.dg-filter-reset { border: 0; background: transparent; color: #68605a; cursor: pointer; font: inherit; font-size: 13px; }
 @media (min-width: 1600px) {
   .dg-sheet-content { padding-left: 5%; padding-right: 5%; }
   .dg-card-photo { height: 130px; }
@@ -196,6 +229,14 @@
   .dg-map .leaflet-control-zoom a { width: 32px !important; height: 32px !important; line-height: 32px !important; }
   .dg-map .leaflet-control-attribution { max-width: 100%; font-size: 8px !important; }
   .dg-detail-panel.MuiDrawer-paper { width: min(450px, 100%); }
+  .dg-page--default { --dg-sheet-height: clamp(380px, 48dvh, 440px); }
+  .dg-prompt-form { grid-template-columns: 1fr 1fr; }
+  .dg-prompt-form input { grid-column: 1 / -1; }
+  .dg-prompt-form > button { height: 42px; font-size: 13px; }
+  .dg-prompt-tools { flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+  .dg-prompt-tools button { padding: 8px 10px; font-size: 12px; }
+  .dg-prompt-tools > p { padding-left: 10px; font-size: 10px; text-align: left; }
+  .dg-filter-fields { grid-template-columns: 1fr; }
 }
 @media (max-width: 360px) { .dg-topbar { gap: 9px; padding: 0 10px; } .dg-brand { font-size: 17px; } .dg-location { font-size: 10px !important; } }
 @media (prefers-reduced-motion: reduce) { .dg-page *, .dg-page *::before { transition: none !important; scroll-behavior: auto !important; } }

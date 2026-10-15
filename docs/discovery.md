@@ -3,11 +3,11 @@
 `/discover` uses a full-width interactive map, floating navigation, and an overlapping search sheet. Landing and login retain their existing designs. No dependencies were added.
 
 - Click, keyboard-activate, or vertically drag the sheet handle to collapse/expand. **View all** expands the recommendations.
-- Search and six filters use local fixtures in `src/data/venues.js`. The pure search boundary in `src/services/discoveryService.js` can be replaced by a recommendation API adapter.
+- Search accepts up to three removable requirements, with **Add requirement**, **Find places**, **Detailed criteria**, and **Near me** controls. Six filters live in the criteria dialog. Search uses local fixtures in `src/data/venues.js`; the pure boundary in `src/services/discoveryService.js` can be replaced by a recommendation API adapter.
 - Hover a card to highlight its marker. Select a card or marker for a compact preview; **View details** opens a right drawer with directions and a place-selection action.
 - Hearts persist saved place IDs per user on this device. The account menu opens saved places and logs out.
 - Google Maps uses the existing `VITE_GOOGLE_MAPS_API_KEY` setting. The existing Leaflet/OpenStreetMap HOT provider is the keyless fallback. `VITE_GOOGLE_MAPS_MAP_ID` is optional. Map tiles require a network connection.
-- Images in `public/images/venues` are illustrative Unsplash placeholders, not verified photographs of the named venues. Ratings, distances, hours, and English descriptions are sample data. Distances are not calculated from the device's current location.
+- Images in `public/images/venues` are illustrative Unsplash placeholders, not verified photographs of the named venues. Ratings, default distances, hours, and descriptions are sample data. **Near me** requests browser location only when clicked, then calculates straight-line distances and sorts results nearest first; distance filters use those updated values. Click the active location control or clear the search to return to sample distances.
 
 ## Connect authentication
 

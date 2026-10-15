@@ -19,8 +19,9 @@ export default function DiscoverPage() {
   const { language, tx } = useLanguage()
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const [searchQuery, setSearchQuery] = useState('')
-  const [submittedQuery, setSubmittedQuery] = useState('')
+  const [prompts, setPrompts] = useState([])
+  const [submittedPrompts, setSubmittedPrompts] = useState([])
+  const [location, setLocation] = useState(null)
   const [filters, setFilters] = useState(emptyFilters)
   const [selectedVenueId, setSelectedVenueId] = useState(venues[0].id)
   const [hoveredVenueId, setHoveredVenueId] = useState(null)
@@ -31,7 +32,7 @@ export default function DiscoverPage() {
   const savedKey = `findgo:saved:${user?.id || user?.email || 'current-user'}`
   const [savedIds, setSavedIds] = useState(() => readSaved(savedKey))
   const [saveNotice, setSaveNotice] = useState('')
-  const results = useMemo(() => searchDiscoveryVenues({ query: submittedQuery, filters, savedIds, savedOnly }), [submittedQuery, filters, savedIds, savedOnly])
+  const results = useMemo(() => searchDiscoveryVenues({ prompts: submittedPrompts, filters, savedIds, savedOnly, location }), [submittedPrompts, filters, savedIds, savedOnly, location])
   const visibleSelectedId = results.some((venue) => venue.id === selectedVenueId) ? selectedVenueId : null
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function DiscoverPage() {
   }
 
   function resetSearch() {
-    setSearchQuery(''); setSubmittedQuery(''); setFilters(emptyFilters); setSavedOnly(false)
+    setPrompts([]); setSubmittedPrompts([]); setFilters(emptyFilters); setSavedOnly(false); setLocation(null)
     setSelectedVenueId(venues[0].id)
   }
 
@@ -66,7 +67,7 @@ export default function DiscoverPage() {
     <main className={`dg-page dg-page--${selectedSheetState}`} lang={language}>
       <DiscoveryMap venues={results} selectedVenueId={visibleSelectedId} hoveredVenueId={hoveredVenueId} onSelect={selectVenue} onDetails={setDetailVenue} recenterKey={recenterKey} onRecenter={() => setRecenterKey((key) => key + 1)} />
       <FloatingTopBar user={user} onLogout={() => { logout(); navigate('/login', { replace: true }) }} onRecenter={() => setRecenterKey((key) => key + 1)} savedOnly={savedOnly} onSavedOnly={(value) => { setSavedOnly(value); setSelectedSheetState('expanded') }} />
-      <DiscoveryBottomSheet sheetState={selectedSheetState} onSheetState={setSelectedSheetState} query={searchQuery} onQuery={setSearchQuery} filters={filters} onFilter={(key, value) => setFilters((current) => ({ ...current, [key]: value }))} onSearch={() => { setSubmittedQuery(searchQuery.trim()); setSelectedSheetState('default') }} onReset={resetSearch} results={results} selectedVenueId={visibleSelectedId} onSelect={selectVenue} onHover={setHoveredVenueId} savedIds={savedIds} onSave={saveVenue} savedOnly={savedOnly} hasSearch={Boolean(submittedQuery)} />
+      <DiscoveryBottomSheet sheetState={selectedSheetState} onSheetState={setSelectedSheetState} prompts={prompts} onPrompts={(next) => { setPrompts(next); if (next.length < prompts.length) setSubmittedPrompts(next) }} filters={filters} onFilters={setFilters} onSearch={(next) => { setSubmittedPrompts(next); setSelectedSheetState('default') }} onReset={resetSearch} location={location} onLocation={setLocation} results={results} selectedVenueId={visibleSelectedId} onSelect={selectVenue} onHover={setHoveredVenueId} savedIds={savedIds} onSave={saveVenue} savedOnly={savedOnly} hasSearch={submittedPrompts.length > 0} />
       {detailVenue && <VenueDetailPanel key={detailVenue.id} venue={detailVenue} onClose={() => setDetailVenue(null)} filters={filters} saved={savedIds.includes(detailVenue.id)} onSave={saveVenue} onChoose={selectVenue} />}
       <span className="dg-sr-only" role="status">{tx(saveNotice)}</span>
     </main>
