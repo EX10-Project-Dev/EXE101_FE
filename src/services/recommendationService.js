@@ -9,7 +9,9 @@ export function mapBackendVenueToFrontend(result) {
     lat: loc.latitude,
     lng: loc.longitude,
     googleMapsUrl: v.googleMapsUrl,
-  }) || { lat: 10.77348, lng: 106.70560 }
+    location: loc,
+    sourceData: v.sourceData,
+  }) || { lat: 10.8458, lng: 106.8059 }
 
   const minPrice = v.priceMin != null ? Number(v.priceMin).toLocaleString('vi-VN') + 'đ' : ''
   const maxPrice = v.priceMax != null ? Number(v.priceMax).toLocaleString('vi-VN') + 'đ' : ''
