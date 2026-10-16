@@ -13,12 +13,21 @@ import { useReducedMotion } from 'framer-motion'
 
 const CATEGORY_SYMBOLS = {
   Café: '☕',
-  Restaurant: '🍕',
+  'Cà phê': '☕',
+  Restaurant: '🥘',
+  'Nhà hàng': '🥘',
   'Other F&B': '🍻',
+  'Quán bar': '🍸',
   Dessert: '🍰',
+  'Tráng miệng': '🧁',
   'Tea & Beverage': '🧋',
-  'Fast Food': '🍔'
+  'Trà & đồ uống': '🧋',
+  'Fast Food': '🍔',
+  'Đồ ăn nhanh': '🍔',
+  'Món Việt': '🍜',
+  'Kem': '🍨'
 }
+
 
 const REASON_ICONS = [Heart, Utensils, Coffee, Wifi]
 

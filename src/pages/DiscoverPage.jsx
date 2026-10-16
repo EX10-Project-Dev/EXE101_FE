@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import { emptyFilters, venues } from '../data/venues'
 import { searchDiscoveryVenues } from '../services/discoveryService'
-import { searchWithDemoAi } from '../services/discoveryAiDemo'
+import { getRecommendations } from '../services/recommendationService'
 import FloatingTopBar from '../components/discovery/FloatingTopBar'
 import DiscoveryMap from '../components/discovery/DiscoveryMap'
 import DiscoveryBottomSheet from '../components/discovery/DiscoveryBottomSheet'
@@ -24,6 +24,7 @@ export default function DiscoverPage() {
   const [submittedPrompts, setSubmittedPrompts] = useState([])
   const [location, setLocation] = useState(null)
   const [filters, setFilters] = useState(emptyFilters)
+  const [initialVenues, setInitialVenues] = useState(venues)
   const [selectedVenueId, setSelectedVenueId] = useState(venues[0].id)
   const [hoveredVenueId, setHoveredVenueId] = useState(null)
   const [selectedSheetState, setSelectedSheetState] = useState('default')
@@ -38,12 +39,31 @@ export default function DiscoverPage() {
   const searchRequest = useRef(null)
   const sheetStateRef = useRef(selectedSheetState)
   const mapDetailSession = useRef(null)
-  const eligible = useMemo(() => searchDiscoveryVenues({ filters, savedIds, savedOnly, location }), [filters, savedIds, savedOnly, location])
-  const results = useMemo(() => aiSearch.status === 'idle' ? eligible : aiSearch.status === 'success' ? aiSearch.venues.filter(venue => eligible.some(item => item.id === venue.id)) : [], [aiSearch, eligible])
+  const eligible = useMemo(() => searchDiscoveryVenues({ filters, savedIds, savedOnly, location, candidates: initialVenues }), [filters, savedIds, savedOnly, location, initialVenues])
+  const results = useMemo(() => {
+    if (aiSearch.status === 'idle') return eligible
+    if (aiSearch.status === 'success') {
+      return savedOnly ? aiSearch.venues.filter((venue) => savedIds.includes(venue.id)) : aiSearch.venues
+    }
+    return []
+  }, [aiSearch, eligible, savedOnly, savedIds])
   const visibleSelectedId = results.some((venue) => venue.id === selectedVenueId) ? selectedVenueId : null
 
   useEffect(() => () => searchRequest.current?.abort(), [])
   useEffect(() => { sheetStateRef.current = selectedSheetState }, [selectedSheetState])
+
+  useEffect(() => {
+    let cancelled = false
+    getRecommendations({ prompts: [], criteria: {}, location: null })
+      .then((items) => {
+        if (!cancelled && items && items.length > 0) {
+          setInitialVenues(items)
+          setSelectedVenueId((prev) => (items.some((item) => item.id === prev) ? prev : items[0]?.id || null))
+        }
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
 
   useEffect(() => {
     const previousTitle = document.title
@@ -92,7 +112,7 @@ export default function DiscoverPage() {
     setAiSearch({ status: 'idle', query: '', venues: [] })
     setMatchVenueId(null)
     setPrompts([]); setSubmittedPrompts([]); setFilters(emptyFilters); setSavedOnly(false); setLocation(null)
-    setSelectedVenueId(venues[0].id)
+    setSelectedVenueId(eligible[0]?.id || null)
   }
 
   async function runSearch(next, nextFilters = filters, nextLocation = location) {
@@ -108,12 +128,20 @@ export default function DiscoverPage() {
     const query = cleanPrompts.join(' · ')
     setAiSearch({ status: 'loading', query, venues: [] })
     try {
-      const matches = await searchWithDemoAi({ candidates: searchDiscoveryVenues({ filters: nextFilters, location: nextLocation }), prompts: cleanPrompts, signal: controller.signal })
+      const matches = await getRecommendations({
+        prompts: cleanPrompts,
+        criteria: nextFilters,
+        location: nextLocation,
+        signal: controller.signal
+      })
       if (controller.signal.aborted || searchRequest.current !== controller) return
       setAiSearch({ status: 'success', query, venues: matches })
       setSelectedVenueId(matches[0]?.id || null)
+      setRecenterKey((key) => key + 1)
     } catch (error) {
-      if (error.name !== 'AbortError' && searchRequest.current === controller) setAiSearch({ status: 'error', query, venues: [] })
+      if (error?.name !== 'AbortError' && error?.code !== 'ERR_CANCELED' && searchRequest.current === controller) {
+        setAiSearch({ status: 'error', query, venues: [] })
+      }
     }
   }
 
