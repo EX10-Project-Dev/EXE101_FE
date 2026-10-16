@@ -13,24 +13,36 @@ import { useReducedMotion } from 'framer-motion'
 
 const CATEGORY_SYMBOLS = {
   Café: '☕',
-  Restaurant: '🍕',
+  'Cà phê': '☕',
+  Restaurant: '🥘',
+  'Nhà hàng': '🥘',
   'Other F&B': '🍻',
+  'Quán bar': '🍸',
   Dessert: '🍰',
+  'Tráng miệng': '🧁',
   'Tea & Beverage': '🧋',
-  'Fast Food': '🍔'
+  'Trà & đồ uống': '🧋',
+  'Fast Food': '🍔',
+  'Đồ ăn nhanh': '🍔',
+  'Món Việt': '🍜',
+  'Kem': '🍨'
 }
+
 
 const REASON_ICONS = [Heart, Utensils, Coffee, Wifi]
 
+const DEFAULT_MAP_CENTER = [10.8458, 106.8059]
+
 // HTML generator for modern, crisp custom map pin
-function createCustomMarkerHtml(venue, symbol) {
+function createCustomMarkerHtml(venue, symbol, isActive = false) {
   const score = venue.matchScore?.toFixed(1) || '9.5'
+  const shortName = venue.name.split('-')[0].trim()
   return `
-    <div class="custom-map-pin is-active" title="${venue.name}: ${score}/10">
+    <div class="custom-map-pin ${isActive ? 'is-active' : 'is-marker'}" title="${venue.name}: ${score}/10">
       <div class="pin-card-pill">
         <span class="pin-emoji" aria-hidden="true">${symbol}</span>
-        <span class="pin-name">${venue.name}</span>
-        <span class="pin-score-tag">★ ${score}</span>
+        <span class="pin-name">${shortName}</span>
+        ${isActive ? `<span class="pin-score-tag">★ ${score}</span>` : ''}
       </div>
       <div class="pin-pointer-tip"></div>
       <div class="pin-ground-dot"></div>
@@ -38,43 +50,12 @@ function createCustomMarkerHtml(venue, symbol) {
   `
 }
 
-// Custom designer Google Maps styles: clean, warm, uncluttered
-const GOOGLE_MAP_STYLES = [
-  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#cbe4f6' }] },
-  { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#fbf9f5' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#eee7de' }] },
-  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#ffeacc' }] },
-  { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#fbd09b' }] },
-  { featureType: 'road.arterial', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#e5f3e5' }] },
-  { featureType: 'poi.park', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#57463a' }] },
-  { featureType: 'road', elementType: 'labels.text.stroke', stylers: [{ color: '#ffffff' }, { weight: 3 }] },
-  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#2c201a' }] },
-  { featureType: 'administrative.neighborhood', elementType: 'labels.text.fill', stylers: [{ color: '#7a6557' }] }
-]
-
-function GoogleMapPanTo({ targetPosition, zoom = 16 }) {
-  const map = useMap()
-  const reducedMotion = useReducedMotion()
-  useEffect(() => {
-    if (!map || !targetPosition) return
-    if (reducedMotion) map.setCenter(targetPosition)
-    else map.panTo(targetPosition)
-    map.setZoom(zoom)
-  }, [map, targetPosition, zoom, reducedMotion])
-  return null
-}
-
-function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger, demo }) {
+function LeafletMapCanvas({ venues = [], activeVenue, onMarkerClick, recenterTrigger, demo }) {
   const { tx } = useLanguage()
   const reducedMotion = useReducedMotion()
   const mapElement = useRef(null)
   const mapInstanceRef = useRef(null)
-  const markerRef = useRef(null)
+  const markersRef = useRef(new Map())
   const onMarkerClickRef = useRef(onMarkerClick)
 
   useEffect(() => {
@@ -91,8 +72,8 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger, demo })
       boxZoom: !demo,
       keyboard: !demo,
       zoomControl: false,
-      center: [10.775, 106.700],
-      zoom: 14
+      center: DEFAULT_MAP_CENTER,
+      zoom: 13
     })
     mapInstanceRef.current = map
 
@@ -102,17 +83,15 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger, demo })
       maxZoom: 19
     }).addTo(map)
 
-
     const handleResize = () => map.invalidateSize()
     const observer = new ResizeObserver(handleResize)
     observer.observe(mapElement.current)
 
+    const currentMarkers = markersRef.current
     return () => {
       observer.disconnect()
-      if (markerRef.current) {
-        markerRef.current.remove()
-        markerRef.current = null
-      }
+      currentMarkers.forEach((marker) => marker.remove())
+      currentMarkers.clear()
       map.remove()
       mapInstanceRef.current = null
     }
@@ -124,49 +103,72 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger, demo })
     return () => { control.remove() }
   }, [tx, demo])
 
-  // Recenter back to central Ho Chi Minh City
+  // Recenter back to database venues centroid or fit bounds
   useEffect(() => {
-    if (recenterTrigger > 0 && mapInstanceRef.current) {
-      mapInstanceRef.current.flyTo([10.775, 106.700], 14, { duration: 1, animate: !reducedMotion })
+    const map = mapInstanceRef.current
+    if (!map) return
+    const validCoords = venues.map(extractVenueCoordinates).filter(Boolean)
+    if (validCoords.length > 0) {
+      map.fitBounds(validCoords.map((c) => [c.lat, c.lng]), { padding: [50, 50], maxZoom: 15, animate: !reducedMotion })
+    } else {
+      map.flyTo(DEFAULT_MAP_CENTER, 13, { duration: 1, animate: !reducedMotion })
     }
-  }, [recenterTrigger, reducedMotion])
+  }, [recenterTrigger, venues, reducedMotion])
 
-  // Update marker & smooth flyTo active venue with dynamically parsed coordinates
+  // Render & update markers for all venues in the current list
   useEffect(() => {
     const map = mapInstanceRef.current
     if (!map) return
 
-    if (!activeVenue) {
-      if (markerRef.current) {
-        markerRef.current.remove()
-        markerRef.current = null
-      }
-      return
-    }
+    const currentMarkers = markersRef.current
 
-    const coords = extractVenueCoordinates(activeVenue)
-    const position = coords ? [coords.lat, coords.lng] : [10.775, 106.700]
-    const symbol = CATEGORY_SYMBOLS[activeVenue.category] || '📍'
-    const icon = L.divIcon({
-      className: 'custom-leaflet-marker-wrap',
-      html: createCustomMarkerHtml(activeVenue, symbol),
-      iconSize: [240, 56],
-      iconAnchor: [120, 56]
+    // Remove stale markers
+    currentMarkers.forEach((marker, id) => {
+      if (!venues.some((v) => v.id === id)) {
+        marker.remove()
+        currentMarkers.delete(id)
+      }
     })
 
-    if (!markerRef.current) {
-      markerRef.current = L.marker(position, {
-        icon,
-        title: `${activeVenue.name}: ${activeVenue.matchScore}/10`,
-        keyboard: true
-      }).addTo(map)
-      markerRef.current.on('click', () => onMarkerClickRef.current?.(activeVenue))
-    } else {
-      markerRef.current.setLatLng(position)
-      markerRef.current.setIcon(icon)
-    }
+    // Create or update markers
+    venues.forEach((venue) => {
+      const coords = extractVenueCoordinates(venue)
+      if (!coords) return
+      const isSelected = activeVenue?.id === venue.id
+      const symbol = CATEGORY_SYMBOLS[venue.category] || '📍'
+      const icon = L.divIcon({
+        className: 'custom-leaflet-marker-wrap',
+        html: createCustomMarkerHtml(venue, symbol, isSelected),
+        iconSize: isSelected ? [240, 56] : [160, 44],
+        iconAnchor: isSelected ? [120, 56] : [80, 44]
+      })
 
-    map.flyTo(position, 16, { duration: 1.2, easeLinearity: 0.25, animate: !reducedMotion })
+      let marker = currentMarkers.get(venue.id)
+      if (!marker) {
+        marker = L.marker([coords.lat, coords.lng], {
+          icon,
+          title: `${venue.name}: ${venue.matchScore}/10`,
+          keyboard: true,
+          zIndexOffset: isSelected ? 1000 : 100
+        }).addTo(map)
+        marker.on('click', () => onMarkerClickRef.current?.(venue))
+        currentMarkers.set(venue.id, marker)
+      } else {
+        marker.setLatLng([coords.lat, coords.lng])
+        marker.setIcon(icon)
+        marker.setZIndexOffset(isSelected ? 1000 : 100)
+      }
+    })
+  }, [venues, activeVenue])
+
+  // Smooth flyTo active venue
+  useEffect(() => {
+    const map = mapInstanceRef.current
+    if (!map || !activeVenue) return
+    const coords = extractVenueCoordinates(activeVenue)
+    if (coords) {
+      map.flyTo([coords.lat, coords.lng], 16, { duration: 1.2, easeLinearity: 0.25, animate: !reducedMotion })
+    }
   }, [activeVenue, reducedMotion])
 
   return (
@@ -177,6 +179,34 @@ function LeafletMapCanvas({ activeVenue, onMarkerClick, recenterTrigger, demo })
       aria-label={tx('Interactive map of Ho Chi Minh City')}
     />
   )
+}
+
+function GoogleMapController({ activeCoords, venues, recenterTrigger }) {
+  const map = useMap()
+  useEffect(() => {
+    if (!map || !activeCoords) return
+    map.panTo(activeCoords)
+  }, [map, activeCoords])
+
+  useEffect(() => {
+    if (!map) return
+    const validCoords = venues.map(extractVenueCoordinates).filter(Boolean)
+    if (!validCoords.length) {
+      map.setCenter({ lat: DEFAULT_MAP_CENTER[0], lng: DEFAULT_MAP_CENTER[1] })
+      map.setZoom(13)
+      return
+    }
+    const lats = validCoords.map((c) => c.lat)
+    const lngs = validCoords.map((c) => c.lng)
+    map.fitBounds({
+      north: Math.max(...lats),
+      south: Math.min(...lats),
+      east: Math.max(...lngs),
+      west: Math.min(...lngs)
+    }, 50)
+  }, [map, recenterTrigger, venues])
+
+  return null
 }
 
 export default function DiscoveryMapSection({
@@ -206,7 +236,8 @@ export default function DiscoveryMapSection({
   const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim()
 
   const handleMarkerClick = (venue) => {
-    onOpenDetail?.(venue)
+    setUserSelectedVenueId(venue.id)
+    onSelectVenue?.(venue)
   }
 
   const handleClear = () => {
@@ -306,8 +337,8 @@ export default function DiscoveryMapSection({
             >
               <APIProvider apiKey={googleMapsApiKey}>
                 <Map
-                  defaultCenter={{ lat: 10.775, lng: 106.700 }}
-                  defaultZoom={14}
+                  defaultCenter={{ lat: DEFAULT_MAP_CENTER[0], lng: DEFAULT_MAP_CENTER[1] }}
+                  defaultZoom={13}
                   mapId="DEMO_MAP_ID"
                   internalUsageAttributionIds={['gmp_git_agentskills_v1']}
                   disableDefaultUI
@@ -315,36 +346,42 @@ export default function DiscoveryMapSection({
                   gestureHandling={demo ? 'none' : 'auto'}
                   keyboardShortcuts={!demo}
                   clickableIcons={!demo}
-                  styles={GOOGLE_MAP_STYLES}
                   style={{ width: '100%', height: '100%' }}
                 >
-                  {activeVenue && (
-                    <>
-                      <GoogleMapPanTo targetPosition={activeCoords || { lat: 10.775, lng: 106.700 }} />
+                  <GoogleMapController activeCoords={activeCoords} venues={venueList} recenterTrigger={recenterTrigger} />
+                  {venueList.map((venue) => {
+                    const coords = extractVenueCoordinates(venue)
+                    if (!coords) return null
+                    const isSelected = activeVenue?.id === venue.id
+                    const symbol = CATEGORY_SYMBOLS[venue.category] || '📍'
+                    const score = venue.matchScore?.toFixed(1) || '9.5'
+                    return (
                       <AdvancedMarker
-                        position={activeCoords || { lat: 10.775, lng: 106.700 }}
-                        onClick={() => handleMarkerClick(activeVenue)}
-                        zIndex={1000}
-                        title={`${activeVenue.name}: ${activeVenue.matchScore}/10`}
+                        key={venue.id}
+                        position={coords}
+                        onClick={() => handleMarkerClick(venue)}
+                        zIndex={isSelected ? 1000 : 100}
+                        title={`${venue.name}: ${score}/10`}
                       >
-                        <div className="custom-map-pin is-active">
+                        <div className={`custom-map-pin ${isSelected ? 'is-active' : 'is-marker'}`}>
                           <div className="pin-card-pill">
-                            <span className="pin-emoji" aria-hidden="true">{CATEGORY_SYMBOLS[activeVenue.category] || '📍'}</span>
-                            <span className="pin-name">{activeVenue.name}</span>
-                            <span className="pin-score-tag">★ {activeVenue.matchScore?.toFixed(1) || '9.5'}</span>
+                            <span className="pin-emoji" aria-hidden="true">{symbol}</span>
+                            <span className="pin-name">{venue.name.split('-')[0].trim()}</span>
+                            {isSelected && <span className="pin-score-tag">★ {score}</span>}
                           </div>
                           <div className="pin-pointer-tip" />
                           <div className="pin-ground-dot" />
                         </div>
                       </AdvancedMarker>
-                    </>
-                  )}
+                    )
+                  })}
                 </Map>
               </APIProvider>
             </div>
           ) : (
             <LeafletMapCanvas
               demo={demo}
+              venues={venueList}
               activeVenue={activeVenue}
               onMarkerClick={handleMarkerClick}
               recenterTrigger={recenterTrigger}

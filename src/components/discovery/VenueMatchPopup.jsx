@@ -46,9 +46,12 @@ const matchSubjects = {
 
 export default function VenueMatchPopup({ venue, onClose, onDetails }) {
   const { isEn, tx } = useLanguage()
-  const rows = highlights[venue.id] || []
+  const dynamicRows = (Array.isArray(venue.reasons) && venue.reasons.length > 0 ? venue.reasons : (Array.isArray(venue.dynamicReasons) ? venue.dynamicReasons : []))
+    .slice(0, 3)
+    .map((r) => ['✨', r, '', r, ''])
+  const rows = highlights[venue.id] || dynamicRows
   const subject = matchSubjects[venue.id]?.[isEn ? 1 : 0] || venue.name
-  const missing = ['Wi-Fi', 'Power outlets', 'Parking'].find(amenity => !venue.amenities.includes(amenity))
+  const missing = ['Wi-Fi', 'Power outlets', 'Parking'].find(amenity => !venue.amenities?.includes(amenity))
   if (venue.reviewSource === 'demo') return <article className="dg-match-popup dg-match-popup--review">
     <button type="button" className="dg-match-close" onClick={(event) => { event.stopPropagation(); onClose() }} aria-label={isEn ? 'Close match details' : 'Đóng độ phù hợp'}><X size={16} /></button>
     <div className="dg-match-scroll"><VenueAiReview venue={venue} /></div>
@@ -63,12 +66,12 @@ export default function VenueMatchPopup({ venue, onClose, onDetails }) {
       </header>
       <div className="dg-match-scroll">
         <div className="dg-match-positives">
-          {rows.map(([icon, titleVi, bodyVi, titleEn, bodyEn]) => <div className="dg-match-row" key={titleEn}><span aria-hidden="true">{icon}</span><div><strong>{isEn ? titleEn : titleVi}</strong><p>{isEn ? bodyEn : bodyVi}</p></div></div>)}
+          {rows.map(([icon, titleVi, bodyVi, titleEn, bodyEn], idx) => <div className="dg-match-row" key={`${idx}-${titleEn}`}><span aria-hidden="true">{icon}</span><div><strong>{isEn ? titleEn : titleVi}</strong>{bodyEn || bodyVi ? <p>{isEn ? bodyEn : bodyVi}</p> : null}</div></div>)}
         </div>
         <div className="dg-match-row dg-match-neutral"><span aria-hidden="true">💰</span><div><strong>{isEn ? 'Budget to plan for' : 'Chi phí tham khảo'}</strong><p>{venue.priceRange}</p></div></div>
         <div className="dg-match-row dg-match-caution"><span aria-hidden="true">💡</span><div><strong>{isEn ? 'Before you go' : 'Lưu ý trước khi đến'}</strong><p>{missing ? (isEn ? `${tx(missing)} is not listed. Check with the venue.` : `Chưa có thông tin ${tx(missing).toLowerCase()}. Hãy hỏi quán trước.`) : (isEn ? 'Check seating availability with the venue.' : 'Hãy kiểm tra chỗ ngồi với quán trước.')}</p></div></div>
       </div>
-      <footer><small>{isEn ? 'Sample match score' : 'Điểm phù hợp minh họa'}</small><button type="button" onClick={() => onDetails(venue)}>{isEn ? 'Venue info →' : 'Thông tin quán →'}</button></footer>
+      <footer><small>{venue.reviewSource === 'backend' ? (isEn ? 'FindGo Matched' : 'Tìm kiếm FindGo') : (isEn ? 'Sample match score' : 'Điểm phù hợp minh họa')}</small><button type="button" onClick={() => onDetails(venue)}>{isEn ? 'Venue info →' : 'Thông tin quán →'}</button></footer>
     </article>
   )
 }

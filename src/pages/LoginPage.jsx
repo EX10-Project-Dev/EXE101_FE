@@ -1,7 +1,7 @@
 import { useLanguage } from '../contexts/LanguageContext'
 import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { signIn } from '../services/authService'
+import { signIn, signUp, forgotPassword, extractErrorMessage } from '../services/authService'
 import { ArrowRight, X } from 'lucide-react'
 import BrandText from '../components/BrandText'
 import logo from '../assets/logo-small.webp'
@@ -60,24 +60,44 @@ function SignupForm() {
   const [confirmation, setConfirmation] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const [noticeType, setNoticeType] = useState('error')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const confirmationRef = useRef(null)
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
+    if (isSubmitting) return
     setNotice('')
     if (password !== confirmation) {
       setError('Passwords do not match. Please try again.')
       confirmationRef.current?.focus()
       return
     }
+    if (password.length < 8) {
+      setError('Use at least 8 characters.')
+      return
+    }
     setError('')
-    // Connect registration here once the backend contract is available.
-    setNotice('Account creation is not available yet. Please check back soon.')
+    setIsSubmitting(true)
+    try {
+      const result = await signUp({ fullName: name, email, password })
+      setNotice(result?.message || 'Tạo tài khoản thành công. Hãy kiểm tra email để xác minh trước khi đăng nhập.')
+      setNoticeType('success')
+      setName('')
+      setEmail('')
+      setPassword('')
+      setConfirmation('')
+    } catch (err) {
+      setNotice(extractErrorMessage(err, 'Không thể tạo tài khoản. Vui lòng thử lại.'))
+      setNoticeType('error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <form className="auth-form auth-signup-form" onSubmit={handleSubmit}>
-      <GoogleLoginButton onClick={() => setNotice('Google sign-up is coming soon. Please check back soon.')} />
+      <GoogleLoginButton onClick={() => { setNotice('Google sign-up is coming soon. Please check back soon.'); setNoticeType('error') }} />
       <div className="auth-divider"><span>{tx('Or sign up with email')}</span></div>
       <div className="auth-field">
         <label htmlFor="signup-name">{tx('Full name')}</label>
@@ -89,8 +109,11 @@ function SignupForm() {
       </div>
       <PasswordField id="signup-password" isNew value={password} onChange={(event) => { setPassword(event.target.value); setError(''); setNotice('') }} />
       <PasswordField id="signup-confirmation" label="Confirm password" isNew inputRef={confirmationRef} error={error} value={confirmation} onChange={(event) => { setConfirmation(event.target.value); setError(''); setNotice('') }} />
-      <button className="auth-submit" type="submit"><span>{tx('Create account')}</span><ArrowRight size={20} aria-hidden="true" /></button>
-      {notice && <p className="auth-notice" role="status">{tx(notice)}</p>}
+      <button className="auth-submit" type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
+        <span>{tx(isSubmitting ? 'Creating account…' : 'Create account')}</span>
+        <ArrowRight size={20} aria-hidden="true" />
+      </button>
+      {notice && <p className={`auth-notice ${noticeType === 'success' ? 'auth-notice--success' : 'auth-notice--error'}`} role="status">{tx(notice)}</p>}
       <p className="auth-register">{tx('Already have an account?')} <Link to="/login">{tx('Log in')}</Link></p>
     </form>
   )
@@ -103,18 +126,21 @@ function LoginForm() {
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [notice, setNotice] = useState('')
+  const [noticeType, setNoticeType] = useState('error')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   async function handleSubmit(event) {
     event.preventDefault()
     if (isSubmitting) return
     setNotice('')
+    setNoticeType('error')
     setIsSubmitting(true)
     try {
       await signIn({ email: email.trim(), password, rememberMe })
       navigate('/discover', { replace: true })
     } catch (error) {
-      setNotice(error.response?.status === 401 || error.code === 'INVALID_CREDENTIALS' ? 'Incorrect email or password. Please try again.' : error.response ? 'Sign-in is unavailable right now. Please try again.' : 'Unable to connect. Please try again.')
+      setNotice(extractErrorMessage(error, 'Incorrect email or password. Please try again.'))
+      setNoticeType('error')
     } finally {
       setIsSubmitting(false)
     }
@@ -122,7 +148,7 @@ function LoginForm() {
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
-      <GoogleLoginButton onClick={() => setNotice('Google sign-in is coming soon. You can still explore places without an account.')} />
+      <GoogleLoginButton onClick={() => { setNotice('Google sign-in is coming soon. You can still explore places without an account.'); setNoticeType('error') }} />
       <div className="auth-divider"><span>{tx('Or continue with email')}</span></div>
       <div className="auth-field">
         <label htmlFor="login-email">{tx('Email address')}</label>
@@ -133,9 +159,53 @@ function LoginForm() {
         <label className="auth-remember"><input name="remember" type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />{tx('Remember me')}</label>
         <Link to="/forgot-password">{tx('Forgot password?')}</Link>
       </div>
-      <button className="auth-submit" type="submit" disabled={isSubmitting} aria-busy={isSubmitting}><span>{tx(isSubmitting ? 'Signing in…' : 'Log in')}</span><ArrowRight size={20} aria-hidden="true" /></button>
-      {notice && <p className="auth-notice" role="status">{tx(notice)}</p>}
+      <button className="auth-submit" type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
+        <span>{tx(isSubmitting ? 'Signing in…' : 'Log in')}</span>
+        <ArrowRight size={20} aria-hidden="true" />
+      </button>
+      {notice && <p className={`auth-notice ${noticeType === 'success' ? 'auth-notice--success' : 'auth-notice--error'}`} role="status">{tx(notice)}</p>}
       <p className="auth-register">{tx('New to FIND&GO?')} <Link to="/register">{tx('Create an account')}</Link></p>
+    </form>
+  )
+}
+
+function ForgotPasswordForm() {
+  const { tx } = useLanguage()
+  const [email, setEmail] = useState('')
+  const [notice, setNotice] = useState('')
+  const [noticeType, setNoticeType] = useState('error')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    if (isSubmitting) return
+    setNotice('')
+    setNoticeType('error')
+    setIsSubmitting(true)
+    try {
+      const result = await forgotPassword({ email })
+      setNotice(result?.message || 'Nếu email thuộc về tài khoản đã xác minh, hướng dẫn đặt lại mật khẩu sẽ được gửi.')
+      setNoticeType('success')
+    } catch (error) {
+      setNotice(extractErrorMessage(error, 'Dịch vụ email chưa được cấu hình.'))
+      setNoticeType('error')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <form className="auth-form" onSubmit={handleSubmit}>
+      <div className="auth-field">
+        <label htmlFor="recovery-email">{tx('Email address')}</label>
+        <input id="recovery-email" name="email" type="email" autoComplete="email" placeholder="you@university.edu" required value={email} onChange={(event) => { setEmail(event.target.value); setNotice('') }} />
+      </div>
+      <button className="auth-submit" type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
+        <span>{tx(isSubmitting ? 'Sending…' : 'Send reset link')}</span>
+        <ArrowRight size={20} aria-hidden="true" />
+      </button>
+      {notice && <p className={`auth-notice ${noticeType === 'success' ? 'auth-notice--success' : 'auth-notice--error'}`} role="status">{tx(notice)}</p>}
+      <p className="auth-register"><Link to="/login">{tx('Back to login')}</Link></p>
     </form>
   )
 }
@@ -156,6 +226,8 @@ function LoginVisualPanel({ onClose }) {
 
 export default function LoginPage({ pendingFlow, isSignup = false, onClose }) {
   const { tx, language, isEn } = useLanguage()
+  const isRecovery = pendingFlow === 'recovery'
+
   return (
     <div className={`auth-page${isSignup ? ' auth-signup' : ''}`} lang={language}>
       <section className="auth-left" aria-labelledby="auth-title">
@@ -163,12 +235,35 @@ export default function LoginPage({ pendingFlow, isSignup = false, onClose }) {
         <button className="auth-mobile-close" type="button" onClick={onClose} aria-label={tx('Close authentication dialog')}><X size={20} aria-hidden="true" /></button>
         <div className="auth-content">
           <div className="auth-intro">
-            <p className="auth-eyebrow">{tx(isSignup ? 'Join the good company' : 'Welcome back')}</p>
-            <h1 id="auth-title">{!isEn ? (isSignup ? <>Quán hợp gu.<br />Bạn cùng <span>sở thích.</span></> : <>Sẵn sàng tìm<br /><span>quán hợp gu?</span></>) : isSignup ? <>Your next spot.<br />Your kind of <span>people.</span></> : <>Ready to find<br />your next <span>spot?</span></>}</h1>
-            <p className="auth-description">{tx(isSignup ? 'Create an account to save your favorite places and discover more moments worth sharing.' : 'Log in to save places, revisit your matches, and get recommendations shaped around you.')}</p>
+            <p className="auth-eyebrow">{tx(isRecovery ? 'Account recovery' : isSignup ? 'Join the good company' : 'Welcome back')}</p>
+            <h1 id="auth-title">
+              {!isEn ? (
+                isRecovery ? (
+                  <>Khôi phục<br /><span>mật khẩu</span></>
+                ) : isSignup ? (
+                  <>Quán hợp gu.<br />Bạn cùng <span>sở thích.</span></>
+                ) : (
+                  <>Sẵn sàng tìm<br /><span>quán hợp gu?</span></>
+                )
+              ) : isRecovery ? (
+                <>Recover your<br /><span>password</span></>
+              ) : isSignup ? (
+                <>Your next spot.<br />Your kind of <span>people.</span></>
+              ) : (
+                <>Ready to find<br />your next <span>spot?</span></>
+              )}
+            </h1>
+            <p className="auth-description">
+              {tx(
+                isRecovery
+                  ? 'Enter your email address and we will send you instructions to reset your password.'
+                  : isSignup
+                    ? 'Create an account to save your favorite places and discover more moments worth sharing.'
+                    : 'Log in to save places, revisit your matches, and get recommendations shaped around you.'
+              )}
+            </p>
           </div>
-          {pendingFlow && <p className="auth-notice" role="status">{tx('Password recovery is coming soon.')} <Link to="/login">{tx('Back to login')}</Link></p>}
-          {isSignup ? <SignupForm /> : <LoginForm />}
+          {isRecovery ? <ForgotPasswordForm /> : isSignup ? <SignupForm /> : <LoginForm />}
         </div>
         <p className="auth-footer">{tx('Good places. Great company.')} <span>FIND&GO.</span></p>
       </section>

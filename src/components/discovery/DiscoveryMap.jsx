@@ -6,9 +6,10 @@ import 'leaflet/dist/leaflet.css'
 import { APIProvider, Map as GoogleMap, AdvancedMarker, InfoWindow, useMap } from '@vis.gl/react-google-maps'
 import VenuePhoto from './VenuePhoto'
 import VenueMatchPopup from './VenueMatchPopup'
+import { extractVenueCoordinates } from '../../utils/geoUtils'
 import { venueSymbol } from '../../utils/venueSymbols'
 
-const CITY_CENTER = { lat: 10.786, lng: 106.705 }
+const CITY_CENTER = { lat: 10.8458, lng: 106.8059 }
 
 
 function VenueMapPopup({ venue, onDetails, onMatch, onCloseMatch, expanded }) {
@@ -34,7 +35,7 @@ function LeafletDiscoveryMap({ venues, selectedVenueId, hoveredVenueId, onSelect
   const expanded = Boolean(selected && selected.id === matchVenueId)
 
   useEffect(() => {
-    const map = L.map(element.current, { center: [CITY_CENTER.lat, CITY_CENTER.lng], zoom: 14, zoomControl: false, scrollWheelZoom: true })
+    const map = L.map(element.current, { center: [CITY_CENTER.lat, CITY_CENTER.lng], zoom: 13, zoomControl: false, scrollWheelZoom: true })
     mapRef.current = map
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, tiles by <a href="https://www.hotosm.org/">HOT</a>',
@@ -54,9 +55,12 @@ function LeafletDiscoveryMap({ venues, selectedVenueId, hoveredVenueId, onSelect
 
   useEffect(() => {
     const map = mapRef.current
+    if (!map) return
     const currentMarkers = markers.current
     venues.forEach((venue) => {
-      const marker = L.marker([venue.lat, venue.lng], { icon: makeIcon(venue, false, false), title: venue.name, alt: venue.name, keyboard: true })
+      const coords = extractVenueCoordinates(venue) || { lat: venue.lat, lng: venue.lng }
+      if (!coords || typeof coords.lat !== 'number' || typeof coords.lng !== 'number') return
+      const marker = L.marker([coords.lat, coords.lng], { icon: makeIcon(venue, false, false), title: venue.name, alt: venue.name, keyboard: true })
         .addTo(map).on('click', () => { onSelect(venue.id); setMarkerClick(value => value + 1) })
       currentMarkers.set(venue.id, marker)
     })
@@ -80,6 +84,7 @@ function LeafletDiscoveryMap({ venues, selectedVenueId, hoveredVenueId, onSelect
 
   useEffect(() => {
     const map = mapRef.current
+    if (!map) return
     map.closePopup()
     const marker = markers.current.get(selectedVenueId)
     if (marker) {
@@ -95,10 +100,14 @@ function LeafletDiscoveryMap({ venues, selectedVenueId, hoveredVenueId, onSelect
   }, [selectedVenueId, venues, popupElement, expanded, markerClick, onCloseMatch])
 
   useEffect(() => {
-    if (!recenterKey) return
     const map = mapRef.current
-    if (venues.length) map.fitBounds(venues.map((venue) => [venue.lat, venue.lng]), { paddingTopLeft: [70, 130], paddingBottomRight: [70, 100], maxZoom: 14, animate: false })
-    else map.setView([CITY_CENTER.lat, CITY_CENTER.lng], 14)
+    if (!map) return
+    const validCoords = venues.map((v) => extractVenueCoordinates(v) || { lat: v.lat, lng: v.lng }).filter(c => c && typeof c.lat === 'number' && typeof c.lng === 'number')
+    if (validCoords.length) {
+      map.fitBounds(validCoords.map((c) => [c.lat, c.lng]), { paddingTopLeft: [70, 130], paddingBottomRight: [70, 100], maxZoom: 15, animate: false })
+    } else {
+      map.setView([CITY_CENTER.lat, CITY_CENTER.lng], 13)
+    }
   }, [recenterKey, venues])
 
   return <><div ref={element} className="dg-map-canvas" aria-label={tx('Interactive map of Ho Chi Minh City')} role="region" />{selected && createPortal(<VenueMapPopup venue={selected} onDetails={onDetails} onMatch={onMatch} onCloseMatch={onCloseMatch} expanded={expanded} />, popupElement)}{tileError && <p className="dg-map-error" role="status">{tx('Map tiles are unavailable. You can still explore the places below.')}</p>}</>
@@ -106,12 +115,17 @@ function LeafletDiscoveryMap({ venues, selectedVenueId, hoveredVenueId, onSelect
 
 function GoogleMapController({ selected, venues, recenterKey }) {
   const map = useMap()
-  useEffect(() => { if (map && selected) map.setCenter({ lat: selected.lat, lng: selected.lng }) }, [map, selected])
   useEffect(() => {
-    if (!map || !recenterKey) return
-    if (!venues.length) { map.setCenter(CITY_CENTER); map.setZoom(14); return }
-    const lats = venues.map((venue) => venue.lat)
-    const lngs = venues.map((venue) => venue.lng)
+    if (!map || !selected) return
+    const coords = extractVenueCoordinates(selected) || { lat: selected.lat, lng: selected.lng }
+    if (coords) map.setCenter(coords)
+  }, [map, selected])
+  useEffect(() => {
+    if (!map) return
+    const validCoords = venues.map((v) => extractVenueCoordinates(v) || { lat: v.lat, lng: v.lng }).filter(c => c && typeof c.lat === 'number' && typeof c.lng === 'number')
+    if (!validCoords.length) { map.setCenter(CITY_CENTER); map.setZoom(13); return }
+    const lats = validCoords.map((c) => c.lat)
+    const lngs = validCoords.map((c) => c.lng)
     map.fitBounds({ north: Math.max(...lats), south: Math.min(...lats), east: Math.max(...lngs), west: Math.min(...lngs) }, { top: 120, bottom: 90, left: 60, right: 60 })
   }, [map, recenterKey, venues])
   return null
@@ -120,12 +134,28 @@ function GoogleMapController({ selected, venues, recenterKey }) {
 function GoogleDiscoveryMap(props) {
   const { venues, selectedVenueId, hoveredVenueId, onSelect, onDetails, recenterKey, matchVenueId, onMatch, onCloseMatch } = props
   const selected = venues.find((venue) => venue.id === selectedVenueId)
-  return <GoogleMap className="dg-map-canvas" style={{ height: 'calc(100% - 38px)' }} defaultCenter={CITY_CENTER} defaultZoom={14} mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID'} disableDefaultUI zoomControl gestureHandling="greedy" clickableIcons={false} onClick={onCloseMatch}>
+  const selectedCoords = selected ? (extractVenueCoordinates(selected) || { lat: selected.lat, lng: selected.lng }) : null
+  return <GoogleMap className="dg-map-canvas" style={{ height: 'calc(100% - 38px)' }} defaultCenter={CITY_CENTER} defaultZoom={13} mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID'} disableDefaultUI zoomControl gestureHandling="greedy" clickableIcons={false} onClick={onCloseMatch}>
     <GoogleMapController selected={selected} venues={venues} recenterKey={recenterKey} />
-    {venues.map((venue) => <AdvancedMarker key={venue.id} position={{ lat: venue.lat, lng: venue.lng }} title={venue.name} onClick={() => onSelect(venue.id)} zIndex={venue.id === selectedVenueId ? 1000 : venue.id === hoveredVenueId ? 500 : 1}>{venue.id === selectedVenueId && venue.id === matchVenueId ? <span className="dg-match-marker"><span aria-hidden="true">{venueSymbol(venue)}</span><strong>{venue.matchScore.toFixed(1)}</strong></span> : <span className={`dg-pin${venue.id === selectedVenueId ? ' is-selected' : ''}${venue.id === hoveredVenueId ? ' is-highlighted' : ''}`} aria-hidden="true"><span className="dg-pin-body"><span className="dg-pin-symbol">{venueSymbol(venue)}</span></span></span>}</AdvancedMarker>)}
-    {selected && <InfoWindow position={{ lat: selected.lat, lng: selected.lng }} pixelOffset={[0, -48]} headerDisabled onClose={onCloseMatch}><VenueMapPopup venue={selected} onDetails={onDetails} onMatch={onMatch} onCloseMatch={onCloseMatch} expanded={selected.id === matchVenueId} /></InfoWindow>}
+    {venues.map((venue) => {
+      const coords = extractVenueCoordinates(venue) || { lat: venue.lat, lng: venue.lng }
+      if (!coords || typeof coords.lat !== 'number' || typeof coords.lng !== 'number') return null
+      return (
+        <AdvancedMarker key={venue.id} position={coords} title={venue.name} onClick={() => onSelect(venue.id)} zIndex={venue.id === selectedVenueId ? 1000 : venue.id === hoveredVenueId ? 500 : 1}>
+          {venue.id === selectedVenueId && venue.id === matchVenueId ? (
+            <span className="dg-match-marker"><span aria-hidden="true">{venueSymbol(venue)}</span><strong>{venue.matchScore.toFixed(1)}</strong></span>
+          ) : (
+            <span className={`dg-pin${venue.id === selectedVenueId ? ' is-selected' : ''}${venue.id === hoveredVenueId ? ' is-highlighted' : ''}`} aria-hidden="true">
+              <span className="dg-pin-body"><span className="dg-pin-symbol">{venueSymbol(venue)}</span></span>
+            </span>
+          )}
+        </AdvancedMarker>
+      )
+    })}
+    {selected && selectedCoords && <InfoWindow position={selectedCoords} pixelOffset={[0, -48]} headerDisabled onClose={onCloseMatch}><VenueMapPopup venue={selected} onDetails={onDetails} onMatch={onMatch} onCloseMatch={onCloseMatch} expanded={selected.id === matchVenueId} /></InfoWindow>}
   </GoogleMap>
 }
+
 
 export default function DiscoveryMap(props) {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim()

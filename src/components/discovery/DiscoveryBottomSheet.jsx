@@ -32,7 +32,7 @@ export default function DiscoveryBottomSheet({ sheetState, onSheetState, prompts
     <section className={`dg-sheet dg-sheet--${sheetState}`} aria-label={tx('Search and recommendations')}>
       <button className="dg-sheet-handle" type="button" aria-label={tx(sheetState === 'collapsed' ? 'Expand recommendations' : 'Collapse recommendations')} aria-expanded={sheetState !== 'collapsed'} onPointerDown={(event) => { startY.current = event.clientY; suppressClick.current = false; event.currentTarget.setPointerCapture(event.pointerId) }} onPointerUp={handlePointerUp} onPointerCancel={() => { startY.current = null }} onClick={() => { if (!suppressClick.current) onSheetState(sheetState === 'collapsed' ? 'default' : 'collapsed'); suppressClick.current = false }}><span /></button>
       <div className="dg-sheet-content" inert={sheetState === 'collapsed' ? true : undefined}>
-        <SearchSection compact prompts={prompts} setPrompts={onPrompts} onSearch={onSearch} onOpenFilter={() => setFiltersOpen(true)} criteriaCount={activeFilters} onGetLocation={onLocation} locationState={location} onReset={onReset} isLoading={searching} />
+        <SearchSection compact prompts={prompts} setPrompts={onPrompts} onSearch={onSearch} onOpenFilter={() => setFiltersOpen(true)} criteriaCount={activeFilters} onGetLocation={onLocation} locationState={location} onReset={onReset} isLoading={searching} venues={results} />
         {filtersOpen && <DiscoveryFilterDialog filters={filters} onApply={onFilters} onClose={() => setFiltersOpen(false)} />}
         {aiSearch.status !== 'idle' && <DiscoveryAiSearch search={aiSearch} venue={reviewedVenue} onCancel={onCancelSearch} onRetry={onRetrySearch} />}
         {showResults && <><div className="dg-recommendation-heading">

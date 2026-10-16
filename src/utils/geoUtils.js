@@ -3,11 +3,15 @@
  * Đảm bảo khi thêm dữ liệu mới trong tương lai, bản đồ web luôn khớp chính xác với Google Maps.
  */
 
+export const DATABASE_CITY_CENTER = { lat: 10.8458, lng: 106.8059 }
+
 /**
  * Trích xuất tọa độ { lat, lng } chuẩn từ đối tượng venue.
  * Hỗ trợ đa dạng định dạng:
- * - venue.lat & venue.lng (số hoặc chuỗi số '10.77348')
+ * - venue.lat & venue.lng (số hoặc chuỗi số '10.77348' hoặc '10,8405')
  * - venue.latitude & venue.longitude
+ * - venue.location.latitude & venue.location.longitude (từ Backend API DTO)
+ * - venue.sourceData.latitudeSource / longitudeSource
  * - Tự động bóc tách tọa độ từ googleMapsUrl nếu không có sẵn lat/lng
  * 
  * @param {Object} venue - Đối tượng địa điểm
@@ -16,13 +20,17 @@
 export function extractVenueCoordinates(venue) {
   if (!venue || typeof venue !== 'object') return null
 
-  // 1. Kiểm tra trực tiếp lat/lng hoặc latitude/longitude
-  const rawLat = venue.lat ?? venue.latitude
-  const rawLng = venue.lng ?? venue.lon ?? venue.longitude
+  // 1. Kiểm tra trực tiếp lat/lng, location DTO hoặc sourceData
+  const loc = venue.location || {}
+  const source = venue.sourceData || {}
+  const rawLat = venue.lat ?? venue.latitude ?? loc.latitude ?? loc.lat ?? source.latitudeSource ?? source.lat
+  const rawLng = venue.lng ?? venue.lon ?? venue.longitude ?? loc.longitude ?? loc.lng ?? source.longitudeSource ?? source.lng
 
   if (rawLat !== undefined && rawLat !== null && rawLng !== undefined && rawLng !== null) {
-    const lat = typeof rawLat === 'number' ? rawLat : parseFloat(String(rawLat).trim())
-    const lng = typeof rawLng === 'number' ? rawLng : parseFloat(String(rawLng).trim())
+    const latStr = String(rawLat).trim().replace(',', '.')
+    const lngStr = String(rawLng).trim().replace(',', '.')
+    const lat = typeof rawLat === 'number' ? rawLat : parseFloat(latStr)
+    const lng = typeof rawLng === 'number' ? rawLng : parseFloat(lngStr)
 
     if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
       return { lat, lng }
@@ -30,7 +38,7 @@ export function extractVenueCoordinates(venue) {
   }
 
   // 2. Trích xuất từ Google Maps URL nếu không có sẵn trường lat/lng
-  const url = venue.googleMapsUrl || venue.mapUrl || venue.url
+  const url = venue.googleMapsUrl || venue.mapUrl || venue.url || source.googleMapsUrlSource
   if (typeof url === 'string' && url.trim()) {
     const coordsFromUrl = parseCoordinatesFromGoogleMapsUrl(url.trim())
     if (coordsFromUrl) return coordsFromUrl
@@ -38,6 +46,7 @@ export function extractVenueCoordinates(venue) {
 
   return null
 }
+
 
 /**
  * Trích xuất tọa độ từ các định dạng URL của Google Maps:
