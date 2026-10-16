@@ -23,15 +23,16 @@ const MARQUEE_TAGLINES_EN = {
   'venue-6': 'Japanese Matcha & Sweets'
 }
 
-export default function ScoreMarquee({ onSelectCard }) {
+export default function ScoreMarquee({ onSelectCard, venues }) {
   const { isEn, tx } = useLanguage()
   const track = useRef(null)
   const inView = useInView(track)
   const reducedMotion = useReducedMotion()
 
-  const MARQUEE_DATA = MOCK_VENUES.map((v) => ({
+  const venueList = venues?.length > 0 ? venues : MOCK_VENUES
+  const MARQUEE_DATA = venueList.map((v) => ({
     ...v,
-    marqueeLabel: isEn ? (MARQUEE_TAGLINES_EN[v.id] || v.category) : (MARQUEE_TAGLINES_VI[v.id] || v.category)
+    marqueeLabel: isEn ? (MARQUEE_TAGLINES_EN[v.id] || v.tagline || v.category) : (MARQUEE_TAGLINES_VI[v.id] || v.tagline || v.category)
   }))
 
   const INFINITE_ITEMS = [...MARQUEE_DATA, ...MARQUEE_DATA]
