@@ -11,7 +11,7 @@ export async function getRecommendations(payload = {}) {
 
   try {
     // Thử gọi backend API
-    const response = await api.post('/recommendations', {
+    const response = await api.post('/v1/search/recommendations', {
       prompts,
       criteria,
       location
