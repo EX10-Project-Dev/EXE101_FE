@@ -1,6 +1,6 @@
 import api from './api.js'
 import { MOCK_VENUES } from '../data/mockVenues.js'
-import { extractVenueCoordinates } from '../utils/geoUtils.js'
+import { extractVenueCoordinates, extractGooglePlaceId } from '../utils/geoUtils.js'
 
 export function mapBackendVenueToFrontend(result) {
   const v = result.venue || {}
@@ -66,6 +66,11 @@ export function mapBackendVenueToFrontend(result) {
   const tags = Array.from(new Set([v.categoryName || 'Café', ...rawTags]))
   const defaultPhoto = validImages[0] || defaultImages[0]
 
+  const googlePlaceId = v.googlePlaceId || extractGooglePlaceId(v)
+  const defaultGoogleMapsUrl = googlePlaceId
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.name + ', ' + (v.address || ''))}&query_place_id=${googlePlaceId}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.name + ' ' + (v.address || ''))}`
+
   return {
     id: String(v.venueId || `venue-${Math.random()}`),
     name: v.name || 'Địa điểm F&B',
@@ -85,7 +90,8 @@ export function mapBackendVenueToFrontend(result) {
     dynamicReasons: reasons,
     image: defaultPhoto,
     images: validImages.length > 0 ? validImages : defaultImages,
-    googleMapsUrl: v.googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.name + ' ' + (v.address || ''))}`,
+    googlePlaceId,
+    googleMapsUrl: v.googleMapsUrl || defaultGoogleMapsUrl,
     description: v.shortDescription || sourceData.tagsAndPurpose || v.name || '',
     descriptionVi: v.shortDescription || sourceData.tagsAndPurpose || v.name || '',
     isOpenNow: v.isOpenNow ?? true,
@@ -160,7 +166,7 @@ export async function getRecommendations(payload = {}) {
     const requestBody = {
       prompt: promptText || undefined,
       page: 1,
-      pageSize: 40,
+      pageSize: 100,
     }
 
     if (criteria?.purpose) {

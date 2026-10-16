@@ -29,10 +29,19 @@ export function extractVenueCoordinates(venue) {
   if (rawLat !== undefined && rawLat !== null && rawLng !== undefined && rawLng !== null) {
     const latStr = String(rawLat).trim().replace(',', '.')
     const lngStr = String(rawLng).trim().replace(',', '.')
-    const lat = typeof rawLat === 'number' ? rawLat : parseFloat(latStr)
-    const lng = typeof rawLng === 'number' ? rawLng : parseFloat(lngStr)
+    let lat = typeof rawLat === 'number' ? rawLat : parseFloat(latStr)
+    let lng = typeof rawLng === 'number' ? rawLng : parseFloat(lngStr)
 
-    if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+    // Tự động đảo nếu nhập ngược Latitude (>90) và Longitude (<=90)
+    if (lat > 90 && lng <= 90) {
+      const temp = lat
+      lat = lng
+      lng = temp
+    }
+
+    // Bỏ qua tọa độ (0, 0) mặc định của database (Null Island) để thử bóc tách từ URL hoặc dùng fallback
+    const isZero = Math.abs(lat) < 0.0001 && Math.abs(lng) < 0.0001
+    if (!isNaN(lat) && !isNaN(lng) && !isZero && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
       return { lat, lng }
     }
   }
@@ -89,7 +98,29 @@ export function parseCoordinatesFromGoogleMapsUrl(url) {
 }
 
 /**
- * Tạo đường dẫn Google Maps chỉ đường (Directions) chính xác đến địa điểm
+ * Trích xuất Google Place ID chuẩn từ đối tượng venue.
+ * Hỗ trợ lấy từ trường venue.googlePlaceId, venue.placeId, hoặc bóc tách từ URL nguồn.
+ * 
+ * @param {Object} venue - Đối tượng địa điểm
+ * @returns {string | null} Google Place ID (ví dụ: ChIJgXrzCAAndTERWBjEsI7ibSU)
+ */
+export function extractGooglePlaceId(venue) {
+  if (!venue || typeof venue !== 'object') return null
+  if (venue.googlePlaceId) return String(venue.googlePlaceId).trim()
+  if (venue.placeId) return String(venue.placeId).trim()
+
+  const rawUrl = venue.googleMapsUrl || venue.sourceData?.googleMapsUrlSource || ''
+  if (!rawUrl) return null
+
+  // Làm sạch khoảng trắng/xuống dòng do OCR trong chuỗi nguồn
+  const cleanUrl = String(rawUrl).replace(/\s+/g, '')
+  const match = cleanUrl.match(/query_place_id=([a-zA-Z0-9_\-]+)/) || cleanUrl.match(/place_id=([a-zA-Z0-9_\-]+)/)
+  return match ? match[1] : null
+}
+
+/**
+ * Tạo đường dẫn Google Maps chỉ đường (Directions) chính xác đến địa điểm.
+ * Tận dụng Phương án 2 (Google Place ID) để đảm bảo Google Maps mở đúng cơ sở kinh doanh chính thức.
  * 
  * @param {Object} venue - Đối tượng địa điểm
  * @returns {string} Đường dẫn Google Maps
@@ -97,25 +128,42 @@ export function parseCoordinatesFromGoogleMapsUrl(url) {
 export function getDirectionsUrl(venue) {
   if (!venue) return 'https://www.google.com/maps'
 
+  const placeId = extractGooglePlaceId(venue)
+  const query = [venue.name, venue.address].filter(Boolean).join(', ')
+
+  if (placeId && query) {
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}&destination_place_id=${placeId}`
+  }
+
+  if (query) {
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`
+  }
+
   const coords = extractVenueCoordinates(venue)
   if (coords) {
     return `https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}`
   }
 
   if (venue.googleMapsUrl) return venue.googleMapsUrl
-
-  const query = [venue.name, venue.address].filter(Boolean).join(' ')
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query || 'Ho Chi Minh City')}`
+  return 'https://www.google.com/maps'
 }
 
 /**
- * Tạo đường dẫn Google Maps xem chi tiết địa điểm
+ * Tạo đường dẫn Google Maps xem chi tiết địa điểm.
+ * Tận dụng Phương án 2 (Google Place ID) để mở trực tiếp hồ sơ xác thực của địa điểm.
  * 
  * @param {Object} venue - Đối tượng địa điểm
  * @returns {string} Đường dẫn xem địa điểm
  */
 export function getPlaceViewUrl(venue) {
   if (!venue) return 'https://www.google.com/maps'
+
+  const placeId = extractGooglePlaceId(venue)
+  const query = [venue.name, venue.address].filter(Boolean).join(', ')
+
+  if (placeId && query) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}&query_place_id=${placeId}`
+  }
 
   if (venue.googleMapsUrl) return venue.googleMapsUrl
 
@@ -124,6 +172,5 @@ export function getPlaceViewUrl(venue) {
     return `https://www.google.com/maps/search/?api=1&query=${coords.lat},${coords.lng}`
   }
 
-  const query = [venue.name, venue.address].filter(Boolean).join(' ')
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query || 'Ho Chi Minh City')}`
 }

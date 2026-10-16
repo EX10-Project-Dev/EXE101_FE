@@ -3,7 +3,7 @@ import { Box, Button, Container, Typography } from '@mui/material'
 import { ArrowUpRight, Coffee, Compass, Heart, MapPin, Navigation, Sparkles, Utensils, Wifi, X } from 'lucide-react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { APIProvider, Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps'
+import { APIProvider, Map as GoogleMap, AdvancedMarker, useMap } from '@vis.gl/react-google-maps'
 import { useLanguage } from '../contexts/LanguageContext'
 import { MOCK_VENUES } from '../data/mockVenues'
 import { extractVenueCoordinates, getDirectionsUrl } from '../utils/geoUtils'
@@ -98,7 +98,7 @@ function LeafletMapCanvas({ venues = [], activeVenue, onMarkerClick, recenterTri
   }, [demo])
 
   useEffect(() => {
-    if (demo) return
+    if (demo || !mapInstanceRef.current) return
     const control = L.control.zoom({ position: 'bottomright', zoomInTitle: tx('Zoom in'), zoomOutTitle: tx('Zoom out') }).addTo(mapInstanceRef.current)
     return () => { control.remove() }
   }, [tx, demo])
@@ -336,7 +336,7 @@ export default function DiscoveryMapSection({
               aria-label={isEn ? 'Google Maps of recommended places in Ho Chi Minh City' : 'Bản đồ Google Maps địa điểm gợi ý tại TP.HCM'}
             >
               <APIProvider apiKey={googleMapsApiKey}>
-                <Map
+                <GoogleMap
                   defaultCenter={{ lat: DEFAULT_MAP_CENTER[0], lng: DEFAULT_MAP_CENTER[1] }}
                   defaultZoom={13}
                   mapId="DEMO_MAP_ID"
@@ -375,7 +375,7 @@ export default function DiscoveryMapSection({
                       </AdvancedMarker>
                     )
                   })}
-                </Map>
+                </GoogleMap>
               </APIProvider>
             </div>
           ) : (
@@ -396,7 +396,7 @@ export default function DiscoveryMapSection({
                 {isEn ? 'Quick explore:' : 'Khám phá nhanh:'}
               </span>
               <div className="quick-picks-list">
-                {venueList.slice(0, 10).map((venue) => {
+                {venueList.map((venue) => {
                   const symbol = CATEGORY_SYMBOLS[venue.category] || '📍'
                   return (
                     <button
