@@ -49,6 +49,7 @@ function LeafletDiscoveryMap({ venues, selectedVenueId, hoveredVenueId, onSelect
   }, [])
 
   useEffect(() => {
+    if (!mapRef.current) return
     const control = L.control.zoom({ position: 'bottomright', zoomInTitle: tx('Zoom in'), zoomOutTitle: tx('Zoom out') }).addTo(mapRef.current)
     return () => { control.remove() }
   }, [tx])

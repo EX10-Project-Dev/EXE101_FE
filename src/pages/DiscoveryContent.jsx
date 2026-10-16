@@ -137,6 +137,7 @@ export default function DiscoveryContent() {
     <>
       {/* 3. Atly-Style Match Score Marquee */}
       <ScoreMarquee
+        venues={venues}
         onSelectCard={(selected) => {
           if (typeof selected === 'object' && selected !== null) {
             handleFocusVenueOnMap(selected)
