@@ -36,6 +36,8 @@ export default function ScoreMarquee({ onSelectCard, venues }) {
   }))
 
   const INFINITE_ITEMS = [...MARQUEE_DATA, ...MARQUEE_DATA]
+  // Adjust duration proportionally to number of items so speed stays comfortably slow (approx 3.5s - 4s per item)
+  const marqueeDuration = Math.max(35, MARQUEE_DATA.length * 3.8)
 
   return (
     <Box
@@ -100,7 +102,7 @@ export default function ScoreMarquee({ onSelectCard, venues }) {
             display: 'flex',
             gap: 2.5,
             width: 'max-content',
-            animation: 'marqueeLeft 28s linear infinite',
+            animation: `marqueeLeft ${marqueeDuration}s linear infinite`,
             animationPlayState: inView && !reducedMotion ? 'running' : 'paused',
             py: 1,
             px: 1,
