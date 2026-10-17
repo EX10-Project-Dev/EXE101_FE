@@ -118,8 +118,19 @@ const VI_TEXT = {
   'Request a new verification link': 'Yêu cầu liên kết xác minh mới',
   'Enter your email below and we will send you a fresh verification link.': 'Nhập email của bạn bên dưới và chúng tôi sẽ gửi liên kết xác minh mới.',
   'Resend link': 'Gửi lại liên kết',
-  'Return to homepage': 'Quay về trang chủ',
   'Please wait while we verify your email address and activate your account.': 'Vui lòng đợi giây lát trong khi chúng tôi xác minh email và kích hoạt tài khoản của bạn.',
+  'Verify email address': 'Xác minh địa chỉ email',
+  'Verify your account': 'Xác minh tài khoản của bạn',
+  'Your account must be verified before logging in. If you did not receive a link, request a new one below.': 'Tài khoản cần được xác minh email trước khi đăng nhập. Nếu chưa nhận được liên kết, hãy yêu cầu gửi lại bên dưới.',
+  'Paste confirmation link from email': 'Dán liên kết xác minh từ email',
+  'Or verify using email link': 'Hoặc xác minh bằng liên kết đã nhận',
+  'Verify now': 'Xác minh ngay',
+  'Verifying…': 'Đang xác minh…',
+  'Please enter a valid confirmation link containing userId and token.': 'Vui lòng nhập liên kết hợp lệ chứa userId và token.',
+  'Go to email verification page': 'Đến trang xác nhận email',
+  'Open email confirmation page': 'Mở trang xác nhận email',
+  'Already verified?': 'Đã xác minh?',
+  'Unverified account?': 'Chưa xác minh email?',
 }
 
 export function translateText(text, language = 'vi', values = {}) {

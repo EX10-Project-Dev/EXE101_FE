@@ -130,6 +130,11 @@
   color: #f04438;
 }
 
+.confirm-icon--idle {
+  background: #f0f7ff;
+  color: #0284c7;
+}
+
 .confirm-title {
   font-size: 26px;
   font-weight: 800;

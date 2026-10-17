@@ -131,6 +131,14 @@ function SignupForm() {
             {isResending ? tx('Sending…') : tx('Resend verification email')}
           </button>
         </div>
+        <div style={{ marginTop: 12 }}>
+          <Link
+            to={`/confirm-email?email=${encodeURIComponent(registeredEmail)}`}
+            className="auth-link-button"
+          >
+            {tx('Open email confirmation page')} →
+          </Link>
+        </div>
         {resendStatus && (
           <p className="auth-notice auth-notice--success" role="status">
             {tx(resendStatus)}
@@ -177,7 +185,11 @@ function SignupForm() {
         <ArrowRight size={20} aria-hidden="true" />
       </button>
       {notice && <p className={`auth-notice auth-notice--${noticeType}`} role="status">{tx(notice)}</p>}
-      <p className="auth-register">{tx('Already have an account?')} <Link to="/login">{tx('Log in')}</Link></p>
+      <p className="auth-register">
+        {tx('Already have an account?')} <Link to="/login">{tx('Log in')}</Link>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>•</span>
+        <Link to="/confirm-email">{tx('Unverified account?')}</Link>
+      </p>
     </form>
   )
 }
@@ -252,7 +264,7 @@ function LoginForm() {
         <div className={`auth-notice auth-notice--${noticeType}`} role="status">
           <p>{tx(notice)}</p>
           {showResendOption && email && (
-            <div style={{ marginTop: 8 }}>
+            <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
               <button
                 type="button"
                 className="auth-link-button"
@@ -261,6 +273,12 @@ function LoginForm() {
               >
                 {isResending ? tx('Sending…') : tx('Resend verification email')}
               </button>
+              <Link
+                to={`/confirm-email?email=${encodeURIComponent(email.trim())}`}
+                className="auth-link-button"
+              >
+                {tx('Go to email verification page')} →
+              </Link>
             </div>
           )}
         </div>
@@ -270,7 +288,11 @@ function LoginForm() {
           {tx(resendStatus)}
         </p>
       )}
-      <p className="auth-register">{tx('New to FIND&GO?')} <Link to="/register">{tx('Create an account')}</Link></p>
+      <p className="auth-register">
+        {tx('New to FIND&GO?')} <Link to="/register">{tx('Create an account')}</Link>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>•</span>
+        <Link to="/confirm-email">{tx('Unverified account?')}</Link>
+      </p>
     </form>
   )
 }
