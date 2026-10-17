@@ -27,7 +27,12 @@ export function normalizeUser(rawUser) {
   }
 }
 
+export const AUTH_TIMEOUT_MS = Number(import.meta.env?.VITE_AUTH_TIMEOUT_MS) || 60000
+
 export function extractErrorMessage(error, defaultMessage = 'An unexpected error occurred. Please try again.') {
+  if (error?.code === 'ECONNABORTED' || (typeof error?.message === 'string' && error.message.toLowerCase().includes('timeout'))) {
+    return 'Quá thời gian kết nối đến máy chủ (máy chủ có thể đang gửi email hoặc đang khởi động lại). Vui lòng thử lại.'
+  }
   const data = error?.response?.data
   if (typeof data === 'string' && data.trim()) return data
   if (data?.message && typeof data.message === 'string') {
@@ -71,7 +76,7 @@ export async function signIn({ email, password, rememberMe }) {
 
   const path = AUTH_ENDPOINTS.login
 
-  const response = await api.post(path, { email: email.trim(), password }, { skipAuth: true, timeout: 15000 })
+  const response = await api.post(path, { email: email.trim(), password }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   return completeSignIn(response, rememberMe)
 }
 
@@ -93,13 +98,13 @@ export async function signUp({ fullName, email, password }) {
     fullName: fullName.trim(),
     email: email.trim(),
     password,
-  }, { skipAuth: true, timeout: 15000 })
+  }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   return response.data?.data || response.data
 }
 
 export async function forgotPassword({ email }) {
   const path = AUTH_ENDPOINTS.forgotPassword
-  const response = await api.post(path, { email: email.trim() }, { skipAuth: true, timeout: 15000 })
+  const response = await api.post(path, { email: email.trim() }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   return response.data?.data || response.data
 }
 
@@ -109,7 +114,7 @@ export async function resetPassword({ email, token, newPassword }) {
     email: email.trim(),
     token: token.trim(),
     newPassword,
-  }, { skipAuth: true, timeout: 15000 })
+  }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   return response.data?.data || response.data
 }
 
@@ -121,7 +126,7 @@ export async function googleSignIn({ credential, rememberMe }) {
   try {
     // Backend must implement POST /api/auth/google and verify Google's ID token.
     // Never decode the credential or create a frontend-only Google session.
-    response = await api.post(AUTH_ENDPOINTS.google, { credential }, { skipAuth: true, timeout: 15000 })
+    response = await api.post(AUTH_ENDPOINTS.google, { credential }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   } catch (error) {
     if (error.response?.status === 401) {
       throw new Error('Google sign-in was rejected. Please try again or use email and password.')
@@ -150,12 +155,12 @@ export async function signOut() {
 
 export async function confirmEmail({ userId, token }) {
   const path = AUTH_ENDPOINTS.confirmEmail
-  const response = await api.post(path, { userId, token }, { skipAuth: true, timeout: 15000 })
+  const response = await api.post(path, { userId, token }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   return response.data?.data || response.data
 }
 
 export async function resendConfirmation({ email }) {
   const path = AUTH_ENDPOINTS.resendConfirmation
-  const response = await api.post(path, { email: email.trim() }, { skipAuth: true, timeout: 15000 })
+  const response = await api.post(path, { email: email.trim() }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   return response.data?.data || response.data
 }

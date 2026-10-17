@@ -149,3 +149,115 @@
 .auth-page[lang="vi"] .auth-eyebrow, .auth-page[lang="vi"] .auth-member { letter-spacing: .04em; line-height: 1.6; }
 .auth-page[lang="vi"] .auth-divider span { white-space: normal; text-align: center; line-height: 1.6; }
 .auth-options { flex-wrap: wrap; }
+
+.auth-registered-box {
+  text-align: center;
+  padding: 12px 0 16px;
+  animation: auth-rise 600ms both;
+}
+
+.auth-registered-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--auth-orange);
+  background: #fff3eb;
+}
+
+.auth-icon--success {
+  color: #16a34a;
+  background: #f0fdf4;
+}
+
+.auth-icon--error {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.auth-icon--spin {
+  color: var(--auth-orange);
+  background: #fff8f4;
+}
+
+.icon-spin {
+  animation: icon-spin-anim 1s linear infinite;
+}
+
+@keyframes icon-spin-anim {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.auth-registered-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #23343b;
+}
+
+.auth-registered-desc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #637077;
+  margin-bottom: 24px;
+}
+
+.auth-registered-desc strong {
+  color: #23343b;
+  word-break: break-all;
+}
+
+.auth-submit-link {
+  display: inline-flex;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.auth-resend-row {
+  margin-top: 18px;
+  font-size: 12.5px;
+  color: var(--auth-muted);
+}
+
+.auth-link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #c94a12;
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.auth-link-button:hover:not(:disabled) {
+  color: #e85b16;
+}
+
+.auth-link-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-link-muted {
+  color: var(--auth-muted);
+  font-weight: 500;
+}
+
+.auth-link-muted:hover:not(:disabled) {
+  color: #23343b;
+}
+
+.auth-resend-inline-form {
+  background: #fdfaf8;
+  border: 1px solid var(--auth-border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  text-align: left;
+}

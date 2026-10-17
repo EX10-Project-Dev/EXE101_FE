@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Outlet, useNavigate, Navigate } from 'rea
 import Dialog from '@mui/material/Dialog'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
+import ConfirmEmailPage from './pages/ConfirmEmailPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useLanguage } from './contexts/LanguageContext'
 import useAuth from './hooks/useAuth'
@@ -42,11 +43,15 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/discover" element={<ProtectedRoute><Suspense fallback={<p role="status" style={{ padding: 32 }}>{tx('Opening your map…')}</p>}><DiscoverPage /></Suspense></ProtectedRoute>} />
+        <Route path="/auth/confirm-email" element={<ConfirmEmailPage />} />
+        <Route path="/confirm-email" element={<ConfirmEmailPage />} />
         <Route element={<LandingLayout />}>
           <Route path="/" element={null} />
           <Route path="/login" element={<AuthDialog />} />
           <Route path="/forgot-password" element={<AuthDialog pendingFlow="recovery" />} />
           <Route path="/register" element={<AuthDialog isSignup />} />
+          <Route path="/auth/reset-password" element={<AuthDialog pendingFlow="reset-password" />} />
+          <Route path="/reset-password" element={<AuthDialog pendingFlow="reset-password" />} />
         </Route>
       </Routes>
     </BrowserRouter>

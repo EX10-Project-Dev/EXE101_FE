@@ -53,6 +53,8 @@ test('AUTH_ENDPOINTS retain email routes and use the required Google route', () 
   assert.equal(AUTH_ENDPOINTS.register, '/v1/auth/register')
   assert.equal(AUTH_ENDPOINTS.forgotPassword, '/v1/auth/forgot-password')
   assert.equal(AUTH_ENDPOINTS.resetPassword, '/v1/auth/reset-password')
+  assert.equal(AUTH_ENDPOINTS.confirmEmail, '/v1/auth/confirm-email')
+  assert.equal(AUTH_ENDPOINTS.resendConfirmation, '/v1/auth/resend-confirmation')
   assert.equal(AUTH_ENDPOINTS.google, '/auth/google')
   assert.equal(AUTH_ENDPOINTS.logout, '/v1/auth/logout')
 })
@@ -62,10 +64,54 @@ function memoryStorage() {
   return { getItem: (key) => values.get(key) ?? null, setItem: (key, value) => values.set(key, String(value)), removeItem: (key) => values.delete(key) }
 }
 
+globalThis.localStorage = memoryStorage()
+globalThis.sessionStorage = memoryStorage()
+globalThis.window = new EventTarget()
+
+test('signUp, confirmEmail, resendConfirmation, and resetPassword call expected endpoints', async (t) => {
+  const originalAdapter = api.defaults.adapter
+  t.after(() => { api.defaults.adapter = originalAdapter })
+
+  const { signUp, confirmEmail, resendConfirmation, resetPassword } = await import('../src/services/authService.js')
+
+  // signUp
+  api.defaults.adapter = async (config) => {
+    assert.equal(config.url, '/v1/auth/register')
+    assert.deepEqual(JSON.parse(config.data), { fullName: 'Nguyen Van A', email: 'a@example.com', password: 'Password123!' })
+    return { data: { message: 'Tạo tài khoản thành công.' }, status: 201, config }
+  }
+  const regResult = await signUp({ fullName: ' Nguyen Van A ', email: ' a@example.com ', password: 'Password123!' })
+  assert.equal(regResult.message, 'Tạo tài khoản thành công.')
+
+  // confirmEmail
+  api.defaults.adapter = async (config) => {
+    assert.equal(config.url, '/v1/auth/confirm-email')
+    assert.deepEqual(JSON.parse(config.data), { userId: 'u123', token: 'token-abc' })
+    return { data: { message: 'Email đã được xác minh.' }, status: 200, config }
+  }
+  const confirmResult = await confirmEmail({ userId: 'u123', token: 'token-abc' })
+  assert.equal(confirmResult.message, 'Email đã được xác minh.')
+
+  // resendConfirmation
+  api.defaults.adapter = async (config) => {
+    assert.equal(config.url, '/v1/auth/resend-confirmation')
+    assert.deepEqual(JSON.parse(config.data), { email: 'a@example.com' })
+    return { data: { message: 'Đã gửi lại email.' }, status: 200, config }
+  }
+  const resendResult = await resendConfirmation({ email: ' a@example.com ' })
+  assert.equal(resendResult.message, 'Đã gửi lại email.')
+
+  // resetPassword
+  api.defaults.adapter = async (config) => {
+    assert.equal(config.url, '/v1/auth/reset-password')
+    assert.deepEqual(JSON.parse(config.data), { email: 'a@example.com', token: 'token-xyz', newPassword: 'NewPassword123!' })
+    return { data: { message: 'Mật khẩu đã được đặt lại.' }, status: 200, config }
+  }
+  const resetResult = await resetPassword({ email: ' a@example.com ', token: ' token-xyz ', newPassword: 'NewPassword123!' })
+  assert.equal(resetResult.message, 'Mật khẩu đã được đặt lại.')
+})
+
 test('Google and password login share backend response normalization and session persistence', async (t) => {
-  globalThis.localStorage = memoryStorage()
-  globalThis.sessionStorage = memoryStorage()
-  globalThis.window = new EventTarget()
   const originalAdapter = api.defaults.adapter
   t.after(() => { api.defaults.adapter = originalAdapter; clearSession() })
 
