@@ -3,6 +3,7 @@
 ## Mục tiêu
 
 Authenticated discovery implementation and login setup: [Discovery documentation](docs/discovery.md).
+Google Sign-In configuration and backend contract: [Google Sign-In](docs/google-sign-in.md).
 
 Xây dựng giao diện để khách chưa đăng nhập đi hết luồng tìm địa điểm F&B của FIND&GO: bắt đầu từ landing page, nhập nhu cầu, xem và so sánh gợi ý, mở chi tiết, chọn địa điểm và chuyển sang Google Maps.
 
