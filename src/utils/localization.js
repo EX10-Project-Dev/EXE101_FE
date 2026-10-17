@@ -1,5 +1,7 @@
 // Translate display text only. Keep category/filter IDs stable for search and APIs.
 const VI_TEXT = {
+  'Google sign-in is currently unavailable. Please continue with email.': 'Đăng nhập Google hiện chưa khả dụng. Bạn hãy tiếp tục bằng email.',
+  'One account. More places to discover.': 'Một tài khoản. Khám phá thêm nhiều điểm đến.',
   'or continue with': 'hoặc tiếp tục với',
   'Loading Google sign-in…': 'Đang tải đăng nhập Google…',
   'Google sign-in is not configured. Please use email and password.': 'Đăng nhập Google chưa được cấu hình. Vui lòng dùng email và mật khẩu.',

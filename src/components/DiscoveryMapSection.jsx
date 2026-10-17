@@ -148,10 +148,11 @@ function LeafletMapCanvas({ venues = [], activeVenue, onMarkerClick, recenterTri
         marker = L.marker([coords.lat, coords.lng], {
           icon,
           title: `${venue.name}: ${venue.matchScore}/10`,
-          keyboard: true,
+          keyboard: !demo,
+          interactive: !demo,
           zIndexOffset: isSelected ? 1000 : 100
         }).addTo(map)
-        marker.on('click', () => onMarkerClickRef.current?.(venue))
+        if (!demo) marker.on('click', () => onMarkerClickRef.current?.(venue))
         currentMarkers.set(venue.id, marker)
       } else {
         marker.setLatLng([coords.lat, coords.lng])
@@ -159,7 +160,7 @@ function LeafletMapCanvas({ venues = [], activeVenue, onMarkerClick, recenterTri
         marker.setZIndexOffset(isSelected ? 1000 : 100)
       }
     })
-  }, [venues, activeVenue])
+  }, [venues, activeVenue, demo])
 
   // Smooth flyTo active venue
   useEffect(() => {
@@ -230,7 +231,7 @@ export default function DiscoveryMapSection({
   }
 
   const venueList = venues?.length > 0 ? venues : MOCK_VENUES
-  const activeVenueId = demo ? null : userSelectedVenueId || focusedVenueId || null
+  const activeVenueId = demo ? venueList[0]?.id : userSelectedVenueId || focusedVenueId || null
   const activeVenue = activeVenueId ? venueList.find((v) => v.id === activeVenueId) : null
   const activeCoords = extractVenueCoordinates(activeVenue)
   const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim()
@@ -359,7 +360,7 @@ export default function DiscoveryMapSection({
                       <AdvancedMarker
                         key={venue.id}
                         position={coords}
-                        onClick={() => handleMarkerClick(venue)}
+                        onClick={demo ? undefined : () => handleMarkerClick(venue)}
                         zIndex={isSelected ? 1000 : 100}
                         title={`${venue.name}: ${score}/10`}
                       >

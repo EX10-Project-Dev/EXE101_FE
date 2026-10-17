@@ -162,6 +162,14 @@ test('failed Google login never creates a session', async (t) => {
     assert.equal(getToken(), null)
     assert.equal(getUser(), null)
   }
+  api.defaults.adapter = async (config) => {
+    throw Object.assign(new Error('Unauthorized'), {
+      config, response: { status: 401, data: { message: 'Invalid Google token audience' } },
+    })
+  }
+  await assert.rejects(googleSignIn({ credential: 'credential' }), /Invalid Google token audience/)
+  assert.equal(getToken(), null)
+  assert.equal(getUser(), null)
   for (const body of [{ user: { id: 'g1' } }, { accessToken: 'token' }, { accessToken: ' ', user: {} }, { accessToken: 'token', user: [] }]) {
     api.defaults.adapter = async (config) => ({ data: body, status: 200, config })
     await assert.rejects(googleSignIn({ credential: 'credential' }), /incomplete/)

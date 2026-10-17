@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
+import { Loader2, ShieldCheck, Info } from 'lucide-react'
 import { GoogleLogin } from '@react-oauth/google'
 import { useNavigate } from 'react-router-dom'
 import { GoogleAuthContext } from '../contexts/googleAuthContext'
@@ -11,14 +12,12 @@ export default function GoogleSignInButton({ rememberMe = false, disabled, onBus
   const navigate = useNavigate()
   const containerRef = useRef(null)
   const requestRef = useRef(false)
-  const [width, setWidth] = useState(260)
+  const [width, setWidth] = useState(null)
 
   useEffect(() => {
-    const observer = new ResizeObserver(([entry]) => {
-      setWidth(Math.max(200, Math.min(400, Math.floor(entry.contentRect.width))))
-    })
-    observer.observe(containerRef.current)
-    return () => observer.disconnect()
+    // Measure before mounting GIS. Resizing must not remount its global initializer.
+    const measuredWidth = containerRef.current?.getBoundingClientRect().width || 320
+    setWidth(Math.max(200, Math.min(400, Math.floor(measuredWidth))))
   }, [])
 
   async function handleCredential({ credential }) {
@@ -38,17 +37,18 @@ export default function GoogleSignInButton({ rememberMe = false, disabled, onBus
   }
 
   const unavailable = status === 'unconfigured'
-    ? 'Google sign-in is not configured. Please use email and password.'
+    ? 'Google sign-in is currently unavailable. Please continue with email.'
     : status === 'error'
       ? 'Unable to load Google sign-in. Check your connection and reload the page.'
       : ''
 
   return (
     <div ref={containerRef} className="auth-google-container" aria-busy={disabled || status === 'loading'}>
-      {status === 'ready' ? (
+      {status === 'ready' && width !== null ? (
         <div className="auth-google-widget" inert={disabled ? true : undefined}>
           <GoogleLogin
             key={language}
+            locale={language}
             onSuccess={handleCredential}
             onError={() => onNotice('Google sign-in failed. Please try again.', 'error')}
             // GIS does not expose a popup-close callback for ID-token buttons.
@@ -57,15 +57,20 @@ export default function GoogleSignInButton({ rememberMe = false, disabled, onBus
             ux_mode="popup"
             theme="outline"
             size="large"
-            shape="rectangular"
+            shape="pill"
+            logo_alignment="left"
             text="continue_with"
             width={width}
           />
         </div>
       ) : (
-        <button className="auth-google" type="button" disabled>{tx(status === 'loading' ? 'Loading Google sign-in…' : 'Continue with Google')}</button>
+        <button className="auth-google" type="button" disabled>
+          {status === 'loading' && <Loader2 className="auth-google-spinner" size={20} aria-hidden="true" />}{tx(status === 'loading' ? 'Loading Google sign-in…' : 'Continue with Google')}</button>
       )}
-      {unavailable && <p className="auth-field-error" role="status">{tx(unavailable)}</p>}
+      <p className={`auth-google-caption${unavailable ? ' auth-google-caption--notice' : ''}`} role="status">
+        {unavailable ? <Info size={14} aria-hidden="true" /> : <ShieldCheck size={14} aria-hidden="true" />}
+        <span>{tx(unavailable || 'One account. More places to discover.')}</span>
+      </p>
     </div>
   )
 }

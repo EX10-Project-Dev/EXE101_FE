@@ -130,7 +130,10 @@ export async function googleSignIn({ credential, rememberMe }) {
     }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   } catch (error) {
     if (error.response?.status === 401) {
-      throw new Error('Google sign-in was rejected. Please try again or use email and password.')
+      throw new Error(extractErrorMessage(
+        { response: { data: error.response?.data } },
+        'Google sign-in was rejected. Please try again or use email and password.',
+      ))
     }
     if ([404, 405, 501].includes(error.response?.status)) {
       throw new Error('Google sign-in is not available on the server yet. Please use email and password.')
