@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { clearSession, DEMO_TOKEN, getToken } from './sessionStore.js'
 
-const baseURL = import.meta.env?.VITE_API_BASE || 'http://localhost:5128/api'
+const baseURL = import.meta.env?.VITE_API_BASE || 'https://exe101-be-wkc0.onrender.com/api'
 
 const api = axios.create({
   baseURL,
