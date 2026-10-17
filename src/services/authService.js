@@ -6,8 +6,7 @@ export const AUTH_ENDPOINTS = {
   register: import.meta.env?.VITE_AUTH_REGISTER_PATH?.trim() || '/v1/auth/register',
   forgotPassword: import.meta.env?.VITE_AUTH_FORGOT_PASSWORD_PATH?.trim() || '/v1/auth/forgot-password',
   resetPassword: import.meta.env?.VITE_AUTH_RESET_PASSWORD_PATH?.trim() || '/v1/auth/reset-password',
-  // Relative to the shared API base ending in /api: POST /api/auth/google.
-  google: '/auth/google',
+  google: import.meta.env?.VITE_AUTH_GOOGLE_PATH?.trim() || '/v1/auth/google',
   logout: import.meta.env?.VITE_AUTH_LOGOUT_PATH?.trim() || '/v1/auth/logout',
   confirmEmail: import.meta.env?.VITE_AUTH_CONFIRM_EMAIL_PATH?.trim() || '/v1/auth/confirm-email',
   resendConfirmation: import.meta.env?.VITE_AUTH_RESEND_CONFIRMATION_PATH?.trim() || '/v1/auth/resend-confirmation',
@@ -124,9 +123,11 @@ export async function googleSignIn({ credential, rememberMe }) {
   }
   let response
   try {
-    // Backend must implement POST /api/auth/google and verify Google's ID token.
-    // Never decode the credential or create a frontend-only Google session.
-    response = await api.post(AUTH_ENDPOINTS.google, { credential }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
+    // Send idToken as expected by Backend GoogleLoginRequest DTO (with credential fallback)
+    response = await api.post(AUTH_ENDPOINTS.google, {
+      idToken: credential,
+      credential,
+    }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   } catch (error) {
     if (error.response?.status === 401) {
       throw new Error('Google sign-in was rejected. Please try again or use email and password.')
@@ -155,8 +156,16 @@ export async function signOut() {
 
 export async function confirmEmail({ userId, token }) {
   const path = AUTH_ENDPOINTS.confirmEmail
-  const response = await api.post(path, { userId, token }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
-  return response.data?.data || response.data
+  try {
+    const response = await api.post(path, { userId, token }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
+    return response.data?.data || response.data
+  } catch (error) {
+    if (error.response?.status === 405) {
+      const getResponse = await api.get(path, { params: { userId, token }, skipAuth: true, timeout: AUTH_TIMEOUT_MS })
+      return getResponse.data?.data || getResponse.data
+    }
+    throw error
+  }
 }
 
 export async function resendConfirmation({ email }) {

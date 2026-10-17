@@ -55,7 +55,7 @@ test('AUTH_ENDPOINTS retain email routes and use the required Google route', () 
   assert.equal(AUTH_ENDPOINTS.resetPassword, '/v1/auth/reset-password')
   assert.equal(AUTH_ENDPOINTS.confirmEmail, '/v1/auth/confirm-email')
   assert.equal(AUTH_ENDPOINTS.resendConfirmation, '/v1/auth/resend-confirmation')
-  assert.equal(AUTH_ENDPOINTS.google, '/auth/google')
+  assert.equal(AUTH_ENDPOINTS.google, '/v1/auth/google')
   assert.equal(AUTH_ENDPOINTS.logout, '/v1/auth/logout')
 })
 
@@ -118,9 +118,10 @@ test('Google and password login share backend response normalization and session
   for (const wrapped of [false, true]) {
     for (const rememberMe of [false, true]) {
       api.defaults.adapter = async (config) => {
-        assert.equal(config.url, '/auth/google')
-        assert.equal(config.baseURL.replace(/\/$/, '') + config.url, `${api.defaults.baseURL.replace(/\/$/, '')}/auth/google`)
-        assert.deepEqual(JSON.parse(config.data), { credential: 'google-id-token' })
+        assert.equal(config.url, '/v1/auth/google')
+        assert.equal(config.baseURL.replace(/\/$/, '') + config.url, `${api.defaults.baseURL.replace(/\/$/, '')}/v1/auth/google`)
+        const parsedData = JSON.parse(config.data)
+        assert.equal(parsedData.idToken, 'google-id-token')
         assert.equal(config.skipAuth, true)
         assert.equal(config.headers.Authorization, undefined)
         const body = { [wrapped ? 'token' : 'accessToken']: 'application-token', user: { id: 'g1', name: 'Google Member', email: 'member@example.com', avatar: 'avatar-url', role: 'Member' } }
