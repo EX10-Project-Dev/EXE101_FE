@@ -21,7 +21,7 @@ export default function VenueDetailPanel({ venue, onClose, filters, saved, onSav
           <p className="dg-detail-description">{language === 'vi' ? venue.descriptionVi : venue.description}</p>
           {venue.reviewSource === 'demo' && <VenueAiReview venue={venue} />}
           <section><h3>{tx('Why it matches you')}</h3><ul>{getMatchReasons(venue, filters, language).map((reason) => <li key={reason}>{reason}</li>)}</ul></section>
-          <section><h3>{tx('Amenities')}</h3><div className="dg-tags">{venue.amenities.map((amenity) => <span key={amenity}>{tx(amenity)}</span>)}</div></section>
+          <section><h3>{tx('Amenities')}</h3><div className="dg-tags">{(venue.amenities || []).map((amenity) => <span key={amenity}>{tx(amenity)}</span>)}</div></section>
           <section><h3>{tx('Opening hours')}</h3><p>{venue.openingHours}</p></section>
           <section><h3>{tx('Address')}</h3><p>{venue.address}</p></section>
           <p className="dg-detail-note">{tx('Sample venue information. Check current hours and details before visiting.')}</p>

@@ -1,5 +1,5 @@
 import api from './api.js'
-import { MOCK_VENUES } from '../data/mockVenues.js'
+import { venues as LOCAL_VENUES } from '../data/venues.js'
 import { extractVenueCoordinates, extractGooglePlaceId } from '../utils/geoUtils.js'
 
 export function mapBackendVenueToFrontend(result) {
@@ -107,48 +107,49 @@ export function mapBackendVenueToFrontend(result) {
 
 function fallbackScoredVenues(prompts, criteria) {
   const promptText = (Array.isArray(prompts) ? prompts.join(' ') : String(prompts || '')).toLowerCase()
-  const scoredVenues = MOCK_VENUES.map((venue) => {
+  const scoredVenues = LOCAL_VENUES.map((venue) => {
     let score = 8.5
-    const matchedReasons = [...venue.reasons]
+    const matchedReasons = [...(venue.reasons || [])]
     if (promptText) {
       if (promptText.includes('deadline') || promptText.includes('làm việc') || promptText.includes('học')) {
-        if (venue.purposes.includes('Study / Work')) {
+        if (venue.purposes?.includes('Study / Work')) {
           score += 1.0
           matchedReasons.unshift('Rất phù hợp để tập trung làm việc & chạy deadline')
         }
       }
       if (promptText.includes('hẹn hò') || promptText.includes('người yêu') || promptText.includes('date')) {
-        if (venue.purposes.includes('Date')) {
+        if (venue.purposes?.includes('Date')) {
           score += 1.1
           matchedReasons.unshift('Không gian lãng mạn, ghi điểm trong mắt đối phương')
         }
       }
       if (promptText.includes('nhóm') || promptText.includes('bạn bè') || promptText.includes('tụ tập')) {
-        if (venue.groupSizes.includes('3-5 people') || venue.groupSizes.includes('6+ people')) {
+        if (venue.groupSizes?.includes('3-5 people') || venue.groupSizes?.includes('6+ people')) {
           score += 0.9
           matchedReasons.unshift('Bàn rộng rãi, dễ dàng sắp xếp chỗ cho nhóm bạn')
         }
       }
       if (promptText.includes('yên tĩnh')) {
-        if (venue.atmosphere.includes('Quiet')) {
+        if (venue.atmosphere?.includes('Quiet')) {
           score += 0.8
         }
       }
     }
-    if (criteria?.purpose && venue.purposes.includes(criteria.purpose)) score += 0.6
+    if (criteria?.purpose && venue.purposes?.includes(criteria.purpose)) score += 0.6
     if (criteria?.budget && venue.budgetLevel === criteria.budget) score += 0.5
-    if (criteria?.groupSize && venue.groupSizes.includes(criteria.groupSize)) score += 0.4
+    if (criteria?.groupSize && venue.groupSizes?.includes(criteria.groupSize)) score += 0.4
     if (criteria?.category && venue.category === criteria.category) score += 0.4
-    if (criteria?.atmosphere && venue.atmosphere.includes(criteria.atmosphere)) score += 0.4
+    if (criteria?.atmosphere && venue.atmosphere?.includes(criteria.atmosphere)) score += 0.4
     if (criteria?.amenities && criteria.amenities.length > 0) {
       const matchCount = criteria.amenities.filter((item) =>
-        venue.amenities.some((a) => a.toLowerCase().includes(item.toLowerCase()))
+        (venue.amenities || []).some((a) => a.toLowerCase().includes(item.toLowerCase()))
       ).length
       score += matchCount * 0.2
     }
     const finalScore = Math.min(9.9, Math.round(score * 10) / 10)
     return {
       ...venue,
+      tags: venue.tags || (venue.category ? [venue.category] : ['Café']),
       matchScore: finalScore,
       dynamicReasons: Array.from(new Set(matchedReasons)).slice(0, 3)
     }
@@ -270,7 +271,7 @@ export async function getVenueDetail(id) {
     // Fallback to local venues
   }
 
-  const found = MOCK_VENUES.find((v) => v.id === id)
+  const found = LOCAL_VENUES.find((v) => v.id === id)
   if (!found) throw new Error('Không tìm thấy địa điểm.')
   return found
 }
