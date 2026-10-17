@@ -73,7 +73,7 @@ test('Google and password login share backend response normalization and session
     for (const rememberMe of [false, true]) {
       api.defaults.adapter = async (config) => {
         assert.equal(config.url, '/auth/google')
-        assert.equal(config.baseURL.replace(/\/$/, '') + config.url, 'http://localhost:5128/api/auth/google')
+        assert.equal(config.baseURL.replace(/\/$/, '') + config.url, `${api.defaults.baseURL.replace(/\/$/, '')}/auth/google`)
         assert.deepEqual(JSON.parse(config.data), { credential: 'google-id-token' })
         assert.equal(config.skipAuth, true)
         assert.equal(config.headers.Authorization, undefined)
