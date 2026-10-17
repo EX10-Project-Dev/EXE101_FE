@@ -28,6 +28,9 @@
 .auth-form { margin-top: 30px; }
 .auth-google { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; height: 51px; border: 1px solid var(--auth-border); border-radius: 5px; background: white; color: #23343b; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 180ms, border-color 180ms; animation: auth-rise 650ms 140ms both; }
 .auth-google:hover { background: #fef8f3; border-color: #d7c8bd; }
+.auth-google-container { width: 100%; min-height: 51px; }
+.auth-google-widget { display: flex; justify-content: center; padding: 5px 0 6px; border-radius: 5px; background: #fff; }
+.auth-google-widget[inert], .auth-google:disabled { opacity: .65; cursor: not-allowed; }
 .auth-divider { display: flex; align-items: center; gap: 16px; margin: 25px 0; }
 .auth-divider::before, .auth-divider::after { content: ''; height: 1px; flex: 1; background: var(--auth-border); }
 .auth-divider span { color: var(--auth-muted); font-size: 9px; letter-spacing: 1.1px; text-transform: uppercase; white-space: nowrap; }

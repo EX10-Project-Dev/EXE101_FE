@@ -6,7 +6,8 @@ export const AUTH_ENDPOINTS = {
   register: import.meta.env?.VITE_AUTH_REGISTER_PATH?.trim() || '/v1/auth/register',
   forgotPassword: import.meta.env?.VITE_AUTH_FORGOT_PASSWORD_PATH?.trim() || '/v1/auth/forgot-password',
   resetPassword: import.meta.env?.VITE_AUTH_RESET_PASSWORD_PATH?.trim() || '/v1/auth/reset-password',
-  google: import.meta.env?.VITE_AUTH_GOOGLE_PATH?.trim() || '/v1/auth/google',
+  // Relative to the shared API base ending in /api: POST /api/auth/google.
+  google: '/auth/google',
   logout: import.meta.env?.VITE_AUTH_LOGOUT_PATH?.trim() || '/v1/auth/logout',
   confirmEmail: import.meta.env?.VITE_AUTH_CONFIRM_EMAIL_PATH?.trim() || '/v1/auth/confirm-email',
   resendConfirmation: import.meta.env?.VITE_AUTH_RESEND_CONFIRMATION_PATH?.trim() || '/v1/auth/resend-confirmation',
@@ -71,10 +72,14 @@ export async function signIn({ email, password, rememberMe }) {
   const path = AUTH_ENDPOINTS.login
 
   const response = await api.post(path, { email: email.trim(), password }, { skipAuth: true, timeout: 15000 })
+  return completeSignIn(response, rememberMe)
+}
+
+function completeSignIn(response, rememberMe) {
   const data = response.data?.data || response.data
   const token = data?.accessToken || data?.token
   const rawUser = data?.user
-  if (typeof token !== 'string' || !token.trim() || !rawUser || typeof rawUser !== 'object') {
+  if (typeof token !== 'string' || !token.trim() || !rawUser || typeof rawUser !== 'object' || Array.isArray(rawUser)) {
     throw new Error('The sign-in response is incomplete. Please contact support.')
   }
   const user = normalizeUser(rawUser)
@@ -108,18 +113,28 @@ export async function resetPassword({ email, token, newPassword }) {
   return response.data?.data || response.data
 }
 
-export async function googleSignIn({ idToken, rememberMe }) {
-  const path = AUTH_ENDPOINTS.google
-  const response = await api.post(path, { idToken }, { skipAuth: true, timeout: 15000 })
-  const data = response.data?.data || response.data
-  const token = data?.accessToken || data?.token
-  const rawUser = data?.user
-  if (typeof token !== 'string' || !token.trim() || !rawUser || typeof rawUser !== 'object') {
-    throw new Error('The sign-in response is incomplete. Please contact support.')
+export async function googleSignIn({ credential, rememberMe }) {
+  if (typeof credential !== 'string' || !credential.trim()) {
+    throw new Error('Google did not return an ID token. Please try again.')
   }
-  const user = normalizeUser(rawUser)
-  saveSession({ token, user }, rememberMe)
-  return { token, user }
+  let response
+  try {
+    // Backend must implement POST /api/auth/google and verify Google's ID token.
+    // Never decode the credential or create a frontend-only Google session.
+    response = await api.post(AUTH_ENDPOINTS.google, { credential }, { skipAuth: true, timeout: 15000 })
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error('Google sign-in was rejected. Please try again or use email and password.')
+    }
+    if ([404, 405, 501].includes(error.response?.status)) {
+      throw new Error('Google sign-in is not available on the server yet. Please use email and password.')
+    }
+    if (!error.response || [502, 503, 504].includes(error.response.status)) {
+      throw new Error('Unable to connect for Google sign-in. Check your connection and try again.')
+    }
+    throw new Error(extractErrorMessage(error, 'Google sign-in failed. Please try again.'))
+  }
+  return completeSignIn(response, rememberMe)
 }
 
 export async function signOut() {

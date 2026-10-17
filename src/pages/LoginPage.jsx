@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { signIn, signUp, forgotPassword, extractErrorMessage } from '../services/authService'
 import { ArrowRight, X } from 'lucide-react'
 import BrandText from '../components/BrandText'
+import GoogleSignInButton from '../components/GoogleSignInButton'
 import logo from '../assets/logo-small.webp'
 import './LoginPage.css'
 
@@ -17,21 +18,6 @@ function AuthHeader() {
       </Link>
       <span className="auth-member">{tx('Member access')}</span>
     </header>
-  )
-}
-
-function GoogleLoginButton({ onClick }) {
-  const { tx } = useLanguage()
-  return (
-    <button className="auth-google" type="button" onClick={onClick}>
-      <svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true">
-        <path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5h6.6c3.9-3.6 6.1-8.8 6.1-14.9Z" />
-        <path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5c-1.8 1.2-4.1 2-6.9 2-5.3 0-9.8-3.6-11.4-8.4H5.8v5.2A20 20 0 0 0 24 44Z" />
-        <path fill="#FBBC05" d="M12.6 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8l6.8-5.2Z" />
-        <path fill="#EA4335" d="M24 11.9c3 0 5.7 1 7.8 3.1l5.8-5.8A19.5 19.5 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.8 5.2C14.2 15.5 18.7 11.9 24 11.9Z" />
-      </svg>
-      {tx('Continue with Google')}
-    </button>
   )
 }
 
@@ -97,7 +83,7 @@ function SignupForm() {
 
   return (
     <form className="auth-form auth-signup-form" onSubmit={handleSubmit}>
-      <GoogleLoginButton onClick={() => { setNotice('Google sign-up is coming soon. Please check back soon.'); setNoticeType('error') }} />
+      <GoogleSignInButton disabled={isSubmitting} onBusyChange={setIsSubmitting} onNotice={(message, type) => { setNotice(message); setNoticeType(type) }} />
       <div className="auth-divider"><span>{tx('Or sign up with email')}</span></div>
       <div className="auth-field">
         <label htmlFor="signup-name">{tx('Full name')}</label>
@@ -113,7 +99,7 @@ function SignupForm() {
         <span>{tx(isSubmitting ? 'Creating account…' : 'Create account')}</span>
         <ArrowRight size={20} aria-hidden="true" />
       </button>
-      {notice && <p className={`auth-notice ${noticeType === 'success' ? 'auth-notice--success' : 'auth-notice--error'}`} role="status">{tx(notice)}</p>}
+      {notice && <p className={`auth-notice auth-notice--${noticeType}`} role="status">{tx(notice)}</p>}
       <p className="auth-register">{tx('Already have an account?')} <Link to="/login">{tx('Log in')}</Link></p>
     </form>
   )
@@ -148,8 +134,8 @@ function LoginForm() {
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
-      <GoogleLoginButton onClick={() => { setNotice('Google sign-in is coming soon. You can still explore places without an account.'); setNoticeType('error') }} />
-      <div className="auth-divider"><span>{tx('Or continue with email')}</span></div>
+      <GoogleSignInButton rememberMe={rememberMe} disabled={isSubmitting} onBusyChange={setIsSubmitting} onNotice={(message, type) => { setNotice(message); setNoticeType(type) }} />
+      <div className="auth-divider"><span>{tx('or continue with')}</span></div>
       <div className="auth-field">
         <label htmlFor="login-email">{tx('Email address')}</label>
         <input id="login-email" name="email" type="email" autoComplete="username" placeholder="you@university.edu" required value={email} onChange={(event) => { setEmail(event.target.value); setNotice('') }} />
@@ -163,7 +149,7 @@ function LoginForm() {
         <span>{tx(isSubmitting ? 'Signing in…' : 'Log in')}</span>
         <ArrowRight size={20} aria-hidden="true" />
       </button>
-      {notice && <p className={`auth-notice ${noticeType === 'success' ? 'auth-notice--success' : 'auth-notice--error'}`} role="status">{tx(notice)}</p>}
+      {notice && <p className={`auth-notice auth-notice--${noticeType}`} role="status">{tx(notice)}</p>}
       <p className="auth-register">{tx('New to FIND&GO?')} <Link to="/register">{tx('Create an account')}</Link></p>
     </form>
   )

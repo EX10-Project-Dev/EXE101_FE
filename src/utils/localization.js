@@ -1,5 +1,15 @@
 // Translate display text only. Keep category/filter IDs stable for search and APIs.
 const VI_TEXT = {
+  'or continue with': 'hoặc tiếp tục với',
+  'Loading Google sign-in…': 'Đang tải đăng nhập Google…',
+  'Google sign-in is not configured. Please use email and password.': 'Đăng nhập Google chưa được cấu hình. Vui lòng dùng email và mật khẩu.',
+  'Unable to load Google sign-in. Check your connection and reload the page.': 'Không thể tải đăng nhập Google. Kiểm tra kết nối và tải lại trang.',
+  'Google sign-in failed. Please try again.': 'Đăng nhập Google thất bại. Vui lòng thử lại.',
+  'Google did not return an ID token. Please try again.': 'Google không trả về ID token. Vui lòng thử lại.',
+  'Google sign-in was rejected. Please try again or use email and password.': 'Đăng nhập Google bị từ chối. Thử lại hoặc dùng email và mật khẩu.',
+  'Google sign-in is not available on the server yet. Please use email and password.': 'Máy chủ chưa hỗ trợ đăng nhập Google. Vui lòng dùng email và mật khẩu.',
+  'Unable to connect for Google sign-in. Check your connection and try again.': 'Không thể kết nối để đăng nhập Google. Kiểm tra kết nối và thử lại.',
+  'Complete sign-in in the Google window. If you close it or it does not open, you can try again or use email and password.': 'Hoàn tất đăng nhập trong cửa sổ Google. Nếu đã đóng hoặc cửa sổ không mở, bạn có thể thử lại hoặc dùng email và mật khẩu.',
   'Café': 'Cà phê', 'Restaurant': 'Nhà hàng', 'Tea & Beverage': 'Trà & đồ uống',
   'Dessert': 'Tráng miệng', 'Fast Food': 'Đồ ăn nhanh', 'Other F&B': 'Quán ăn & đồ uống khác',
   'Study / Work': 'Học tập / Làm việc', 'Eat & Drink': 'Ăn uống', 'Hangout': 'Gặp gỡ bạn bè',
