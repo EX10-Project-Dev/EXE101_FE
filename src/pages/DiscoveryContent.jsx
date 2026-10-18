@@ -163,11 +163,9 @@ export default function DiscoveryContent() {
 
       {/* Discovery map with its search controls */}
       <DiscoveryMapSection
-        venues={venues.length > 0 ? venues : MOCK_VENUES}
+        demo
+        venues={MOCK_VENUES}
         focusedVenueId={focusedVenueId}
-        onSelectVenue={(venue) => setFocusedVenueId(venue?.id || null)}
-        onClearVenue={() => setFocusedVenueId(null)}
-        onOpenDetail={(venue) => setSelectedVenue(venue)}
         searchControls={
           <SearchSection
             embedded

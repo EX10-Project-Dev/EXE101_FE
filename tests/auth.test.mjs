@@ -121,7 +121,7 @@ test('Google and password login share backend response normalization and session
         assert.equal(config.url, '/v1/auth/google')
         assert.equal(config.baseURL.replace(/\/$/, '') + config.url, `${api.defaults.baseURL.replace(/\/$/, '')}/v1/auth/google`)
         const parsedData = JSON.parse(config.data)
-        assert.equal(parsedData.idToken, 'google-id-token')
+        assert.deepEqual(parsedData, { idToken: 'google-id-token' })
         assert.equal(config.skipAuth, true)
         assert.equal(config.headers.Authorization, undefined)
         const body = { [wrapped ? 'token' : 'accessToken']: 'application-token', user: { id: 'g1', name: 'Google Member', email: 'member@example.com', avatar: 'avatar-url', role: 'Member' } }
@@ -167,4 +167,16 @@ test('failed Google login never creates a session', async (t) => {
     await assert.rejects(googleSignIn({ credential: 'credential' }), /incomplete/)
     assert.equal(getToken(), null)
   }
+})
+
+
+test('Google login preserves backend rejection details', async (t) => {
+  const originalAdapter = api.defaults.adapter
+  t.after(() => { api.defaults.adapter = originalAdapter; clearSession() })
+  clearSession()
+  api.defaults.adapter = async () => {
+    throw Object.assign(new Error('Rejected'), { response: { status: 401, data: { message: 'Google ID token is invalid or expired.' } } })
+  }
+  await assert.rejects(googleSignIn({ credential: 'invalid-token' }), /Google ID token is invalid or expired/)
+  assert.equal(getToken(), null)
 })

@@ -123,14 +123,13 @@ export async function googleSignIn({ credential, rememberMe }) {
   }
   let response
   try {
-    // Send idToken as expected by Backend GoogleLoginRequest DTO (with credential fallback)
+    // GoogleLogin returns the Google ID token expected by the backend.
     response = await api.post(AUTH_ENDPOINTS.google, {
       idToken: credential,
-      credential,
     }, { skipAuth: true, timeout: AUTH_TIMEOUT_MS })
   } catch (error) {
     if (error.response?.status === 401) {
-      throw new Error('Google sign-in was rejected. Please try again or use email and password.')
+      throw new Error(error.response?.data?.message || 'Google sign-in was rejected. Please try again or use email and password.')
     }
     if ([404, 405, 501].includes(error.response?.status)) {
       throw new Error('Google sign-in is not available on the server yet. Please use email and password.')

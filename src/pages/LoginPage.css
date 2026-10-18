@@ -26,11 +26,18 @@
 .auth-intro h1 span { color: var(--auth-orange); }
 .auth-description { color: #7a858a; font-size: 14px; line-height: 1.7; max-width: 400px; margin-top: 20px; }
 .auth-form { margin-top: 30px; }
-.auth-google { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; height: 51px; border: 1px solid var(--auth-border); border-radius: 5px; background: white; color: #23343b; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 180ms, border-color 180ms; animation: auth-rise 650ms 140ms both; }
-.auth-google:hover { background: #fef8f3; border-color: #d7c8bd; }
-.auth-google-container { width: 100%; min-height: 51px; }
-.auth-google-widget { display: flex; justify-content: center; padding: 5px 0 6px; border-radius: 5px; background: #fff; }
-.auth-google-widget[inert], .auth-google:disabled { opacity: .65; cursor: not-allowed; }
+.auth-google { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 44px; padding: 10px 20px; border: 1px solid #dadce0; border-radius: 999px; background: #fafafa; color: #687277; font: 500 14px/1.4 Inter, system-ui, sans-serif; cursor: not-allowed; }
+.auth-google-container { width: 100%; max-width: 400px; margin-inline: auto; min-height: 76px; }
+.auth-google-widget { display: flex; justify-content: center; min-height: 44px; padding: 2px 0; border-radius: 999px; transition: box-shadow 180ms; }
+.auth-google-widget:hover { box-shadow: 0 4px 16px rgb(35 52 59 / 8%); }
+.auth-google-widget[inert] { opacity: .6; cursor: wait; }
+.auth-google > svg { flex-shrink: 0; }
+.auth-google-caption { display: flex; align-items: flex-start; justify-content: center; gap: 6px; margin: 10px 0 0; color: #687277; font-size: 11px; line-height: 1.6; text-align: center; }
+.auth-google-caption > svg { flex-shrink: 0; margin-top: 2px; }
+.auth-google-caption--notice { padding: 9px 12px; border-radius: 10px; background: #f7f8fa; color: #626d76; }
+.auth-google-spinner { animation: auth-google-spin 900ms linear infinite; }
+@keyframes auth-google-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .auth-google-spinner { animation: none; } }
 .auth-divider { display: flex; align-items: center; gap: 16px; margin: 25px 0; }
 .auth-divider::before, .auth-divider::after { content: ''; height: 1px; flex: 1; background: var(--auth-border); }
 .auth-divider span { color: var(--auth-muted); font-size: 9px; letter-spacing: 1.1px; text-transform: uppercase; white-space: nowrap; }

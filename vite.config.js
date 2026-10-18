@@ -8,7 +8,13 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    preview: {
+      headers: { 'Cross-Origin-Opener-Policy': 'same-origin-allow-popups' },
+    },
     server: {
+      port: 5173,
+      strictPort: true,
+      headers: { 'Cross-Origin-Opener-Policy': 'same-origin-allow-popups' },
       proxy: {
         '/api': {
           target: apiTarget,
