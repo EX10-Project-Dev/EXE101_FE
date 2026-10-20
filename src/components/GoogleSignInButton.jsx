@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { GoogleAuthContext } from '../contexts/googleAuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import { googleSignIn } from '../services/authService'
+import { getAccountHome } from '../utils/accountNavigation'
 
 export default function GoogleSignInButton({ rememberMe = false, disabled, onBusyChange, onNotice }) {
   const status = useContext(GoogleAuthContext)
@@ -26,8 +27,8 @@ export default function GoogleSignInButton({ rememberMe = false, disabled, onBus
     onNotice('', 'error')
     onBusyChange(true)
     try {
-      await googleSignIn({ credential, rememberMe })
-      navigate('/discover', { replace: true })
+      const { user } = await googleSignIn({ credential, rememberMe })
+      navigate(getAccountHome(user), { replace: true })
     } catch (error) {
       onNotice(error.message, 'error')
     } finally {

@@ -52,11 +52,14 @@ html { scroll-behavior: smooth; }
 .hero-brand { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 1rem; letter-spacing: -0.06em; font-weight: 900; min-height: 44px; }
 .hero-brand img { width: 32px; height: 32px; object-fit: contain; }
 .brand-go { color: var(--accent); }
-.hero-actions { display: flex; align-items: center; gap: 4px; }
-.hero-language { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; padding: 0 8px; border: 0; background: transparent; cursor: pointer; color: var(--text-muted); font-size: 0.75rem; }
-.hero-language .is-active { font-weight: 800; color: var(--text-primary); }
+.hero-language, .hero-partners, .hero-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 8px; border: 0; background: transparent; font: inherit; font-size: .75rem; font-weight: 700; line-height: 1.5; text-decoration: none; white-space: nowrap; }
+.hero-partners:hover, .hero-partners.active { color: var(--accent-text); }
+.hero-actions { display: flex; align-items: center; gap: 8px; }
+.hero-language { gap: 5px; cursor: pointer; color: var(--text-muted); }
+.hero-language .is-active { color: var(--text-primary); }
 .hero-language-divider { opacity: 0.5; }
-.hero-secondary { display: inline-flex; justify-content: center; align-items: center; gap: 4px; min-height: 44px; padding: 0 10px; font-weight: 700; font-size: 0.75rem; text-decoration: none; }
+.hero-secondary { gap: 8px; }
+.hero-secondary svg { flex-shrink: 0; }
 .hero-secondary:hover { color: var(--accent-text); }
 .hero-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--space-3) 0 var(--space-4); }
 .hero-artwork { width: 86%; max-width: 1000px; aspect-ratio: 2245 / 1050; margin: 0; overflow: hidden; }
@@ -72,9 +75,8 @@ html { scroll-behavior: smooth; }
   .hero { padding: var(--space-3) var(--space-4); }
   .hero-brand { font-size: 1.5rem; gap: 10px; }
   .hero-brand img { width: 44px; height: 44px; }
-  .hero-actions { gap: var(--space-2); }
-  .hero-secondary { padding: 0 20px; font-size: 0.875rem; gap: var(--space-1); }
-  .hero-language { font-size: 0.8125rem; }
+  .hero-actions { gap: 24px; }
+  .hero-language, .hero-partners, .hero-secondary { font-size: .875rem; }
   .hero-primary { width: auto; min-width: 240px; }
 }
 @media (max-width: 599px) {

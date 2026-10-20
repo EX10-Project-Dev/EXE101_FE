@@ -5,6 +5,7 @@ import { Compass, MapPin } from 'lucide-react'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import BrandText from '../BrandText'
+import { isMerchant } from '../../utils/accountNavigation'
 
 export default function FloatingTopBar({ user, onLogout, onRecenter, savedOnly, onSavedOnly }) {
   const { tx, toggleLanguage, t, isEn } = useLanguage()
@@ -26,6 +27,8 @@ export default function FloatingTopBar({ user, onLogout, onRecenter, savedOnly, 
       <Menu anchorEl={userAnchor} open={Boolean(userAnchor)} onClose={() => setUserAnchor(null)} slotProps={{ paper: { className: 'dg-user-menu' } }}>
         <Link to="/" className="dg-menu-brand" onClick={() => setUserAnchor(null)}><BrandText /></Link>
         <div className="dg-user-info"><strong>{name}</strong>{user?.email && <span>{user.email}</span>}</div>
+        {/* Merchant vẫn có thể xem bản đồ B2C và quay về cổng đối tác từ menu này. */}
+        {isMerchant(user) && <MenuItem component={Link} to="/merchant" onClick={() => setUserAnchor(null)}>{isEn ? 'Merchant portal' : 'Cổng đối tác'}</MenuItem>}
         <MenuItem selected={!savedOnly} onClick={() => { onSavedOnly(false); setUserAnchor(null) }}>{tx('Discover')}</MenuItem>
         <MenuItem selected={savedOnly} onClick={() => { onSavedOnly(true); setUserAnchor(null) }}>{tx('Saved places')}</MenuItem>
         <MenuItem onClick={toggleLanguage}>{t('switchLangTooltip')}</MenuItem>

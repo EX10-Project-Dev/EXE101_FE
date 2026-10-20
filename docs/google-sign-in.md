@@ -6,7 +6,7 @@
 - Auth state: `src/hooks/useAuth.js` subscribes to `sessionStore.js` using `useSyncExternalStore`.
 - Shared Axios instance/interceptors: `src/services/api.js`.
 - Session keys: `token` and `findgo:user`. Remember me uses localStorage; otherwise sessionStorage.
-- Both email and Google login use `completeSignIn` in `authService.js`, normalize the backend user, save the session, and redirect to `/discover`.
+- Both email and Google login use `completeSignIn` in `authService.js`, normalize the backend user, and save the session. `getAccountHome(user)` sends Merchant users to `/merchant` and other roles to `/discover`.
 - `GoogleAuthProvider` wraps the app through `main.jsx`; it reads only the public `VITE_GOOGLE_CLIENT_ID` and handles SDK loading failures. Without configuration, email/password remains available.
 
 ## Configuration
