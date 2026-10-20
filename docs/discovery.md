@@ -17,7 +17,7 @@ For local demonstrations with `npm run dev`, sign in with **demo@findgo.local** 
 
 Set `VITE_AUTH_LOGIN_PATH` in `.env.local` to the login endpoint relative to `VITE_API_BASE` (for example, `/auth/login`), then restart Vite. The adapter sends `{ email, password }` and expects `{ token, user }` or `{ accessToken, user }`, optionally inside `{ data: ... }`. Adapt `src/services/authService.js` if the backend uses a different contract.
 
-`user` can supply `id`, `name`/`displayName`/`fullName`, `email`, and `avatarUrl`/`picture`. Passwords are never persisted. Successful sign-in navigates to `/discover`. Remember me uses local storage; otherwise the session uses session storage. Missing sessions redirect to `/login`. Logout and authenticated API 401 responses clear the session.
+`user` can supply `id`, `name`/`displayName`/`fullName`, `email`, and `avatarUrl`/`picture`. Passwords are never persisted. Successful sign-in navigates to `/merchant` for Merchant users and `/discover` for other roles using `getAccountHome(user)`. Merchant users can still explore the map and return through the account menu's Merchant portal link. Remember me uses local storage; otherwise the session uses session storage. Missing sessions redirect to `/login`. Logout and authenticated API 401 responses clear the session.
 
 The backend must validate tokens and enforce authorization on its endpoints; the client guard is navigation protection. Registration and Google sign-in remain pending backend integration.
 

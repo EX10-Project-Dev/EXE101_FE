@@ -13,6 +13,7 @@ import {
 import { ArrowRight, X, Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
 import BrandText from '../components/BrandText'
 import GoogleSignInButton from '../components/GoogleSignInButton'
+import { getAccountHome } from '../utils/accountNavigation'
 import logo from '../assets/logo-small.webp'
 import './LoginPage.css'
 
@@ -214,8 +215,9 @@ function LoginForm() {
     setNoticeType('error')
     setIsSubmitting(true)
     try {
-      await signIn({ email: email.trim(), password, rememberMe })
-      navigate('/discover', { replace: true })
+      const { user } = await signIn({ email: email.trim(), password, rememberMe })
+      // Dùng user vừa nhận từ BE, tránh đọc state của hook trước khi React cập nhật session.
+      navigate(getAccountHome(user), { replace: true })
     } catch (error) {
       setNotice(extractErrorMessage(error, 'Incorrect email or password. Please try again.'))
       setNoticeType('error')

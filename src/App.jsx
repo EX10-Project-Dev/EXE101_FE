@@ -7,8 +7,15 @@ import ConfirmEmailPage from './pages/ConfirmEmailPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useLanguage } from './contexts/LanguageContext'
 import useAuth from './hooks/useAuth'
+import { getAccountHome } from './utils/accountNavigation'
 
 const DiscoverPage = lazy(() => import('./pages/DiscoverPage'))
+const PartnersPage = lazy(() => import('./pages/PartnersPage'))
+const MerchantLayout = lazy(() => import('./pages/merchant/MerchantLayout'))
+const MerchantDashboard = lazy(() => import('./pages/merchant/MerchantDashboard'))
+const MerchantVenues = lazy(() => import('./pages/merchant/MerchantVenues'))
+const MerchantCampaigns = lazy(() => import('./pages/merchant/MerchantCampaigns'))
+const MerchantAnalytics = lazy(() => import('./pages/merchant/MerchantAnalytics'))
 
 function LandingLayout() {
   return <><LandingPage /><Outlet /></>
@@ -16,10 +23,10 @@ function LandingLayout() {
 
 function AuthDialog({ pendingFlow, isSignup = false }) {
   const navigate = useNavigate()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const close = () => navigate('/', { replace: true })
 
-  if (isAuthenticated) return <Navigate to="/discover" replace />
+  if (isAuthenticated) return <Navigate to={getAccountHome(user)} replace />
 
   return (
     <Dialog
@@ -42,6 +49,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/partners" element={<Suspense fallback={<p role="status" style={{ padding: 32 }}>{tx('Loading…')}</p>}><PartnersPage /></Suspense>} />
+        {/* Tái sử dụng bảo vệ đăng nhập hiện có, không tạo cơ chế xác thực mới.
+            Sau đăng nhập, role Merchant vào /merchant; role khác vào /discover.
+            Điều hướng theo role chưa thay thế kiểm tra quyền và quyền sở hữu trên BE. */}
+        <Route path="/merchant" element={<ProtectedRoute><Suspense fallback={<p role="status" style={{ padding: 32 }}>Đang mở cổng đối tác…</p>}><MerchantLayout /></Suspense></ProtectedRoute>}>
+          <Route index element={<MerchantDashboard />} />
+          <Route path="venues" element={<MerchantVenues />} />
+          <Route path="campaigns" element={<MerchantCampaigns />} />
+          <Route path="analytics" element={<MerchantAnalytics />} />
+          {/* Tạm ẩn gói dịch vụ; URL cũ được route * bên dưới đưa về Tổng quan. */}
+          <Route path="*" element={<Navigate to="/merchant" replace />} />
+        </Route>
         <Route path="/discover" element={<ProtectedRoute><Suspense fallback={<p role="status" style={{ padding: 32 }}>{tx('Opening your map…')}</p>}><DiscoverPage /></Suspense></ProtectedRoute>} />
         <Route path="/auth/confirm-email" element={<ConfirmEmailPage />} />
         <Route path="/confirm-email" element={<ConfirmEmailPage />} />
